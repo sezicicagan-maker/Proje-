@@ -13,6 +13,7 @@ const { minify } = require('terser');
   let body = src.replace(/<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>\s*/g, '');
   if (/fonts\.(googleapis|gstatic)\.com/.test(body)) throw new Error('Google Fonts bağlantısı kaldırılamadı');
 
+  body = body.replace(/<title>[^<]*<\/title>\s*/g, '');
   // 1) test kancalarını sil
   const hooks = /\/\*TEST_HOOKS_BEGIN\*\/[\s\S]*?\/\*TEST_HOOKS_END\*\//;
   if (!hooks.test(body)) throw new Error('Test kancası işaretleri bulunamadı');
