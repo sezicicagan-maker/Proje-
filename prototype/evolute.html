@@ -169,6 +169,7 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 .mini.sw::before{content:"";position:absolute;left:calc(100% - var(--u)*22);top:50%;width:calc(var(--u)*17);height:calc(var(--u)*17);margin-top:calc(var(--u)*-8.5);border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);transition:left .25s cubic-bezier(.3,1.5,.5,1)}
 .mini.sw.off{background:#2a3c58;color:#8aa0bf;box-shadow:none;padding:calc(var(--u)*9) calc(var(--u)*10) calc(var(--u)*9) calc(var(--u)*30)}
 .mini.sw.off::before{left:calc(var(--u)*5);background:#8aa0bf}
+.lvl{display:flex;align-items:center;gap:calc(var(--u)*8);justify-content:center}.lvb{display:block;height:calc(var(--u)*6);min-width:calc(var(--u)*90);border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:calc(var(--u)*4)}.lvb i{display:block;height:100%;background:linear-gradient(90deg,#5fe3ff,#ffd23f);border-radius:9px}.lvl .lvb{margin:0;flex:0 0 calc(var(--u)*100)}
 </style>
 
 <div id="wrap">
@@ -217,6 +218,7 @@ const STR = {
     codexTitle: 'Tür Kataloğu', codexNote: 'Her yeni türü ilk kez bulunca sayısı × 3 DNA kazanırsın.', back: 'Geri',
     lang: 'Dil', on: 'Açık', off: 'Kapalı', vib: 'Titreşim', reset: 'İlerlemeyi sil', resetAsk: 'Tüm ilerleme silinsin mi? Bu geri alınamaz.',
     resetYes: 'Evet, sil', cancel: 'Vazgeç', howTo: 'Nasıl oynanır', pauseT: 'Duraklatıldı', resume: 'Devam', toMenu: 'Menüye dön',
+    quests:'Görevler',qMerge:'Toplam {0} birleştirme yap',qKill:'{0} düşman yen',qRuns:'{0} tur oyna',qTier:'Bir turda {0}. kademeye ulaş',qWin:'{0} tur kazan',qCombo:'{0} kombo yap',qAll:'Tüm görevler bonusu',qReady:'Görev ödülün hazır!',lvl:'Seviye {0}',lvUp:'Seviye atladın! +{0} DNA',
     dailyT: 'Günlük ödül', streak: 'Seri: {0}. gün', claim: 'Al', claimed: 'Yarın gel', idleT: 'Kuluçka', idleAcc: '{0} DNA birikti', idleRate: '{0} DNA/sa · en fazla 4 sa',
     collect: 'Topla', tut1: 'Aynı renk ve sayıdaki iki canlıyı sürükleyip birleştir. Sayı büyüdükçe güçlenir.',
     tut2: 'Canlılar kendi sütunlarındaki düşmana saldırır. Güçlü canlıyı tehdidin geldiği sütuna taşı.',
@@ -249,6 +251,7 @@ const STR = {
     codexTitle: 'Species Codex', codexNote: 'Discover a new species to earn its tier × 3 DNA.', back: 'Back',
     lang: 'Language', on: 'On', off: 'Off', vib: 'Vibration', reset: 'Erase progress', resetAsk: 'Erase all progress? This cannot be undone.',
     resetYes: 'Yes, erase', cancel: 'Cancel', howTo: 'How to play', pauseT: 'Paused', resume: 'Resume', toMenu: 'Back to menu',
+    quests:'Quests',qMerge:'Make {0} merges in total',qKill:'Defeat {0} enemies',qRuns:'Play {0} runs',qTier:'Reach tier {0} in one run',qWin:'Win {0} runs',qCombo:'Reach a x{0} combo',qAll:'All quests bonus',qReady:'Quest reward ready!',lvl:'Level {0}',lvUp:'Level up! +{0} DNA',
     dailyT: 'Daily reward', streak: 'Streak: day {0}', claim: 'Claim', claimed: 'Come back tomorrow', idleT: 'Incubator', idleAcc: '{0} DNA ready', idleRate: '{0} DNA/h · max 4 h',
     collect: 'Collect', tut1: 'Drag two creatures with the same color and number together to merge them. Higher numbers hit harder.',
     tut2: 'Creatures attack enemies in their own column. Move your strongest one to the column under threat.',
@@ -281,6 +284,7 @@ const STR = {
     codexTitle: 'Artenkodex', codexNote: 'Neue Art entdecken: Stufe × 3 DNA Belohnung.', back: 'Zurück',
     lang: 'Sprache', on: 'An', off: 'Aus', vib: 'Vibration', reset: 'Fortschritt löschen', resetAsk: 'Gesamten Fortschritt löschen? Das lässt sich nicht rückgängig machen.',
     resetYes: 'Ja, löschen', cancel: 'Abbrechen', howTo: 'Spielanleitung', pauseT: 'Pausiert', resume: 'Weiter', toMenu: 'Zum Menü',
+    quests:'Aufgaben',qMerge:'Führe insgesamt {0} Verschmelzungen durch',qKill:'Besiege {0} Gegner',qRuns:'Spiele {0} Runden',qTier:'Erreiche in einer Runde Stufe {0}',qWin:'Gewinne {0} Runden',qCombo:'Erreiche eine {0}er-Combo',qAll:'Bonus für alle Aufgaben',qReady:'Aufgabenbelohnung bereit!',lvl:'Level {0}',lvUp:'Level aufgestiegen! +{0} DNA',
     dailyT: 'Tagesbelohnung', streak: 'Serie: Tag {0}', claim: 'Abholen', claimed: 'Komm morgen wieder', idleT: 'Brutkasten', idleAcc: '{0} DNA bereit', idleRate: '{0} DNA/Std. · max. 4 Std.',
     collect: 'Einsammeln', tut1: 'Ziehe zwei Wesen mit gleicher Farbe und Zahl zusammen. Höhere Zahlen treffen härter.',
     tut2: 'Wesen greifen Gegner in ihrer Spalte an. Bringe dein stärkstes in die bedrohte Spalte.',
@@ -313,6 +317,7 @@ const STR = {
     codexTitle: 'Códice de especies', codexNote: 'Al descubrir una especie nueva ganas su nivel × 3 ADN.', back: 'Atrás',
     lang: 'Idioma', on: 'Sí', off: 'No', vib: 'Vibración', reset: 'Borrar progreso', resetAsk: '¿Borrar todo el progreso? No se puede deshacer.',
     resetYes: 'Sí, borrar', cancel: 'Cancelar', howTo: 'Cómo jugar', pauseT: 'En pausa', resume: 'Continuar', toMenu: 'Volver al menú',
+    quests:'Misiones',qMerge:'Haz {0} fusiones en total',qKill:'Derrota {0} enemigos',qRuns:'Juega {0} partidas',qTier:'Alcanza el nivel {0} en una partida',qWin:'Gana {0} partidas',qCombo:'Logra un combo de {0}',qAll:'Bono de todas las misiones',qReady:'¡Recompensa de misión lista!',lvl:'Nivel {0}',lvUp:'¡Subiste de nivel! +{0} ADN',
     dailyT: 'Premio diario', streak: 'Racha: día {0}', claim: 'Reclamar', claimed: 'Vuelve mañana', idleT: 'Incubadora', idleAcc: '{0} ADN listo', idleRate: '{0} ADN/h · máx. 4 h',
     collect: 'Recoger', tut1: 'Arrastra dos criaturas del mismo color y número para fusionarlas. Más número, más daño.',
     tut2: 'Las criaturas atacan a los enemigos de su columna. Lleva la más fuerte a la columna amenazada.',
@@ -345,6 +350,7 @@ const STR = {
     codexTitle: 'Códice de espécies', codexNote: 'Ao descobrir uma espécie nova você ganha o nível × 3 DNA.', back: 'Voltar',
     lang: 'Idioma', on: 'Ligado', off: 'Desligado', vib: 'Vibração', reset: 'Apagar progresso', resetAsk: 'Apagar todo o progresso? Isso não pode ser desfeito.',
     resetYes: 'Sim, apagar', cancel: 'Cancelar', howTo: 'Como jogar', pauseT: 'Pausado', resume: 'Continuar', toMenu: 'Voltar ao menu',
+    quests:'Missões',qMerge:'Faça {0} fusões no total',qKill:'Derrote {0} inimigos',qRuns:'Jogue {0} partidas',qTier:'Alcance o nível {0} em uma partida',qWin:'Vença {0} partidas',qCombo:'Faça um combo de {0}',qAll:'Bônus de todas as missões',qReady:'Recompensa de missão pronta!',lvl:'Nível {0}',lvUp:'Subiu de nível! +{0} DNA',
     dailyT: 'Prêmio diário', streak: 'Sequência: dia {0}', claim: 'Resgatar', claimed: 'Volte amanhã', idleT: 'Incubadora', idleAcc: '{0} DNA pronto', idleRate: '{0} DNA/h · máx. 4 h',
     collect: 'Coletar', tut1: 'Arraste duas criaturas de mesma cor e número para fundi-las. Número maior, mais dano.',
     tut2: 'As criaturas atacam os inimigos da própria coluna. Leve a mais forte para a coluna ameaçada.',
@@ -440,7 +446,7 @@ function cyrb53(str, seed) {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 }
 const sig = p => cyrb53(SALT + p, 1).toString(36) + '.' + cyrb53(p + SALT, 7).toString(36);
-const defaultSave = () => ({ dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, maxT: 0, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
+const defaultSave = () => ({ dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, maxT: 0, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto', xp: 0, q: null });
 let loadNotice = null;
 function loadRaw() {
   let seen = false;
@@ -469,6 +475,8 @@ function sanitize(o) {
   if (o.codex && typeof o.codex === 'object') for (const k of Object.keys(o.codex).slice(0, 400)) if (/^\d:[0-2]:[1-8]$/.test(k) && Number(k[0]) <= s.unlocked) s.codex[k] = 1;
   if (o.ach && typeof o.ach === 'object') for (const k of Object.keys(o.ach).slice(0, 100)) if (/^[A-Za-z]+\d{1,5}$/.test(k)) s.ach[k] = 1;
   const st = o.stats || {}; s.stats = { merges: int(st.merges, 0, 1e9, 0), kills: int(st.kills, 0, 1e9, 0), maxTier: int(st.maxTier, 0, MAXT, 0), maxCombo: int(st.maxCombo, 0, 999, 0) };
+  s.xp = int(o.xp, 0, 1e7, 0);
+  if (o.q && dateOk(o.q.d) && Array.isArray(o.q.p) && Array.isArray(o.q.c)) s.q = { d: o.q.d, p: [0, 1, 2].map(i => int(o.q.p[i], 0, 1e5, 0)), c: [0, 1, 2].map(i => o.q.c[i] ? 1 : 0), b: o.q.b ? 1 : 0 };
   s.daily = { last: dateOk(o.daily && o.daily.last), streak: int(o.daily && o.daily.streak, 0, 9999, 0) }; s.dailyDone = dateOk(o.dailyDone);
   if (o.pet && dateOk(o.pet.d) && o.pet.k && typeof o.pet.k === 'object') { s.pet = { d: o.pet.d, k: {} }; for (const k of Object.keys(o.pet.k).slice(0, 200)) if (/^\d:[0-2]:[1-8]$/.test(k)) s.pet.k[k] = 1; }
   s.idleT = Math.min(now, int(o.idleT, 0, 4e12, now)) || now; s.maxT = int(o.maxT, 0, 4e12, 0);
@@ -487,7 +495,7 @@ function nowT() {
   return save.maxT;
 }
 function persist() { try { nowT(); const p = JSON.stringify(save), w = JSON.stringify({ v: 2, p, h: sig(p) }); localStorage.setItem(KEY, w); localStorage.setItem(KEY_B, w); } catch (e) {} }
-const APP_VER = '1.7.0';
+const APP_VER = '1.8.0';
 const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -922,6 +930,38 @@ const ACH = [];
 const statVal = a => a.stat === 'wins' ? save.wins : a.stat === 'runs' ? save.runs : a.stat === 'codex' ? Object.keys(save.codex).length : a.stat === 'era' ? save.unlocked + 1 : a.stat === 'eraFull' ? ERAS.reduce((n, _, e) => n + (Object.keys(save.codex).filter(k => k.startsWith(e + ':')).length >= 3 * MAXT ? 1 : 0), 0) : save.stats[a.stat];
 function checkAch(g) { for (const a of ACH) if (!save.ach[a.id] && statVal(a) >= a.n) { save.ach[a.id] = 1; save.dna += a.r; g.newAch.push(a); } }
 
+/* ---------- Günlük görevler ve oyuncu seviyesi ---------- */
+const QDEF = [
+  { k: 'qMerge', f: 'merge', n: [40, 60, 90], r: 25 }, { k: 'qKill', f: 'kill', n: [60, 100, 150], r: 25 }, { k: 'qRuns', f: 'runs', n: [2, 3, 4], r: 20 },
+  { k: 'qTier', f: 'tier', n: [4, 5, 6], r: 35 }, { k: 'qWin', f: 'win', n: [1, 1, 2], r: 40 }, { k: 'qCombo', f: 'combo', n: [4, 5, 7], r: 30 }];
+function qList() {
+  let h = 7; for (const ch of save.q.d) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const a = [0, 1, 2, 3, 4, 5]; for (let i = 0; i < 3; i++) { const j = i + ((h >>> (i * 4)) % (6 - i)); [a[i], a[j]] = [a[j], a[i]]; }
+  return [0, 1, 2].map(i => { const d = QDEF[a[i]]; const n = d.n[(h >>> (12 + i * 2)) % 3]; return { k: d.k, f: d.f, n, r: Math.round(d.r * (1 + (n - d.n[0]) / (d.n[2] * 2))) }; });
+}
+function qEnsure() { if (!save.q || save.q.d !== today()) save.q = { d: today(), p: [0, 0, 0], c: [0, 0, 0], b: 0 }; return qList(); }
+function qRun(g) {
+  const L = qEnsure(); const v = { merge: g.merges, kill: g.kills, runs: 1, win: g.win ? 1 : 0, tier: g.maxTier, combo: g.maxCombo };
+  L.forEach((q, i) => { if (q.f === 'tier' || q.f === 'combo') save.q.p[i] = Math.max(save.q.p[i], v[q.f]); else save.q.p[i] = Math.min(99999, save.q.p[i] + v[q.f]); });
+}
+const qReadyN = () => { const L = qEnsure(); return L.filter((q, i) => save.q.p[i] >= q.n && !save.q.c[i]).length + (save.q.c.every(x => x) && !save.q.b ? 1 : 0); };
+const xpNeed = l => 80 + 40 * l;
+function lvOf(xp) { let l = 1; while (l < 99 && xp >= xpNeed(l)) { xp -= xpNeed(l); l++; } return { l, cur: xp, need: xpNeed(l) }; }
+function addXp(n) { const a = lvOf(save.xp).l; save.xp += n; const b = lvOf(save.xp).l; if (b > a) { save.dna += 25 * (b - a); return b - a; } return 0; }
+function claimQuest(i) {
+  const L = qEnsure();
+  if (i === 'b') { if (save.q.c.every(x => x) && !save.q.b) { save.q.b = 1; save.dna += 60; addXp(30); persist(); } showQuests(); return; }
+  const q = L[+i]; if (!q || save.q.p[+i] < q.n || save.q.c[+i]) return;
+  save.q.c[+i] = 1; save.dna += q.r; addXp(15); persist(); showQuests();
+}
+function lvBar() { const v = lvOf(save.xp); return `<div class="bank lvl"><b>${t('lvl', v.l)}</b><i class="lvb"><i style="width:${Math.round(v.cur / v.need * 100)}%"></i></i></div>`; }
+function showQuests() {
+  screen = 'quests'; const L = qEnsure();
+  const rows = L.map((q, i) => { const p = Math.min(q.n, save.q.p[i]), done = p >= q.n, got = save.q.c[i];
+    return `<div class="row"><div><b>${t(q.k, q.n)}</b><small>${p}/${q.n} · +${q.r}${DNA_SVG}</small><i class="lvb"><i style="width:${Math.round(p / q.n * 100)}%"></i></i></div><button class="mini" data-q="${i}" ${done && !got ? '' : 'disabled'}>${got ? '✓' : t('claim')}</button></div>`; }).join('');
+  const all = save.q.c.every(x => x);
+  setOv(`<span class="tag">${t('quests')}</span>${lvBar()}<div class="lab">${rows}<div class="row"><div><b>${t('qAll')}</b><small>+60${DNA_SVG}</small></div><button class="mini" data-q="b" ${all && !save.q.b ? '' : 'disabled'}>${save.q.b ? '✓' : t('claim')}</button></div></div><button class="btn" data-act="back">${t('back')}</button>`);
+}
 function finishRun() {
   const g = G;
   const base = g.bossRush ? g.bossKills * 30 + g.kills * 0.6 + (g.win ? 90 : 0) : g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0);
@@ -940,6 +980,7 @@ function finishRun() {
   save.bestWave = Math.max(save.bestWave, g.waveReached);
   if (g.endless) { g.newBest = g.waveReached > (save.best[g.era] || 0); save.best[g.era] = Math.max(save.best[g.era] || 0, g.waveReached); }
   const st = save.stats; st.merges += g.merges; st.kills += g.kills; st.maxTier = Math.max(st.maxTier, g.maxTier); st.maxCombo = Math.max(st.maxCombo, g.maxCombo);
+  qRun(g); g.lvUp = addXp(10 + g.waveReached * 3 + (g.win ? 25 : 0));
   checkAch(g);
   screen = 'result'; persist(); showResult();
 }
@@ -1682,14 +1723,14 @@ function modesHTML() {
 function showMenu() {
   screen = 'menu'; const note = loadNotice; loadNotice = null;
   const dr = dailyReady(), acc = idleAcc();
-  setOv(`${note ? `<small class="bestl warn">${t(note)}</small>` : ''}<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
+  setOv(`${note ? `<small class="bestl warn">${t(note)}</small>` : ''}<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}${lvBar()}
     <button class="btn" data-act="start">${t('play')}</button>
     ${bankHTML()}
     <div class="cards2">
       <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + DNA_SVG + ' · ' + t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
       <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
     </div>
-    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="hab">${t('habT')}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
+    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost ${qReadyN() ? 'pulse' : ''}" data-act="quests">${t('quests')} ${qEnsure() && save.q.c.filter(x => x).length}/3</button><button class="ghost" data-act="hab">${t('habT')}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
 }
 function showLab() {
   screen = 'lab';
@@ -1710,7 +1751,7 @@ function showResult() {
     <div class="stats"><span>${g.bossRush ? t('bossLbl', g.bossKills) : `${t('sWave')} <b>${g.waveReached}${g.endless ? '' : '/' + WAVES}</b>`}</span><span>${t('sTier')} <b>${g.maxTier}</b></span>
     <span>${t('sMerge')} <b>${g.merges}</b></span><span>${t('sKill')} <b>${g.kills}</b></span>
     <span>${t('sFirst')} <b>${fm}</b></span><span>${t('sTime')} <b>${Math.round(g.t)} ${t('sec')}</b></span></div>
-    ${nxt}<div class="bank">${g.disc ? t('gainCodex', g.disc) + ' · ' : ''}${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>
+    ${nxt}${g.lvUp ? `<div class="bank"><b>${t('lvUp', 25 * g.lvUp)}</b></div>` : ''}${qReadyN() ? `<div class="bank"><b>${t('qReady')}</b></div>` : ''}<div class="bank">${g.disc ? t('gainCodex', g.disc) + ' · ' : ''}${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>
     ${goalsHTML()}${achHTML(g)}${nextUpHTML()}
     <button class="btn" data-act="again">${t('next')}</button>
     <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="menu">${t('pickEra')}</button><button class="ghost" data-act="codex">${t('codex')}</button></div>`);
@@ -1791,6 +1832,7 @@ const FX = {
   start: { a: 'jelly', g: ['✦', '🧬', '✦'], c: '#ff9a4a', n: 10, s: [523, 784, 1047], v: 25 },
   daily: { a: 'pop', g: ['◆', '✦'], c: '#ffd23f', n: 12, s: [880, 1175, 1568], v: [20, 30, 20] },
   idle: { a: 'pop', g: ['◆', '✦'], c: '#5fe3ff', n: 10, s: [660, 990], v: 20 },
+  quests: { a: 'swing', g: ['✔', '★'], c: '#ffd23f', n: 6, s: [660, 880], v: 12 },
   lab: { a: 'bounce', g: ['○', '●'], c: '#7fe3ff', n: 8, s: [330, 440, 550], v: 12 },
   ach: { a: 'swing', g: ['★', '✦'], c: '#ffd23f', n: 8, s: [784, 988], v: 15 },
   hab: { a: 'sway', g: ['❦', '✿'], c: '#7ee08a', n: 8, s: [392, 523], v: 12 },
@@ -1808,7 +1850,7 @@ const FX = {
 };
 function fxOf(b) {
   const d = b.dataset;
-  if (d.up) return FX.up; if (d.pick) return FX.pick; if (d.lang) return FX.lang; if (d.mode) return FX.mode;
+  if (d.q !== undefined) return FX.daily; if (d.up) return FX.up; if (d.pick) return FX.pick; if (d.lang) return FX.lang; if (d.mode) return FX.mode;
   if (d.era || d.cera || d.hera) return FX.arrow;
   const a = d.act;
   if (a === 'mute' || a === 'music' || a === 'vib' || a === 'gfx') return FX.tog;
@@ -1841,7 +1883,7 @@ ov.addEventListener('click', ev => {
   ensureAudio(); const f = fxOf(b), d = b.dataset;
   fxPlay(b, f); fxBurst(b, f); fxSound(f);
   try { save.vib && navigator.vibrate && navigator.vibrate(f.v); } catch (e) {}
-  navDir = (f === FX.nav || d.act === 'menu') ? 'l' : (d.act === 'lab' || d.act === 'ach' || d.act === 'hab' || d.act === 'codex' || d.act === 'settings') ? 'r' : (d.act === 'start' ? 'u' : '');
+  navDir = (f === FX.nav || d.act === 'menu') ? 'l' : (d.act === 'lab' || d.act === 'quests' || d.act === 'ach' || d.act === 'hab' || d.act === 'codex' || d.act === 'settings') ? 'r' : (d.act === 'start' ? 'u' : '');
 }, true);
 ov.addEventListener('click', ev => {
   ensureAudio();
@@ -1851,6 +1893,8 @@ ov.addEventListener('click', ev => {
   if (d.act === 'again') { newGame(); return; }
   if (d.act === 'daily') { claimDaily(); sfx('discover'); showMenu(); return; }
   if (d.act === 'idle') { collectIdle(); sfx('discover'); showMenu(); return; }
+  if (d.act === 'quests') { goSub(showQuests); return; }
+  if (d.q !== undefined) { claimQuest(d.q); return; }
   if (d.act === 'lab') { goSub(showLab); return; }
   if (d.act === 'ach') { goSub(showAch); return; }
   if (d.act === 'hab') { habEra = Math.min(save.era, save.unlocked); goSub(showHabitat); return; }
@@ -1927,7 +1971,7 @@ requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
 /*TEST_HOOKS_BEGIN*/
-if (window.__EVO_TEST__) window.__evolute = { persist, sanitize, nowT, defaultSave, sig, get loadNotice() { return loadNotice; }, habTap, showHabitat, get habList() { return habList; }, bossAbility, BOSS_AB, DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+if (window.__EVO_TEST__) window.__evolute = { showQuests, qList, qEnsure, claimQuest, lvOf, qReadyN, persist, sanitize, nowT, defaultSave, sig, get loadNotice() { return loadNotice; }, habTap, showHabitat, get habList() { return habList; }, bossAbility, BOSS_AB, DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 /*TEST_HOOKS_END*/
 })();
 </script>

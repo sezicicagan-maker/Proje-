@@ -11,6 +11,7 @@ Gereksinim: `npm i -D playwright` (ve bir kez `npx playwright install chromium`)
 | `test7.js` | **Güvenlik:** kayıt kurcalama, düşmanca kayıt, saat geri alma, çökme kurtarma |
 | `test8.js` | **Üretim derlemesi** (`npm run build:www` sonrası `www/`): kanca yok, CSP ihlali yok, dış ağ yok |
 | `test9.js` | **Düğme animasyonları:** her düğme türü kendi animasyonu/parçacığı, ekran geçiş yönleri, azaltılmış hareket |
+| `test10.js` | **Günlük görevler + seviye:** 3 farklı görev, ilerleme, tek seferlik ödül, kurcalama sınırları, gün sıfırlama |
 | `monkey.js` | Rastgele dokunma/sürükleme/tıklama ile hata avı: `node tests/monkey.js <tohum> <eylem sayısı>` |
 | `bal.js` | Çağ başına zorluk ölçümü (bot) |
 

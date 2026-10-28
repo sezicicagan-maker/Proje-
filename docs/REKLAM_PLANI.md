@@ -42,3 +42,12 @@
 4. Kapalı testte reklamları dene (test reklamlarıyla), sıklığı ayarla.
 5. Yayın günü gerçek reklam kimliklerini koyarız.
 6. Sonra: "Reklamları Kaldır" satın alması (Play Faturalama), mediation, sunucu doğrulaması.
+
+## Oyuncuyu oyunda tutan sistemler ve reklam noktaları (v1.8)
+
+Oyun süresi arttıkça ödüllü reklam izleme fırsatı artar. Şu an var olan döngüler: günlük görevler (3 görev + tamamlama bonusu), oyuncu seviyesi (her seviyede DNA), günlük ödül serisi, kuluçka, başarımlar, teraryum, 4 mod.
+Reklam eklendiğinde (isteğe bağlı, zorlamasız) bağlanacak yerler:
+- Görev ödülünü **2x** yapan ödüllü reklam (görev ekranındaki Al düğmesinin yanında).
+- Günlük ödül ve kuluçka için **2x** reklamı.
+- Yenilgi ekranında "devam et" (bir kez) ödüllü reklamı.
+- Tur sonunda en fazla birkaç turda bir araya giren (kısa) geçiş reklamı; ilk oturumlarda yok.

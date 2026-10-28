@@ -29,6 +29,7 @@ Mobil merge + roguelite + idle oyunu. Google Play için hazırlanıyor. Bu proje
 - 5 dil: Türkçe, English, Deutsch, Español, Português (cihaz diline göre seçilir).
 - Duraklatma, eğitim, ses ve titreşim ayarları, Android geri tuşu desteği.
 - Düğmeye özel animasyon, ses, titreşim ve parçacık efektleri (jöle, zıplama, çevirme, dönen dişli…), yönlü ekran geçişleri, anahtar (switch) tarzı ayarlar, HUD düğme efektleri; "hareketi azalt" ayarına saygılı.
+- **Günlük görevler** (3 görev + bonus) ve **oyuncu seviyesi** (her seviyede DNA); oyuncuyu "bir tur daha" döngüsünde tutar, ileride ödüllü reklamla 2x bağlanır.
 
 ## Android derlemesi
 
