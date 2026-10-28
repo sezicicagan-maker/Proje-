@@ -1,6 +1,7 @@
 # CrazyGames gönderim paketi (Basic Launch)
 
-Yüklenecek dosya: `store/web/evolute-web.zip` (index.html + fonts, toplam ~180 KB, dış bağlantı yok). Giriş dosyası: `index.html`.
+Yüklenecek dosya: **`store/web/index.html`** (TEK dosya, yazı tipleri gömülü, ~185 KB, dış bağlantı yok). Portal zip kabul etmiyor; bu dosyayı doğrudan yükleme alanına bırak. Yeniden üretmek için: `npm run build:www && node scripts/build-single.js`. (`evolute-web.zip` ve `www/` klasörü de duruyor ama portal zip kabul etmiyor.)
+**Kayıt sorusu:** "Yes, using LocalStorage" seç (oyun localStorage kullanıyor).
 Yeniden üretmek için: `npm run build:www` ve `www/` klasörünü zip'le.
 
 ## Oyun bilgileri (portala yapıştır, İngilizce)
