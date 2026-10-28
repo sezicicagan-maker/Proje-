@@ -48,6 +48,15 @@ body{
   border-radius:calc(var(--u)*12);padding:calc(var(--u)*11) calc(var(--u)*13);cursor:pointer}
 .card b{display:block;font-size:calc(var(--u)*17);color:var(--accent)}
 .card span{color:var(--muted);font-size:calc(var(--u)*12)}
+.eras{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);width:100%;max-width:calc(var(--u)*310);
+  background:var(--panel);border-radius:calc(var(--u)*12);padding:calc(var(--u)*8) calc(var(--u)*10)}
+.eras>div{display:flex;flex-direction:column;gap:calc(var(--u)*2)} .eras b{font-size:calc(var(--u)*18)} .eras small{color:var(--muted);font-size:calc(var(--u)*12)}
+.ghost{font:500 calc(var(--u)*14)/1 var(--font);padding:calc(var(--u)*10) calc(var(--u)*14);background:transparent;color:var(--ink);
+  border:2px solid var(--panel2);border-radius:calc(var(--u)*11);cursor:pointer}
+.ghost:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.pair{display:flex;gap:calc(var(--u)*8);flex-wrap:wrap;justify-content:center}
+.crow{display:flex;gap:calc(var(--u)*9);align-items:flex-start;text-align:left;background:var(--panel);border-radius:calc(var(--u)*10);padding:calc(var(--u)*8) calc(var(--u)*10);font-size:calc(var(--u)*14)}
+.crow .dot{margin-top:calc(var(--u)*4);flex:none} .crow small{display:block;color:var(--muted);font-size:calc(var(--u)*12);line-height:1.5} .crow small b{color:var(--ink);font-size:inherit} .crow small i{opacity:.55}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 
@@ -88,14 +97,69 @@ const UPS = {
   spawn: { name: 'Üretim',       desc: l => `Üretim hızı +%${l * 5}`,  cost: l => Math.round(30 * Math.pow(1.6, l)) },
 };
 
+/* Çağlar: görünüm, zorluk ve tür adları. Mekanik (3 element) tüm çağlarda aynı. */
+const ERAS = [
+  { name: 'İlkel Deniz', bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1,
+    species: [['Plankton', 'Karides', 'Yengeç', 'Mürekkep Balığı', 'Ahtapot', 'Orka', 'Kraken', 'Leviathan'],
+              ['Alg', 'Denizanası', 'Deniz Kestanesi', 'Zehirli Balık', 'Taş Balığı', 'Halkalı Ahtapot', 'Zehir Ejderi', 'Abis Yılanı'],
+              ['Parıltı', 'Fener Balığı', 'Torpido', 'Elektrik Yılanı', 'Işık Yengeci', 'Fırtına Vatozu', 'Şimşek Köpekbalığı', 'Tesla Leviathan']] },
+  { name: 'Sisli Orman', bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6,
+    species: [['Tohum', 'Filiz', 'Yosun', 'Eğrelti', 'Çalı', 'Meşe', 'Ağaç Ruhu', 'Ana Orman'],
+              ['Spor', 'Küf', 'Mantar', 'Zehirli Mantar', 'Sarmaşık', 'Etobur Bitki', 'Mantar Kral', 'Çürük Ana'],
+              ['Ateş Böceği', 'Kıvılcım Kelebeği', 'Uğur Böceği', 'Yıldırım Böceği', 'Mor Güve', 'Boynuzlu Böcek', 'Gök Kartalı', 'Şimşek Ejderi']] },
+  { name: 'Buzul Çağı', bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4,
+    species: [['Kar Tanesi', 'Buz Parçası', 'Kutup Tilkisi', 'Penguen', 'Fok', 'Mamut', 'Buz Devi', 'Donmuş Titan'],
+              ['Kristal Tozu', 'Don Çiçeği', 'Sarkıt', 'Soğuk Örümcek', 'Buz Yılanı', 'Kristal Akrep', 'Don Ejderi', 'Ebedi Kış'],
+              ['Kıvılcım', 'Kar Fırtınası', 'Şimşek Bulutu', 'Aurora', 'Fırtına Kuşu', 'Yıldırım Kurdu', 'Kutup Işığı Ejderi', 'Fırtına Tanrısı']] },
+];
+const CODEX_TOTAL = ERAS.length * 3 * MAXT;
+
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
 const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 } };
+let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false };
 try {
   const s = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0 }, s.up || {}); }
 } catch (e) {}
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
+
+/* ---------- Ses (WebAudio, dosyasız) ---------- */
+let AC = null; const lastSfx = {};
+function ensureAudio() {
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (AC && AC.state === 'suspended') AC.resume();
+}
+function tone(f, d, type, v, slide) {
+  if (!AC || save.muted) return;
+  const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f * slide), t + d);
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d);
+}
+function sfx(k, n) {
+  if (!AC || save.muted) return;
+  const now = performance.now(), gap = { hit: 70, kill: 40, spawn: 60 }[k];
+  if (gap && now - (lastSfx[k] || 0) < gap) return; lastSfx[k] = now;
+  if (k === 'merge') { tone(260 + n * 60, 0.2, 'triangle', 0.12, 1.7); tone(520 + n * 120, 0.12, 'sine', 0.05, 1.3); }
+  else if (k === 'spawn') tone(620, 0.05, 'sine', 0.04);
+  else if (k === 'hit') tone(420, 0.04, 'square', 0.02);
+  else if (k === 'kill') tone(200, 0.1, 'square', 0.05, 0.5);
+  else if (k === 'base') tone(110, 0.3, 'sawtooth', 0.12, 0.4);
+  else if (k === 'discover') { tone(880, 0.1, 'sine', 0.07); setTimeout(() => tone(1320, 0.18, 'sine', 0.07), 90); }
+  else if (k === 'win') [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.25, 'triangle', 0.1), i * 110));
+  else if (k === 'lose') [330, 262, 196].forEach((f, i) => setTimeout(() => tone(f, 0.3, 'sawtooth', 0.08), i * 160));
+}
+function toggleMute() { save.muted = !save.muted; persist(); }
+function discover(el, tier) {
+  const k = G.era + ':' + el + ':' + tier;
+  if (save.codex[k]) return;
+  save.codex[k] = 1;
+  const bonus = tier * 3; save.dna += bonus; G.disc += bonus; persist();
+  G.toast = { s: 'Yeni tür: ' + ERAS[G.era].species[el][tier - 1] + '  +' + bonus + ' DNA', life: 2.4, max: 2.4 };
+  sfx('discover');
+}
 
 /* ---------- Oyun durumu ---------- */
 let G = null;
@@ -115,11 +179,12 @@ function newGame() {
     board: new Array(ROWS * COLS).fill(null),
     enemies: [], proj: [], fx: [], texts: [], queue: [], muts: {},
     spawnT: 1.8, kills: 0, merges: 0, maxTier: 1, firstMerge: null,
-    shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
+    era: save.era, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
   };
   // İlk birleştirmeyi ilk saniyelerde yaptırmak için iki hazır çift.
   G.board[idx(4, 0)] = mkUnit(0, 1); G.board[idx(4, 1)] = mkUnit(0, 1);
   G.board[idx(4, 3)] = mkUnit(2, 1); G.board[idx(4, 4)] = mkUnit(2, 1);
+  discover(0, 1); discover(2, 1);
   hideOv();
 }
 
@@ -132,7 +197,8 @@ function spawnUnit() {
   for (let i = 0; i < G.board.length; i++) if (!G.board[i]) empty.push(i);
   if (!empty.length) return false;
   const i = empty[Math.floor(Math.random() * empty.length)];
-  G.board[i] = mkUnit(Math.floor(Math.random() * 3), 1);
+  const u = mkUnit(Math.floor(Math.random() * 3), 1);
+  G.board[i] = u; discover(u.el, 1); sfx('spawn');
   return true;
 }
 function spawnManual() {
@@ -166,6 +232,7 @@ function drop(from, to) {
     G.board[to] = nu; G.board[from] = null;
     G.merges++; G.maxTier = Math.max(G.maxTier, nu.tier);
     if (G.firstMerge === null) G.firstMerge = G.t;
+    discover(nu.el, nu.tier); sfx('merge', nu.tier);
     const c = to % COLS, r = Math.floor(to / COLS), [x, y] = cellXY(r, c);
     burst(x, y, EL[A.el].c, 10);
     const bl = mutLv('boom');
@@ -190,7 +257,7 @@ function burst(x, y, color, n) {
 }
 
 /* ---------- Dalgalar ve düşmanlar ---------- */
-const waveHp = w => Math.round(16 * Math.pow(1.36, w - 1));
+const waveHp = w => { const E = ERAS[G.era]; return Math.round(E.hpBase * Math.pow(E.hpGrow, w - 1)); };
 function startWave(w) {
   G.waveReached = w;
   const n = 3 + Math.round(w * 1.3);
@@ -236,13 +303,13 @@ function hurt(e, d) {
   if (e.dead) return;
   e.hp -= d; e.flash = 0.08;
   if (e.hp <= 0) {
-    e.dead = true; G.kills++; G.gold += e.boss ? 40 : 3;
+    e.dead = true; G.kills++; G.gold += e.boss ? 40 : 3; sfx('kill');
     burst(e.x, e.y, e.boss ? '#ffb347' : '#ff7a88', e.boss ? 26 : 8);
     if (e.boss) { G.bossKilled = true; endRun(true); }
   }
 }
 function fire(u, r, c, t) {
-  let dmg = BASE_DMG * Math.pow(TIERMUL, u.tier - 1) * (1 + 0.08 * save.up.atk);
+  let dmg = BASE_DMG * Math.pow(TIERMUL, u.tier - 1) * (1 + 0.08 * save.up.atk) * eraBonus();
   dmg *= 1 + neighbors(r, c, u.el) * synBonus();
   let crit = false;
   const cl = mutLv('crit');
@@ -252,7 +319,7 @@ function fire(u, r, c, t) {
 }
 function impact(p) {
   const t = p.t;
-  hurt(t, p.dmg);
+  hurt(t, p.dmg); sfx('hit');
   if (p.crit) G.texts.push({ x: t.x, y: t.y - 20, s: Math.round(p.dmg), life: 0.5, max: 0.5, c: '#ffe27a' });
   if (p.el === 0 && mutLv('slow')) t.slow = 1.2 + 0.4 * mutLv('slow');
   if (p.el === 1 && mutLv('tox')) {
@@ -272,7 +339,7 @@ function impact(p) {
 /* ---------- Ana güncelleme ---------- */
 function endRun(win) {
   if (!G || G.mode === 'ending' || G.mode === 'over') return;
-  G.mode = 'ending'; G.win = win; G.endT = 0.9;
+  G.mode = 'ending'; G.win = win; G.endT = 0.9; sfx(win ? 'win' : 'lose');
   if (!win) G.shake = 0.4;
 }
 function step(dt) {
@@ -306,7 +373,7 @@ function step(dt) {
       e.slow = Math.max(0, e.slow - dt); e.flash = Math.max(0, e.flash - dt);
       e.y += e.spd * (e.slow > 0 ? 0.55 : 1) * dt;
       if (e.y >= BASE_Y) {
-        e.dead = true; g.hp -= e.boss ? 6 : 1; g.shake = 0.25;
+        e.dead = true; g.hp -= e.boss ? 6 : 1; g.shake = 0.25; sfx('base');
         if (g.hp <= 0) { g.hp = 0; endRun(false); }
       }
     }
@@ -325,11 +392,15 @@ function step(dt) {
 
 function finishRun() {
   const g = G;
-  const gain = Math.round(g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0));
+  const gain = Math.round((g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0)) * ERAS[g.era].dnaMul);
   g.gain = gain;
-  save.dna += gain; save.runs++; if (g.win) save.wins++;
+  save.dna += gain; save.runs++;
+  if (g.win) {
+    save.wins++; save.clears[g.era] = (save.clears[g.era] || 0) + 1;
+    if (g.era === save.unlocked && save.unlocked < ERAS.length - 1) { save.unlocked++; g.newEra = true; }
+  }
   save.bestWave = Math.max(save.bestWave, g.waveReached);
-  persist(); showResult();
+  screen = 'result'; persist(); showResult();
 }
 
 /* ---------- Çizim ---------- */
@@ -377,8 +448,9 @@ function drawEnemy(e) {
   ctx.save();
   ctx.beginPath(); ctx.ellipse(e.x, e.y + r * .85, r * .9, r * .28, 0, 0, 6.2832); ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fill();
   ctx.beginPath(); ctx.arc(e.x, e.y, r, 0, 6.2832);
-  ctx.fillStyle = e.flash > 0 ? '#fff' : (e.boss ? '#a02a6b' : '#d9475c'); ctx.fill();
-  ctx.lineWidth = 3; ctx.strokeStyle = e.boss ? '#5a1040' : '#8e2438'; ctx.stroke();
+  const ec = ERAS[G.era], col = e.boss ? ec.boss : ec.en;
+  ctx.fillStyle = e.flash > 0 ? '#fff' : col[0]; ctx.fill();
+  ctx.lineWidth = 3; ctx.strokeStyle = col[1]; ctx.stroke();
   if (e.boss) { ctx.fillStyle = '#ffc247'; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(e.x + i * 14 - 6, e.y - r + 3); ctx.lineTo(e.x + i * 14, e.y - r - 11); ctx.lineTo(e.x + i * 14 + 6, e.y - r + 3); ctx.fill(); } }
   if (e.slow > 0) { ctx.strokeStyle = '#8fd3ff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(e.x, e.y, r + 3, 0, 6.2832); ctx.stroke(); }
   if (e.tox) { ctx.strokeStyle = '#9be35a'; ctx.setLineDash([4, 4]); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(e.x, e.y, r + 6, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]); }
@@ -410,7 +482,7 @@ function draw(now) {
   ctx.save();
   if (g && g.shake > 0 && !reduceMotion) ctx.translate(rand(-3, 3) * g.shake * 4, rand(-3, 3) * g.shake * 4);
   // arka plan ve şeritler
-  const bg = ctx.createLinearGradient(0, 0, 0, BOARD_Y); bg.addColorStop(0, '#12294a'); bg.addColorStop(1, '#0c1a2e');
+  const bg = ctx.createLinearGradient(0, 0, 0, BOARD_Y); const eb = ERAS[g ? g.era : save.era].bg; bg.addColorStop(0, eb[0]); bg.addColorStop(1, eb[1]);
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, BOARD_Y);
   for (let c = 0; c < COLS; c++) { ctx.fillStyle = c % 2 ? 'rgba(255,255,255,.03)' : 'rgba(255,255,255,0)'; ctx.fillRect(c * CELL, FIELD_Y, CELL, BASE_Y - FIELD_Y); }
   ctx.fillStyle = '#0a1424'; ctx.fillRect(0, BOARD_Y, W, H - BOARD_Y);
@@ -502,6 +574,9 @@ function drawHud(g) {
   txt('ÜRET', 150, 696, 17, can ? '#241206' : '#6d83a3', 'center');
   ctx.fillStyle = can ? '#241206' : '#6d83a3'; ctx.beginPath(); ctx.arc(196, 696, 6, 0, 6.2832); ctx.fill();
   txt(String(cost), 206, 696.5, 16, can ? '#241206' : '#6d83a3', 'left');
+  txt('SES', 320, 696, 13, '#92a9c8', 'center', 500);
+  if (save.muted) { ctx.strokeStyle = '#ff4d5e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(305, 703); ctx.lineTo(335, 689); ctx.stroke(); }
+  if (g.toast) { g.toast.life -= 0.016; if (g.toast.life <= 0) g.toast = null; else { ctx.globalAlpha = Math.min(1, g.toast.life / 0.5); txt(g.toast.s, W / 2, 112, 14, '#ffd23f', 'center'); ctx.globalAlpha = 1; } }
   if (g.banner) { const a = Math.min(1, g.banner.life / 0.4); ctx.globalAlpha = a; txt(g.banner.s, W / 2, 170, g.banner.s.startsWith('BOSS') ? 30 : 26, g.banner.s.startsWith('BOSS') ? '#ffc247' : '#fff', 'center'); ctx.globalAlpha = 1; }
 }
 
@@ -515,8 +590,10 @@ function cellAt(x, y) {
   return idx(Math.floor((y - BOARD_Y) / CELL), Math.floor(x / CELL));
 }
 cv.addEventListener('pointerdown', ev => {
+  ensureAudio();
   if (!G || G.mode !== 'play') return;
   const [x, y] = toVirt(ev);
+  if (x >= 290 && x <= 350 && y >= 679 && y <= 713) { toggleMute(); return; }
   if (x >= 88 && x <= 272 && y >= 679 && y <= 713) { spawnManual(); G.idle = 0; return; }
   const i = cellAt(x, y);
   if (i !== null && G.board[i]) { drag = { from: i, x, y }; G.idle = 0; try { cv.setPointerCapture(ev.pointerId); } catch (e) {} }
@@ -532,7 +609,9 @@ cv.addEventListener('pointercancel', () => { drag = null; });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 
 /* ---------- Arayüz katmanları ---------- */
+let screen = 'menu', codexEra = 0;
 function hideOv() { ov.hidden = true; ov.innerHTML = ''; }
+function render() { if (screen === 'result') showResult(); else if (screen === 'codex') showCodex(); else showMenu(); }
 function labHTML() {
   return '<div class="lab">' + Object.keys(UPS).map(k => {
     const u = UPS[k], l = save.up[k], cost = u.cost(l), max = l >= UPMAX, can = save.dna >= cost && !max;
@@ -540,23 +619,47 @@ function labHTML() {
       `<button class="mini" data-up="${k}" ${can ? '' : 'disabled'}>${max ? 'MAX' : cost + ' DNA'}</button></div>`;
   }).join('') + '</div>';
 }
+const codexCount = () => Object.keys(save.codex).length;
+function eraRow() {
+  const E = ERAS[save.era], c = save.clears[save.era] || 0;
+  const next = save.era >= save.unlocked && save.era < ERAS.length - 1 ? 'Sonraki çağ için boss\'u devir' : (c ? 'Tamamlandı ×' + c : 'Boss: dalga ' + WAVES);
+  return `<div class="eras"><button class="mini" data-era="-1" aria-label="Önceki çağ" ${save.era <= 0 ? 'disabled' : ''}>‹</button>` +
+    `<div><span class="tag">Çağ ${save.era + 1}/${ERAS.length}</span><b>${E.name}</b><small>${next}</small></div>` +
+    `<button class="mini" data-era="1" aria-label="Sonraki çağ" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>`;
+}
+const soundBtn = () => `<button class="ghost" data-act="mute">Ses: ${save.muted ? 'Kapalı' : 'Açık'}</button>`;
 function showMenu() {
-  ov.hidden = false;
-  ov.innerHTML = `<span class="tag">Prototip G0 · çekirdek döngü testi</span><h1>EVOLUTE</h1>
-    <p>Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır. 10. dalgadaki boss'u devir.</p>
+  screen = 'menu'; ov.hidden = false;
+  ov.innerHTML = `<span class="tag">Prototip G1</span><h1>EVOLUTE</h1>
+    <p>Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır.</p>
     <div class="how"><span class="dot" style="background:var(--water)"></span>Su <span class="dot" style="background:var(--poison)"></span>Zehir <span class="dot" style="background:var(--volt)"></span>Elektrik</div>
-    <div class="bank">Kasa <b>${save.dna}</b> DNA</div>${labHTML()}
-    <button class="btn" data-act="start">${save.runs ? 'Tekrar Oyna' : 'Başla'}</button>`;
+    ${eraRow()}<div class="bank">Kasa <b>${save.dna}</b> DNA</div>${labHTML()}
+    <button class="btn" data-act="start">${save.runs ? 'Tekrar Oyna' : 'Başla'}</button>
+    <div class="pair"><button class="ghost" data-act="codex">Katalog ${codexCount()}/${CODEX_TOTAL}</button>${soundBtn()}</div>`;
 }
 function showResult() {
-  const g = G; ov.hidden = false;
+  const g = G; screen = 'result'; ov.hidden = false;
   const fm = g.firstMerge === null ? '-' : g.firstMerge.toFixed(1) + ' sn';
+  const nxt = g.newEra ? `<div class="bank"><b>Yeni çağ açıldı: ${ERAS[save.unlocked].name}</b></div>` : '';
   ov.innerHTML = `<span class="tag">${g.win ? 'Boss devrildi' : 'Taban düştü'}</span><h2>${g.win ? 'ZAFER' : 'YENİLDİN'}</h2>
     <div class="stats"><span>Dalga <b>${g.waveReached}/${WAVES}</b></span><span>En yüksek sayı <b>${g.maxTier}</b></span>
     <span>Birleştirme <b>${g.merges}</b></span><span>Öldürülen <b>${g.kills}</b></span>
     <span>İlk birleştirme <b>${fm}</b></span><span>Süre <b>${Math.round(g.t)} sn</b></span></div>
-    <div class="bank">+${g.gain} DNA · Kasa <b>${save.dna}</b></div>${labHTML()}
-    <button class="btn" data-act="again">Bir Tur Daha</button>`;
+    ${nxt}<div class="bank">+${g.gain} DNA${g.disc ? ' · +' + g.disc + ' katalog' : ''} · Kasa <b>${save.dna}</b></div>${labHTML()}
+    <button class="btn" data-act="again">Bir Tur Daha</button>
+    <div class="pair"><button class="ghost" data-act="menu">Çağ Seç</button><button class="ghost" data-act="codex">Katalog</button></div>`;
+}
+function showCodex() {
+  screen = 'codex'; ov.hidden = false;
+  const E = ERAS[codexEra];
+  const rows = [0, 1, 2].map(el => {
+    const names = E.species[el].map((n, i) => save.codex[codexEra + ':' + el + ':' + (i + 1)] ? `<b>${i + 1}</b> ${n}` : `<i>${i + 1} ???</i>`).join(' · ');
+    return `<div class="crow"><span class="dot" style="background:${EL[el].c}"></span><div><b>${EL[el].name}</b><small>${names}</small></div></div>`;
+  }).join('');
+  ov.innerHTML = `<span class="tag">Tür Kataloğu ${codexCount()}/${CODEX_TOTAL}</span>
+    <div class="eras"><button class="mini" data-cera="-1" aria-label="Önceki çağ" ${codexEra <= 0 ? 'disabled' : ''}>‹</button><div><span class="tag">Çağ ${codexEra + 1}</span><b>${E.name}</b></div><button class="mini" data-cera="1" aria-label="Sonraki çağ" ${codexEra >= ERAS.length - 1 ? 'disabled' : ''}>›</button></div>
+    <div class="lab">${rows}</div><p>Her yeni türü ilk kez bulunca sayısı × 3 DNA kazanırsın.</p>
+    <button class="btn" data-act="${G && G.mode === 'over' ? 'back' : 'menu'}">Geri</button>`;
 }
 function showPick() {
   ov.hidden = false;
@@ -565,12 +668,20 @@ function showPick() {
       return `<button class="card" data-pick="${id}"><b>${m.name}${l ? ' · Sv.' + (l + 1) : ''}</b><span>${m.desc}</span></button>`; }).join('') + '</div>';
 }
 ov.addEventListener('click', ev => {
+  ensureAudio();
   const t = ev.target.closest('button'); if (!t) return;
-  if (t.dataset.act) { newGame(); return; }
-  if (t.dataset.pick) { pickMut(t.dataset.pick); return; }
-  if (t.dataset.up) {
-    const k = t.dataset.up, u = UPS[k], l = save.up[k], cost = u.cost(l);
-    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k]++; persist(); (G && G.mode === 'over') ? showResult() : showMenu(); }
+  const d = t.dataset;
+  if (d.act === 'start' || d.act === 'again') { newGame(); return; }
+  if (d.act === 'codex') { codexEra = save.era; showCodex(); return; }
+  if (d.act === 'menu') { showMenu(); return; }
+  if (d.act === 'back') { showResult(); return; }
+  if (d.act === 'mute') { toggleMute(); render(); return; }
+  if (d.era) { save.era = Math.max(0, Math.min(save.unlocked, save.era + (+d.era))); persist(); render(); return; }
+  if (d.cera) { codexEra = Math.max(0, Math.min(ERAS.length - 1, codexEra + (+d.cera))); showCodex(); return; }
+  if (d.pick) { pickMut(d.pick); return; }
+  if (d.up) {
+    const k = d.up, u = UPS[k], l = save.up[k], cost = u.cost(l);
+    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k]++; persist(); render(); }
   }
 });
 
@@ -586,6 +697,6 @@ fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+window.__evolute = { ERAS, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 })();
 </script>
