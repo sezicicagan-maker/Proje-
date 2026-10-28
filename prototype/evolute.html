@@ -124,6 +124,13 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 .goals.ach{border-color:rgba(255,210,63,.35)} .goals.ach b{color:#ffd23f}
 .ver{color:#5f789c;font-size:calc(var(--u)*11)}
 @media (prefers-reduced-motion:reduce){.ov h1{animation:none!important}}
+
+.ov.habitat{background:none!important;pointer-events:none;overflow:hidden;animation:none}
+.ov.habitat .in{margin:0;height:100%;justify-content:space-between;width:100%}
+.ov.habitat .in>*{pointer-events:auto}
+.habtop{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);width:100%;padding:calc(var(--u)*8) calc(var(--u)*10);border-radius:calc(var(--u)*14);background:linear-gradient(180deg,rgba(14,28,50,.82),rgba(14,28,50,.55));border:1px solid rgba(160,200,255,.12)}
+.habtop>div{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*2);text-align:center}
+.habtop b{font-size:calc(var(--u)*18)} .habhint{color:var(--muted);font-size:calc(var(--u)*11);max-width:calc(var(--u)*190);line-height:1.25}
 </style>
 
 <div id="wrap">
@@ -147,6 +154,8 @@ const BASE_HP = 10, UPMAX = 20;
 const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', pt: 'Português' };
 const STR = {
   tr: {
+    gold:'Hazine',goldD:'Başlangıç altını +{0}',dnaB:'Genetik',dnaBD:'DNA kazancı +%{0}',bossNames:['Kraken Kral','Kadim Ağaç','Buz Titanı','Firavun Devi','Üst Zihin','Boşluk Yutan'],
+    rich:'Altın Akını',richD:'Her öldürme +1 ek altın verir.',heal:'Yenilenme',healD:'Taban her 16 sn 1 can iyileşir.',shield:'Kalkan',shieldD:'Sıradaki 2 sızmayı emer.',frenzy:'Çılgınlık',frenzyD:'Canlılar %15 daha hızlı saldırır.',pierce:'Delici Atış',pierceD:'Atışlar arkadaki düşmana da vurur (%45).',luck:'Şanslı Üretim',luckD:'Üretilen canlı %15 ihtimalle 2 numara başlar.',bomb:'Ölüm Patlaması',bombD:'Ölen düşman yakındakilere hasar verir (canının %20\'si).',giant:'Dev Avcısı',giantD:'Boss ve tanklara +%35 hasar.',leap:'Evrim Sıçraması',leapD:'Birleşme %10 ihtimalle iki sayı atlar.',mutsT:'Mutasyonlar',habT:'Teraryum',habHint:'Bir yaratığa dokun, sev (günde bir kez +1 DNA).',abInk:'MÜREKKEP BULUTU!',abRoots:'KÖKLER!',abFreeze:'DONDURMA!',abSwarm:'SKARAB SÜRÜSÜ!',abGlitch:'ARIZA!',abMeteor:'METEORLAR!',achFull:'{0} çağın kataloğunu tamamla',
     modeB:'Boss Akını',modeD:'Günlük',modeSD:'Çağları sırayla bitir. 10. dalgada boss.',modeED:'Dalgalar bitmez. En iyi dalgayı geç.',modeBD:'Art arda 5 boss ile savaş.',modeDD:'Bugünün kuralı: {0}',dailyDone:'Bugünkü ödül alındı',dailyBonus:'Günlük bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'En iyi: {0}/5 boss',bestTime:'En iyi süre: {0} sn',modeLockG:'Bu modu açmak için çağı tamamla',modSwarm:'Sürü',modSwarmD:'Daha çok ama daha zayıf düşman.',modGlass:'Cam Top',modGlassD:'Taban canı 3, ama hasarın 2,2 kat.',modRush:'Acele',modRushD:'Düşmanlar hızlı, senin üretimin de hızlı.',modPoor:'Kıtlık',modPoorD:'Altın yarı yarıya, ücretsiz üretim hızlı.',modTitan:'Devler',modTitanD:'Yalnızca yavaş ve dayanıklı tanklar.',modMono:'Tek Tür',modMonoD:'Tek element, sinerji iki kat.',
     modeN:'Hikaye',modeE:'Sonsuz',modeLock:'Sonsuz mod için bu çağı tamamla',best:'En iyi: dalga {0}',newBest:'YENİ REKOR!',achT:'Başarımlar',achMerge:'Toplam {0} birleştirme yap',achKill:'Toplam {0} düşman yen',achTier:'{0} sayısına ulaş',achWin:'{0} kez kazan',achCombo:'{0}x kombo yap',achCodex:'{0} tür keşfet',achEra:'{0}. çağı aç',achRuns:'{0} tur oyna',achNew:'Başarım açıldı!',gfx:'Grafik',gfxAuto:'Otomatik',gfxLow:'Düşük',
     music:'Müzik',goalsT:'Hedefler',goalTier:'{0} sayısına ulaş',goalKills:'{0} düşman yen',goalCombo:'{0}x kombo yap',goalMerges:'{0} kez birleştir',goalDone:'Hedef tamam! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'YENİ TÜR',bossAdds:'TAKVİYE GELİYOR!',nextUp:'Sonraki yükseltme',upReady:'Yükseltme hazır!',
@@ -176,6 +185,8 @@ const STR = {
     elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı', 'Çöl Kumulları', 'Siber Şehir', 'Yıldız Boşluğu'],
   },
   en: {
+    gold:'Treasury',goldD:'Starting gold +{0}',dnaB:'Genetics',dnaBD:'DNA gain +{0}%',bossNames:['Kraken King','Ancient Treant','Frost Titan','Pharaoh Colossus','The Overmind','Void Devourer'],
+    rich:'Gold Rush',richD:'Each kill gives +1 extra gold.',heal:'Regeneration',healD:'The base heals 1 HP every 16 s.',shield:'Barrier',shieldD:'Absorbs the next 2 leaks.',frenzy:'Frenzy',frenzyD:'Units attack 15% faster.',pierce:'Piercing Shots',pierceD:'Shots also hit the enemy behind (45%).',luck:'Lucky Spawn',luckD:'15% chance a spawn starts as number 2.',bomb:'Death Blast',bombD:'Dying enemies hurt nearby ones (20% of their health).',giant:'Giant Slayer',giantD:'+35% damage to bosses and tanks.',leap:'Evolution Leap',leapD:'10% chance a merge jumps two numbers.',mutsT:'Mutations',habT:'Terrarium',habHint:'Tap a creature to pet it (+1 DNA each, once a day).',abInk:'INK CLOUD!',abRoots:'ROOTS!',abFreeze:'FREEZE!',abSwarm:'SCARAB SWARM!',abGlitch:'GLITCH!',abMeteor:'METEORS!',achFull:'Complete {0} era codex(es)',
     modeB:'Boss Rush',modeD:'Daily',modeSD:'Clear the eras in order. Boss at wave 10.',modeED:'Waves never end. Beat your best wave.',modeBD:'Face 5 bosses back to back.',modeDD:'Today\'s rule: {0}',dailyDone:'Today\'s reward claimed',dailyBonus:'Daily bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Best: {0}/5 bosses',bestTime:'Best time: {0} s',modeLockG:'Clear this era to unlock this mode',modSwarm:'Swarm',modSwarmD:'More, weaker enemies.',modGlass:'Glass Cannon',modGlassD:'Base HP 3, but your damage is x2.2.',modRush:'Rush Hour',modRushD:'Enemies are faster, and so are your spawns.',modPoor:'Scarcity',modPoorD:'Half the gold, faster free spawns.',modTitan:'Titans',modTitanD:'Only slow, tough tanks.',modMono:'Monoculture',modMonoD:'One element only, double synergy.',
     modeN:'Story',modeE:'Endless',modeLock:'Clear this era to unlock Endless',best:'Best: wave {0}',newBest:'NEW BEST!',achT:'Achievements',achMerge:'Merge {0} times in total',achKill:'Defeat {0} enemies in total',achTier:'Reach number {0}',achWin:'Win {0} time(s)',achCombo:'Reach a x{0} combo',achCodex:'Discover {0} species',achEra:'Unlock era {0}',achRuns:'Play {0} runs',achNew:'Achievement unlocked!',gfx:'Graphics',gfxAuto:'Auto',gfxLow:'Low',
     music:'Music',goalsT:'Goals',goalTier:'Reach number {0}',goalKills:'Defeat {0} enemies',goalCombo:'Chain a x{0} combo',goalMerges:'Merge {0} times',goalDone:'Goal complete! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NEW SPECIES',bossAdds:'REINFORCEMENTS!',nextUp:'Next upgrade',upReady:'Upgrade ready!',
@@ -205,6 +216,8 @@ const STR = {
     elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age', 'Desert Dunes', 'Cyber City', 'Star Void'],
   },
   de: {
+    gold:'Schatzkammer',goldD:'Startgold +{0}',dnaB:'Genetik',dnaBD:'DNA-Gewinn +{0} %',bossNames:['Krakenkönig','Uralter Baumhirte','Frosttitan','Pharaonen-Koloss','Der Übergeist','Leerenverschlinger'],
+    rich:'Goldrausch',richD:'Jeder Kill gibt +1 Gold extra.',heal:'Regeneration',healD:'Die Basis heilt alle 16 s 1 LP.',shield:'Barriere',shieldD:'Absorbiert die nächsten 2 Durchbrüche.',frenzy:'Raserei',frenzyD:'Wesen greifen 15 % schneller an.',pierce:'Durchschlag',pierceD:'Schüsse treffen auch den Gegner dahinter (45 %).',luck:'Glücksgeburt',luckD:'15 % Chance, dass ein neues Wesen mit Zahl 2 startet.',bomb:'Todesknall',bombD:'Sterbende Gegner verletzen Nahe (20 % ihrer Leben).',giant:'Riesentöter',giantD:'+35 % Schaden gegen Bosse und Tanks.',leap:'Evolutionssprung',leapD:'10 % Chance, dass eine Fusion zwei Zahlen springt.',mutsT:'Mutationen',habT:'Terrarium',habHint:'Tippe ein Wesen an, um es zu streicheln (+1 DNA, einmal täglich).',abInk:'TINTENWOLKE!',abRoots:'WURZELN!',abFreeze:'EINFRIEREN!',abSwarm:'SKARABÄEN-SCHWARM!',abGlitch:'FEHLER!',abMeteor:'METEORE!',achFull:'Schließe den Kodex von {0} Zeitalter(n) ab',
     modeB:'Boss-Ansturm',modeD:'Täglich',modeSD:'Schließe die Zeitalter der Reihe nach ab. Boss in Welle 10.',modeED:'Die Wellen enden nie. Übertriff deine beste Welle.',modeBD:'Stelle dich 5 Bossen hintereinander.',modeDD:'Heutige Regel: {0}',dailyDone:'Heutige Belohnung erhalten',dailyBonus:'Tagesbonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Bestwert: {0}/5 Bosse',bestTime:'Bestzeit: {0} s',modeLockG:'Schließe dieses Zeitalter ab, um den Modus freizuschalten',modSwarm:'Schwarm',modSwarmD:'Mehr, aber schwächere Gegner.',modGlass:'Glaskanone',modGlassD:'Basis-LP 3, aber 2,2-facher Schaden.',modRush:'Stoßzeit',modRushD:'Gegner sind schneller, deine Erzeugung auch.',modPoor:'Knappheit',modPoorD:'Halbes Gold, schnellere kostenlose Erzeugung.',modTitan:'Titanen',modTitanD:'Nur langsame, zähe Tanks.',modMono:'Monokultur',modMonoD:'Nur ein Element, doppelte Synergie.',
     modeN:'Story',modeE:'Endlos',modeLock:'Schließe dieses Zeitalter ab, um Endlos freizuschalten',best:'Bestwert: Welle {0}',newBest:'NEUER REKORD!',achT:'Erfolge',achMerge:'Verschmelze insgesamt {0}-mal',achKill:'Besiege insgesamt {0} Gegner',achTier:'Erreiche Zahl {0}',achWin:'Gewinne {0}-mal',achCombo:'Erreiche eine {0}x-Kombo',achCodex:'Entdecke {0} Arten',achEra:'Schalte Zeitalter {0} frei',achRuns:'Spiele {0} Runden',achNew:'Erfolg freigeschaltet!',gfx:'Grafik',gfxAuto:'Auto',gfxLow:'Niedrig',
     music:'Musik',goalsT:'Ziele',goalTier:'Erreiche Zahl {0}',goalKills:'Besiege {0} Gegner',goalCombo:'Schaffe eine {0}x-Kombo',goalMerges:'Verschmelze {0}-mal',goalDone:'Ziel erreicht! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'NEUE ART',bossAdds:'VERSTÄRKUNG!',nextUp:'Nächstes Upgrade',upReady:'Upgrade bereit!',
@@ -234,6 +247,8 @@ const STR = {
     elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit', 'Wüstendünen', 'Cyberstadt', 'Sternenleere'],
   },
   es: {
+    gold:'Tesoro',goldD:'Oro inicial +{0}',dnaB:'Genética',dnaBD:'Ganancia de ADN +{0} %',bossNames:['Rey Kraken','Ent Ancestral','Titán de Escarcha','Coloso Faraón','La Supermente','Devorador del Vacío'],
+    rich:'Fiebre del oro',richD:'Cada derrota da +1 oro extra.',heal:'Regeneración',healD:'La base cura 1 de vida cada 16 s.',shield:'Barrera',shieldD:'Absorbe las próximas 2 filtraciones.',frenzy:'Frenesí',frenzyD:'Las criaturas atacan un 15 % más rápido.',pierce:'Disparo perforante',pierceD:'Los disparos también golpean al enemigo de atrás (45 %).',luck:'Creación afortunada',luckD:'15 % de que una criatura nazca con el número 2.',bomb:'Explosión mortal',bombD:'Los enemigos al morir dañan a los cercanos (20 % de su vida).',giant:'Cazagigantes',giantD:'+35 % de daño a jefes y tanques.',leap:'Salto evolutivo',leapD:'10 % de que una fusión salte dos números.',mutsT:'Mutaciones',habT:'Terrario',habHint:'Toca una criatura para acariciarla (+1 ADN, una vez al día).',abInk:'¡NUBE DE TINTA!',abRoots:'¡RAÍCES!',abFreeze:'¡CONGELACIÓN!',abSwarm:'¡ENJAMBRE DE ESCARABAJOS!',abGlitch:'¡FALLO!',abMeteor:'¡METEORITOS!',achFull:'Completa el códice de {0} era(s)',
     modeB:'Asalto de jefes',modeD:'Diario',modeSD:'Completa las eras en orden. Jefe en la oleada 10.',modeED:'Las oleadas no terminan. Supera tu mejor oleada.',modeBD:'Enfréntate a 5 jefes seguidos.',modeDD:'Regla de hoy: {0}',dailyDone:'Premio de hoy reclamado',dailyBonus:'Bono diario +{0} ADN',bossLbl:'JEFE {0}/5',bestBoss:'Mejor: {0}/5 jefes',bestTime:'Mejor tiempo: {0} s',modeLockG:'Completa esta era para desbloquear este modo',modSwarm:'Enjambre',modSwarmD:'Más enemigos, pero más débiles.',modGlass:'Cañón de cristal',modGlassD:'Vida de la base 3, pero tu daño x2,2.',modRush:'Hora punta',modRushD:'Los enemigos son más rápidos, y tu generación también.',modPoor:'Escasez',modPoorD:'Mitad de oro, generación gratis más rápida.',modTitan:'Titanes',modTitanD:'Solo tanques lentos y duros.',modMono:'Monocultivo',modMonoD:'Un solo elemento, sinergia doble.',
     modeN:'Historia',modeE:'Infinito',modeLock:'Completa esta era para desbloquear Infinito',best:'Mejor: oleada {0}',newBest:'¡NUEVO RÉCORD!',achT:'Logros',achMerge:'Fusiona {0} veces en total',achKill:'Derrota a {0} enemigos en total',achTier:'Llega al número {0}',achWin:'Gana {0} vez/veces',achCombo:'Logra un combo x{0}',achCodex:'Descubre {0} especies',achEra:'Desbloquea la era {0}',achRuns:'Juega {0} partidas',achNew:'¡Logro desbloqueado!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Bajo',
     music:'Música',goalsT:'Objetivos',goalTier:'Llega al número {0}',goalKills:'Derrota a {0} enemigos',goalCombo:'Logra un combo x{0}',goalMerges:'Fusiona {0} veces',goalDone:'¡Objetivo cumplido! +{0} ADN',combo:'COMBO x{0}',newSpecies:'NUEVA ESPECIE',bossAdds:'¡REFUERZOS!',nextUp:'Próxima mejora',upReady:'¡Mejora lista!',
@@ -263,6 +278,8 @@ const STR = {
     elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo', 'Dunas del desierto', 'Ciudad cibernética', 'Vacío estelar'],
   },
   pt: {
+    gold:'Tesouro',goldD:'Ouro inicial +{0}',dnaB:'Genética',dnaBD:'Ganho de DNA +{0}%',bossNames:['Rei Kraken','Ent Ancestral','Titã de Gelo','Colosso Faraó','A Supermente','Devorador do Vazio'],
+    rich:'Corrida do ouro',richD:'Cada abate dá +1 ouro extra.',heal:'Regeneração',healD:'A base cura 1 de vida a cada 16 s.',shield:'Barreira',shieldD:'Absorve os próximos 2 vazamentos.',frenzy:'Frenesi',frenzyD:'As criaturas atacam 15% mais rápido.',pierce:'Tiro perfurante',pierceD:'Os tiros também atingem o inimigo atrás (45%).',luck:'Criação da sorte',luckD:'15% de chance de a criatura nascer com o número 2.',bomb:'Explosão mortal',bombD:'Inimigos ao morrer ferem os próximos (20% da vida).',giant:'Caçador de gigantes',giantD:'+35% de dano em chefes e tanques.',leap:'Salto evolutivo',leapD:'10% de chance de a fusão pular dois números.',mutsT:'Mutações',habT:'Terrário',habHint:'Toque numa criatura para acariciá-la (+1 DNA, uma vez por dia).',abInk:'NUVEM DE TINTA!',abRoots:'RAÍZES!',abFreeze:'CONGELAR!',abSwarm:'ENXAME DE ESCARAVELHOS!',abGlitch:'FALHA!',abMeteor:'METEOROS!',achFull:'Complete o códice de {0} era(s)',
     modeB:'Ataque de chefes',modeD:'Diário',modeSD:'Conclua as eras em ordem. Chefe na onda 10.',modeED:'As ondas nunca terminam. Supere sua melhor onda.',modeBD:'Enfrente 5 chefes seguidos.',modeDD:'Regra de hoje: {0}',dailyDone:'Prêmio de hoje resgatado',dailyBonus:'Bônus diário +{0} DNA',bossLbl:'CHEFE {0}/5',bestBoss:'Melhor: {0}/5 chefes',bestTime:'Melhor tempo: {0} s',modeLockG:'Conclua esta era para liberar este modo',modSwarm:'Enxame',modSwarmD:'Mais inimigos, porém mais fracos.',modGlass:'Canhão de vidro',modGlassD:'Vida da base 3, mas seu dano x2,2.',modRush:'Hora do rush',modRushD:'Inimigos mais rápidos, e sua geração também.',modPoor:'Escassez',modPoorD:'Metade do ouro, geração grátis mais rápida.',modTitan:'Titãs',modTitanD:'Apenas tanques lentos e resistentes.',modMono:'Monocultura',modMonoD:'Um só elemento, sinergia dupla.',
     modeN:'História',modeE:'Infinito',modeLock:'Conclua esta era para liberar o Infinito',best:'Melhor: onda {0}',newBest:'NOVO RECORDE!',achT:'Conquistas',achMerge:'Funda {0} vezes no total',achKill:'Derrote {0} inimigos no total',achTier:'Chegue ao número {0}',achWin:'Vença {0} vez(es)',achCombo:'Faça um combo x{0}',achCodex:'Descubra {0} espécies',achEra:'Libere a era {0}',achRuns:'Jogue {0} partidas',achNew:'Conquista desbloqueada!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Baixo',
     music:'Música',goalsT:'Metas',goalTier:'Chegue ao número {0}',goalKills:'Derrote {0} inimigos',goalCombo:'Faça um combo x{0}',goalMerges:'Funda {0} vezes',goalDone:'Meta cumprida! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NOVA ESPÉCIE',bossAdds:'REFORÇOS!',nextUp:'Próximo upgrade',upReady:'Upgrade pronto!',
@@ -348,11 +365,15 @@ const EL = [
 const MUTS = [
   { id: 'boom', ch: 'P' }, { id: 'fast', ch: 'H' }, { id: 'syn', ch: 'S' }, { id: 'crit', ch: 'K' },
   { id: 'slow', ch: 'B' }, { id: 'tox', ch: 'Z' }, { id: 'volt', ch: 'E' },
+  { id: 'rich', ch: 'G' }, { id: 'heal', ch: 'R' }, { id: 'shield', ch: 'D' }, { id: 'frenzy', ch: 'F' }, { id: 'pierce', ch: 'L' },
+  { id: 'luck', ch: 'C' }, { id: 'bomb', ch: 'X' }, { id: 'giant', ch: 'T' }, { id: 'leap', ch: 'J' },
 ];
 const UPS = {
   atk:   { desc: l => t('atkD', l * 8),   cost: l => Math.round(20 * Math.pow(1.5, l)) },
   hp:    { desc: l => t('hpD', l),        cost: l => Math.round(25 * Math.pow(1.6, l)) },
   spawn: { desc: l => t('spawnD', l * 5), cost: l => Math.round(30 * Math.pow(1.6, l)) },
+  gold:  { desc: l => t('goldD', l * 5),  cost: l => Math.round(18 * Math.pow(1.5, l)) },
+  dnaB:  { desc: l => t('dnaBD', l * 5),  cost: l => Math.round(40 * Math.pow(1.65, l)) },
 };
 /* Çağlar: görünüm ve zorluk. Mekanik (3 element) tüm çağlarda aynı. */
 const ERAS = [
@@ -367,17 +388,17 @@ const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
 const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0, 0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0, 0, 0, 0], bossBest: [0, 0, 0, 0, 0, 0], bossTime: [0, 0, 0, 0, 0, 0], dailyDone: '', stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
+let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0, 0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0, 0, 0, 0], bossBest: [0, 0, 0, 0, 0, 0], bossTime: [0, 0, 0, 0, 0, 0], dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
 try {
   const s = JSON.parse(localStorage.getItem(KEY) || 'null');
-  if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0 }, s.up || {}); }
+  if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, s.up || {}); }
 } catch (e) {}
 ['clears', 'best', 'bossBest', 'bossTime'].forEach(k => { while (save[k].length < ERAS.length) save[k].push(0); });
 if (!save.lang || !LANGS[save.lang]) save.lang = detectLang();
 LANG = save.lang; try { document.documentElement.lang = LANG; } catch (e) {}
 if (!save.idleT) save.idleT = Date.now();
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
-const APP_VER = '1.4.0';
+const APP_VER = '1.5.0';
 const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -407,6 +428,7 @@ function sfx(k, n) {
   else if (k === 'base') tone(110, 0.3, 'sawtooth', 0.12, 0.4);
   else if (k === 'discover') { tone(880, 0.1, 'sine', 0.07); setTimeout(() => tone(1320, 0.18, 'sine', 0.07), 90); }
   else if (k === 'win') [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.25, 'triangle', 0.1), i * 110));
+  else if (k === 'ability') tone(80, 0.45, 'sawtooth', 0.1, 0.5);
   else if (k === 'lose') [330, 262, 196].forEach((f, i) => setTimeout(() => tone(f, 0.3, 'sawtooth', 0.08), i * 160));
 }
 function toggleMute() { save.muted = !save.muted; persist(); }
@@ -444,6 +466,8 @@ const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: r
 function mkUnit(el, tier) { return { el, tier, cd: rand(0, ATK), pop: 0, ph: rand(0, 6.28), rec: 0, born: T, hide: 0, flash: 0 }; }
 
 /* Tur hedefleri */
+const BOSS_AB = ['ink', 'roots', 'freeze', 'swarm', 'glitch', 'meteor'];
+const bossName = () => (t('bossNames') || [])[G.era] || '';
 const GOAL_KEY = { tier: 'goalTier', kills: 'goalKills', combo: 'goalCombo', merges: 'goalMerges' };
 const goalTarget = (id, era) => ({ tier: 5 + (era >= 2 ? 1 : 0), kills: 50 + era * 12, combo: 3 + (era >= 1 ? 1 : 0), merges: 20 + era * 4 })[id];
 const pickGoals = () => Object.keys(GOAL_KEY).sort(() => Math.random() - 0.5).slice(0, 3).map(id => ({ id, n: goalTarget(id, save.era), done: false }));
@@ -472,11 +496,11 @@ function newGame() {
   const kind = resolveKind(), dm = kind === 'daily' ? dailyMod() : null;
   const maxhp = dm === 'glass' ? 3 : BASE_HP + up.hp;
   G = {
-    mode: 'play', t: 0, waveStarted: 0, hp: maxhp, maxhp, gold: 30, bought: 0,
+    mode: 'play', t: 0, waveStarted: 0, hp: maxhp, maxhp, gold: 30 + 5 * (up.gold || 0), bought: 0,
     board: new Array(ROWS * COLS).fill(null),
     enemies: [], proj: [], fx: [], texts: [], queue: [], muts: {},
     spawnT: 1.8, kills: 0, merges: 0, maxTier: 1, firstMerge: null,
-    kind, endless: kind === 'endless', bossRush: kind === 'boss', daily: kind === 'daily', mod: dm, bossKills: 0, newAch: [], anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
+    kind, endless: kind === 'endless', bossRush: kind === 'boss', daily: kind === 'daily', mod: dm, bossKills: 0, newAch: [], later: [], shield: 0, healT: 16, anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
   };
   // İlk birleştirmeyi ilk saniyelerde yaptırmak için iki hazır çift.
   const e0 = dm === 'mono' ? monoEl() : 0, e2 = dm === 'mono' ? monoEl() : 2;
@@ -496,7 +520,7 @@ function spawnUnit() {
   for (let i = 0; i < G.board.length; i++) if (!G.board[i]) empty.push(i);
   if (!empty.length) return false;
   const i = empty[Math.floor(Math.random() * empty.length)];
-  const u = mkUnit(G.mod === 'mono' ? monoEl() : Math.floor(Math.random() * 3), 1);
+  const u = mkUnit(G.mod === 'mono' ? monoEl() : Math.floor(Math.random() * 3), Math.random() < 0.15 * mutLv('luck') ? 2 : 1);
   G.board[i] = u; discover(u.el, 1); sfx('spawn');
   const [hx, hy] = cellXY(Math.floor(i / COLS), i % COLS);
   G.fx.push({ type: 'ripple', x: hx, y: hy, c: EL[u.el].l, s0: 14, s1: 22, life: 0.5, max: 0.5 }); burst(hx, hy, '#ffffff', 5);
@@ -527,10 +551,12 @@ function drop(from, to, px, py) {
   if (!G || G.mode !== 'play' || from === to) return 'none';
   const A = G.board[from], B = G.board[to];
   if (!A) return 'none';
+  if (A.lock > 0 || (B && B.lock > 0)) return 'none';
   const [fx0, fy0] = cellXY(Math.floor(from / COLS), from % COLS), [tx0, ty0] = cellXY(Math.floor(to / COLS), to % COLS), sx0 = px === undefined ? fx0 : px, sy0 = py === undefined ? fy0 : py;
   if (!B) { G.board[to] = A; G.board[from] = null; A.hide = T + 0.13; G.anims.push({ el: A.el, tier: A.tier, ph: A.ph, x0: sx0, y0: sy0, x1: tx0, y1: ty0, t0: T, dur: 0.13 }); return 'move'; }
   if (A.el === B.el && A.tier === B.tier && A.tier < MAXT) {
-    const nu = mkUnit(A.el, A.tier + 1); nu.pop = 1.6; nu.born = T + 0.16; nu.flash = 1;
+    let nt = A.tier + 1; if (nt < MAXT && Math.random() < 0.1 * mutLv('leap')) nt++;
+    const nu = mkUnit(A.el, nt); nu.pop = 1.6; nu.born = T + 0.16; nu.flash = 1;
     G.anims.push({ el: A.el, tier: A.tier, ph: A.ph, x0: sx0, y0: sy0, x1: tx0, y1: ty0, t0: T, dur: 0.16 }, { el: B.el, tier: B.tier, ph: B.ph, x0: tx0, y0: ty0, x1: tx0, y1: ty0, t0: T, dur: 0.16 });
     G.board[to] = nu; G.board[from] = null;
     G.merges++; G.maxTier = Math.max(G.maxTier, nu.tier);
@@ -580,7 +606,7 @@ function startBossWave(w) {
   const lane = () => Math.floor(Math.random() * COLS);
   G.queue.push({ t: G.t + 2.5, lane: lane(), boss: true, w, hw: 2 + 2 * w });
   for (let i = 0; i < 3; i++) G.queue.push({ t: G.t + 4 + i * 2.5, lane: lane(), boss: false, type: 'r', w: w + 2 });
-  G.banner = { s: t('bannerBoss'), boss: true, life: 1.8, max: 1.8 };
+  G.banner = { s: t('bannerBoss'), sub: bossName(), boss: true, life: 1.8, max: 1.8 };
   if (w >= 2) offerPick();
 }
 function startWave(w) {
@@ -594,7 +620,7 @@ function startWave(w) {
   }
   if (G.endless ? w % 10 === 0 : w === WAVES) {
     G.queue.push({ t: G.t + 1.2, lane: 2, boss: true, w });
-    G.banner = { s: t('bannerBoss'), boss: true, life: 1.8, max: 1.8 };
+    G.banner = { s: t('bannerBoss'), sub: bossName(), boss: true, life: 1.8, max: 1.8 };
   } else {
     G.banner = { s: t('bannerWave', w), boss: false, life: 1.1, max: 1.1 };
   }
@@ -609,6 +635,7 @@ function offerPick() {
 function pickMut(id) {
   if (!G || G.mode !== 'pick') return;
   G.muts[id] = (G.muts[id] || 0) + 1;
+  if (id === 'shield') G.shield += 2;
   G.pickOffer = null; G.mode = 'play';
   hideOv();
 }
@@ -623,6 +650,38 @@ function spawnEnemy(q) {
   hp = Math.round(hp);
   G.fx.push({ type: 'ring', x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, c: '#c47bff', r0: 6, r1: boss ? 44 : 26, life: 0.5, max: 0.5 });
   G.enemies.push({ lane: q.lane, x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, hp, maxhp: hp, spd, r, dmg, type: ty, boss, born: T, ph: rand(0, 6.28), kb: 0, slow: 0, tox: null, flash: 0, dead: false });
+}
+function bossAbility(e) {
+  const kind = BOSS_AB[G.era], units = [];
+  G.board.forEach((u, i) => { if (u) units.push([u, i]); });
+  const pick = n => units.slice().sort(() => Math.random() - 0.5).slice(0, n);
+  G.banner = { s: t('ab' + cap(kind)), boss: true, life: 1.1, max: 1.1 }; sfx('ability'); G.shake = Math.max(G.shake, 0.2);
+  if (kind === 'ink') {
+    const lane = Math.floor(Math.random() * COLS);
+    G.fx.push({ type: 'lane', lane, c: '#0a0820', life: 3, max: 3 });
+    for (const [u, i] of units) if (i % COLS === lane) { u.stun = 3; u.sk = 'ink'; }
+  } else if (kind === 'roots') { for (const [u] of pick(2)) { u.lock = 5; u.sk = 'root'; } }
+  else if (kind === 'freeze') { for (const [u] of pick(3)) { u.stun = 4; u.sk = 'ice'; } }
+  else if (kind === 'swarm') { for (const ln of [e.lane - 1, e.lane + 1]) if (ln >= 0 && ln < COLS) G.queue.push({ t: G.t + 0.4, lane: ln, boss: false, type: 'r', w: G.waveReached + 2 }); }
+  else if (kind === 'glitch') {
+    const ps = pick(4).map(([, i]) => i), copy = ps.map(i => G.board[i]);
+    ps.forEach((i, k) => {
+      const j = ps[(k + 1) % ps.length], u = copy[(k + 1) % copy.length];
+      G.board[i] = u; u.hide = T + 0.15;
+      const [x0, y0] = cellXY(Math.floor(j / COLS), j % COLS), [x1, y1] = cellXY(Math.floor(i / COLS), i % COLS);
+      G.anims.push({ el: u.el, tier: u.tier, ph: u.ph, x0, y0, x1, y1, t0: T, dur: 0.15 });
+      G.fx.push({ type: 'ring', x: x1, y: y1, c: '#ff7ae8', r0: 6, r1: 26, life: 0.4, max: 0.4 });
+    });
+  } else {
+    for (let k = 0; k < 3; k++) {
+      const i = Math.floor(Math.random() * ROWS * COLS), [x, y] = cellXY(Math.floor(i / COLS), i % COLS);
+      G.fx.push({ type: 'warn', x, y, life: 1.0, max: 1.0 });
+      G.later.push({ t: G.t + 1.0, fn: () => {
+        G.fx.push({ type: 'ring', x, y, c: '#ff8a3d', r0: 6, r1: 42, life: 0.4, max: 0.4 }); burst(x, y, '#ffb347', 10); G.shake = Math.max(G.shake, 0.25);
+        const u = G.board[i]; if (u) { u.stun = 3; u.sk = 'shock'; }
+      } });
+    }
+  }
 }
 function bossAdds(e) {
   for (const ln of [e.lane - 1, e.lane + 1, e.lane + 2 < COLS ? e.lane + 2 : e.lane - 2]) if (ln >= 0 && ln < COLS) G.queue.push({ t: G.t + 0.3, lane: ln, boss: false, type: 'r', w: G.waveReached });
@@ -644,11 +703,16 @@ function hurt(e, d) {
     if (!e.p2 && f <= 0.33) { e.p2 = true; bossAdds(e); }
   }
   if (e.hp <= 0) {
-    e.dead = true; G.kills++; const gv0 = e.boss ? 40 : (e.type === 't' ? 5 : 3), gv = G.mod === 'poor' ? Math.max(1, Math.floor(gv0 / 2)) : gv0; G.gold += gv; G.goldPop = 1; sfx('kill');
+    e.dead = true; G.kills++; const gv0 = e.boss ? 40 : (e.type === 't' ? 5 : 3), gv = G.mod === 'poor' ? Math.max(1, Math.floor(gv0 / 2)) : gv0; G.gold += gv + mutLv('rich'); G.goldPop = 1; sfx('kill');
     burst(e.x, e.y, e.boss ? '#ffb347' : '#ff7a88', e.boss ? 26 : 8);
     for (let i = 0; i < (e.boss ? 8 : 1); i++) G.fx.push({ type: 'coin', x: e.x + rand(-8, 8), y: e.y, x1: 238, y1: 22, life: 0.7 + i * 0.05, max: 0.7 + i * 0.05 });
     for (let i = 0; i < (e.boss ? 6 : 1); i++) G.fx.push({ type: 'dna', x: e.x, y: e.y, x1: W - 60, y1: FIELD_Y + 38, life: 0.85 + i * 0.06, max: 0.85 + i * 0.06 });
     checkGoals();
+    if (mutLv('bomb')) {
+      const bd = e.maxhp * Math.min(0.6, 0.2 * mutLv('bomb'));
+      G.fx.push({ type: 'ring', x: e.x, y: e.y, c: '#ffb347', r0: 6, r1: 60, life: 0.35, max: 0.35 });
+      for (const o of G.enemies) if (!o.dead && o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 62) hurt(o, bd);
+    }
     G.fx.push({ type: 'pop', x: e.x, y: e.y, r: e.r, boss: e.boss, life: 0.35, max: 0.35 });
     if (e.boss) {
       if (G.endless) G.gold += 60;
@@ -660,6 +724,7 @@ function hurt(e, d) {
 function fire(u, r, c, t) {
   let dmg = BASE_DMG * Math.pow(TIERMUL, u.tier - 1) * (1 + 0.08 * save.up.atk) * eraBonus() * (G.mod === 'glass' ? 2.2 : 1);
   dmg *= 1 + neighbors(r, c, u.el) * synBonus();
+  if (t.boss || t.type === 't') dmg *= 1 + 0.35 * mutLv('giant');
   let crit = false;
   const cl = mutLv('crit');
   if (cl && Math.random() < 0.15 * cl) { dmg *= 2.2; crit = true; }
@@ -670,6 +735,10 @@ function fire(u, r, c, t) {
 function impact(p) {
   const t = p.t;
   hurt(t, p.dmg); sfx('hit');
+  if (mutLv('pierce')) {
+    const e2 = G.enemies.filter(o => !o.dead && o.lane === t.lane && o !== t && o.y < t.y).sort((a, b) => b.y - a.y)[0];
+    if (e2) hurt(e2, p.dmg * Math.min(1, 0.45 * mutLv('pierce')));
+  }
   G.fx.push({ type: 'spark', x: t.x, y: t.y + t.r * 0.4, c: EL[p.el].l, a: rand(0, 6.28), life: 0.2, max: 0.2 });
   if (p.crit) G.texts.push({ x: t.x, y: t.y - 20, s: fmtNum(p.dmg), life: 0.55, max: 0.55, c: '#ffe27a', big: true });
   else if (!LOW && Math.random() < 0.25) G.texts.push({ x: t.x + rand(-8, 8), y: t.y - 14, s: fmtNum(p.dmg), life: 0.5, max: 0.5, c: '#ffffff', sm: true });
@@ -709,12 +778,16 @@ function step(dt) {
   if (g.mode === 'play' || g.mode === 'ending') {
     if (g.mode === 'play') {
       for (let i = g.queue.length - 1; i >= 0; i--) if (g.queue[i].t <= g.t) { spawnEnemy(g.queue[i]); g.queue.splice(i, 1); }
+      for (let i = g.later.length - 1; i >= 0; i--) if (g.later[i].t <= g.t) { const fn = g.later[i].fn; g.later.splice(i, 1); fn(); }
+      if (mutLv('heal') && g.hp < g.maxhp) { g.healT -= dt; if (g.healT <= 0) { g.hp++; g.healT = 16 / mutLv('heal'); g.fx.push({ type: 'ring', x: 122, y: 22, c: '#ff8ae2', r0: 6, r1: 22, life: 0.5, max: 0.5 }); } }
       g.spawnT -= dt;
       if (g.spawnT <= 0) g.spawnT = spawnUnit() ? autoInterval() : 0.5;
       for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
         const u = g.board[idx(r, c)]; if (!u) continue;
         u.cd -= dt; u.pop = Math.max(0, u.pop - dt * 4); u.rec = Math.max(0, u.rec - dt * 6); u.flash = Math.max(0, (u.flash || 0) - dt * 3);
-        if (u.cd <= 0) { const t = frontEnemy(c); if (t) { fire(u, r, c, t); u.cd = ATK; } else u.cd = 0; }
+        if (u.lock > 0) u.lock -= dt;
+        if (u.stun > 0) u.stun -= dt;
+        else if (u.cd <= 0) { const t = frontEnemy(c); if (t) { fire(u, r, c, t); u.cd = ATK / (1 + 0.15 * mutLv('frenzy')); } else u.cd = 0; }
       }
     }
     for (let i = g.proj.length - 1; i >= 0; i--) {
@@ -726,11 +799,12 @@ function step(dt) {
     }
     for (const e of g.enemies) {
       if (e.dead) continue;
+      if (e.boss && g.mode === 'play') { e.abT = (e.abT === undefined ? 4 : e.abT) - dt; if (e.abT <= 0) { e.abT = 8 + rand(-1, 1); bossAbility(e); } }
       if (e.tox) { e.tox.t -= dt; hurt(e, e.tox.dps * dt); if (e.tox.t <= 0) e.tox = null; if (e.dead) continue; }
       e.slow = Math.max(0, e.slow - dt); e.flash = Math.max(0, e.flash - dt); e.kb += (0 - e.kb) * Math.min(1, dt * 14);
       e.y += e.spd * (e.slow > 0 ? 0.55 : 1) * dt;
       if (e.y >= BASE_Y) {
-        e.dead = true; g.hp -= e.dmg; g.shake = 0.25; g.hitFlash = 0.4; sfx('base');
+        e.dead = true; if (g.shield > 0) { g.shield--; g.shake = 0.1; g.fx.push({ type: 'ring', x: e.x, y: BASE_Y, c: '#5fe3ff', r0: 8, r1: 40, life: 0.4, max: 0.4 }); } else { g.hp -= e.dmg; g.shake = 0.25; g.hitFlash = 0.4; sfx('base'); }
         if (g.hp <= 0) { g.hp = 0; endRun(false); }
       }
     }
@@ -754,15 +828,15 @@ function step(dt) {
 /* Başarımlar */
 const ACH = [];
 [['achMerge', 'merges', [50, 500, 2500]], ['achKill', 'kills', [100, 1000, 5000]], ['achTier', 'maxTier', [5, 7, 8]], ['achWin', 'wins', [1, 5, 20]],
- ['achCombo', 'maxCombo', [4, 7, 10]], ['achCodex', 'codex', [20, 70, 144]], ['achEra', 'era', [2, 4, 6]], ['achRuns', 'runs', [10, 50]]]
+ ['achCombo', 'maxCombo', [4, 7, 10]], ['achCodex', 'codex', [20, 70, 144]], ['achEra', 'era', [2, 4, 6]], ['achRuns', 'runs', [10, 50]], ['achFull', 'eraFull', [1, 3, 6]]]
   .forEach(([k, stat, ns]) => ns.forEach((n, i) => ACH.push({ id: stat + n, k, stat, n, r: [20, 50, 120][i] })));
-const statVal = a => a.stat === 'wins' ? save.wins : a.stat === 'runs' ? save.runs : a.stat === 'codex' ? Object.keys(save.codex).length : a.stat === 'era' ? save.unlocked + 1 : save.stats[a.stat];
+const statVal = a => a.stat === 'wins' ? save.wins : a.stat === 'runs' ? save.runs : a.stat === 'codex' ? Object.keys(save.codex).length : a.stat === 'era' ? save.unlocked + 1 : a.stat === 'eraFull' ? ERAS.reduce((n, _, e) => n + (Object.keys(save.codex).filter(k => k.startsWith(e + ':')).length >= 3 * MAXT ? 1 : 0), 0) : save.stats[a.stat];
 function checkAch(g) { for (const a of ACH) if (!save.ach[a.id] && statVal(a) >= a.n) { save.ach[a.id] = 1; save.dna += a.r; g.newAch.push(a); } }
 
 function finishRun() {
   const g = G;
   const base = g.bossRush ? g.bossKills * 30 + g.kills * 0.6 + (g.win ? 90 : 0) : g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0);
-  const gain = Math.round(base * ERAS[g.era].dnaMul);
+  const gain = Math.round(base * ERAS[g.era].dnaMul * (1 + 0.05 * (save.up.dnaB || 0)));
   g.gain = gain + g.goalDna;
   save.dna += gain + g.goalDna; save.runs++;
   if (g.win) {
@@ -982,6 +1056,15 @@ function drawEnemy(e) {
   const hpC = e.boss ? '#ffc247' : (e.type === 't' ? '#ffa24d' : '#ff7a88');
   ctx.fillStyle = hpC; rr(bx, by, Math.max(0, bw * e.hp / e.maxhp), 5, 2.5); ctx.fill();
 }
+function drawStatus(u, x, y) {
+  const sk = u.sk, k = T * 6;
+  ctx.save();
+  if (sk === 'ink') { ctx.globalAlpha = .7; ctx.fillStyle = '#0b0822'; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(x + Math.cos(k * .3 + i * 1.6) * 11, y + Math.sin(k * .25 + i * 2.1) * 8, 13 + i, 0, TAU); ctx.fill(); } }
+  else if (sk === 'ice') { ctx.globalAlpha = .6; ctx.fillStyle = 'rgba(170,225,255,.7)'; shape(1, x, y, 30); ctx.fill(); ctx.globalAlpha = .9; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.beginPath(); ctx.moveTo(x - 14, y - 10); ctx.lineTo(x + 10, y + 14); ctx.moveTo(x + 12, y - 12); ctx.lineTo(x - 6, y + 8); ctx.stroke(); }
+  else if (sk === 'shock') { ctx.globalAlpha = .5 + .4 * Math.sin(k * 2); ctx.strokeStyle = '#fff3a0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 6, y - 22); ctx.lineTo(x + 4, y - 6); ctx.lineTo(x - 4, y - 2); ctx.lineTo(x + 6, y + 18); ctx.stroke(); }
+  else { ctx.globalAlpha = .9; ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x - 28, y + 22); ctx.bezierCurveTo(x - 12, y - 10, x + 8, y + 16, x + 28, y - 22); ctx.moveTo(x + 28, y + 20); ctx.bezierCurveTo(x + 10, y - 8, x - 10, y + 14, x - 28, y - 20); ctx.stroke(); ctx.fillStyle = '#66bb6a'; for (const [lx, ly] of [[-14, 4], [12, -6], [0, 12]]) { ctx.beginPath(); ctx.ellipse(x + lx, y + ly, 5, 2.6, lx * .1, 0, TAU); ctx.fill(); } }
+  ctx.restore();
+}
 function findPair() {
   let best = null;
   for (let i = 0; i < G.board.length; i++) for (let j = i + 1; j < G.board.length; j++) {
@@ -1118,6 +1201,46 @@ function drawAmbient(era) {
   }
 }
 
+let habEra = 0, habList = [], habFx = [], habLastT = 0, habTip = null;
+function buildHab() {
+  habList = []; habFx = []; habTip = null;
+  for (let el = 0; el < 3; el++) for (let tr = 1; tr <= MAXT; tr++) habList.push({ key: habEra + ':' + el + ':' + tr, el, tier: tr, found: !!save.codex[habEra + ':' + el + ':' + tr], x: rand(40, W - 40), y: rand(140, 560), tx: rand(40, W - 40), ty: rand(140, 560), sp: rand(14, 30), ph: rand(0, 6.28), hop: 0 });
+}
+const habFound = () => habList.filter(c => c.found).length;
+const petted = k => !!(save.pet && save.pet.d === today() && save.pet.k[k]);
+function drawHab() {
+  const dt = Math.min(0.1, T - habLastT || 0); habLastT = T;
+  const era = habEra, E = ERAS[era];
+  drawBg(era);
+  const fl = ctx.createLinearGradient(0, BOARD_Y, 0, H); fl.addColorStop(0, E.bg[1]); fl.addColorStop(1, hexMix(E.bg[1], '#000000', .65));
+  ctx.fillStyle = fl; ctx.fillRect(0, BOARD_Y, W, H - BOARD_Y);
+  ctx.drawImage(boardLayer(era), 0, BOARD_Y, W, H - BOARD_Y); ctx.globalAlpha = .55; ctx.fillStyle = fl; ctx.fillRect(0, BOARD_Y, W, H - BOARD_Y); ctx.globalAlpha = 1;
+  drawAmbient(era);
+  const list = habList.filter(c => c.found);
+  for (const c of list) {
+    const dx = c.tx - c.x, dy = c.ty - c.y, d = Math.hypot(dx, dy);
+    if (d < 6) { c.tx = rand(40, W - 40); c.ty = rand(140, 560); } else { c.x += dx / d * c.sp * dt; c.y += dy / d * c.sp * dt; }
+    c.hop = Math.max(0, c.hop - dt * 2.5);
+  }
+  list.sort((a, b) => a.y - b.y);
+  for (const c of list) {
+    drawUnit(c.el, c.tier, c.x, c.y - Math.abs(Math.sin(T * 3 + c.ph)) * 2 - Math.sin(c.hop * Math.PI) * 16, { scale: .62 + c.tier * .03, ph: c.ph, look: false });
+    if (petted(c.key)) heart(c.x + 14, c.y - 24 - c.tier, 4, '#ff7a9a');
+  }
+  if (habTip && T - habTip.t0 < 2.2) { const c = habTip.c; txt(speciesName(habEra, c.el, c.tier), c.x, c.y - 38 - c.tier * 1.2, 13, '#ffffff', 'center', 700, 4); }
+  for (let i = habFx.length - 1; i >= 0; i--) {
+    const f = habFx[i]; f.life -= dt; f.y += f.vy * dt; if (f.life <= 0) { habFx.splice(i, 1); continue; }
+    ctx.globalAlpha = Math.min(1, f.life / f.max * 1.5);
+    if (f.type === 'heart') heart(f.x, f.y, 5, '#ff7a9a'); else txt(f.s, f.x, f.y, 15, '#bff4ff', 'center', 700, 3);
+    ctx.globalAlpha = 1;
+  }
+  for (let el = 0; el < 3; el++) for (let tr = 1; tr <= MAXT; tr++) {
+    const c = habList[el * MAXT + tr - 1], x = W / 2 - 4 * 26 + 13 + (tr - 1) * 26, y = 606 + el * 17;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, TAU); ctx.fillStyle = c.found ? EL[el].c : 'rgba(10,20,36,.7)'; ctx.fill(); ctx.strokeStyle = c.found ? EL[el].l : '#37557f'; ctx.lineWidth = 1.5; ctx.stroke();
+    if (!c.found) txt('?', x, y + .5, 8, '#5f789c', 'center', 700);
+  }
+  const vg = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 480); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.4)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
 function drawMenu(era) {
   const E = ERAS[era];
   drawBg(era);
@@ -1156,6 +1279,7 @@ function draw(now) {
   const g = G, era = g ? g.era : save.era;
   ctx.save();
   if (g && g.shake > 0 && !reduceMotion) ctx.translate(rand(-3, 3) * g.shake * 4, rand(-3, 3) * g.shake * 4);
+  if (screen === 'hab' && !ov.hidden) { drawHab(); ctx.restore(); return; }
   if (!g || (screen === 'menu' && !ov.hidden)) { drawMenu(era); ctx.restore(); return; }
   drawBg(era);
   drawAmbient(era);
@@ -1205,7 +1329,9 @@ function draw(now) {
       const age = T - (u.born || 0); if (age < 0 || T < (u.hide || 0)) continue;
       const hs = age < .45 ? Math.max(.01, eob(age / .45)) : 1, E2 = EL[u.el], ga = (.16 + .06 * Math.sin(T * 2 + u.ph)) * Math.min(1, hs);
       if (!LOW) { const gg = ctx.createRadialGradient(x, y, 4, x, y, 34); gg.addColorStop(0, hexA(E2.c, ga)); gg.addColorStop(1, hexA(E2.c, 0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, 34, 0, TAU); ctx.fill(); }
-      drawUnit(u.el, u.tier, x, y, { scale: (1 + Math.min(1, u.pop) * 0.3) * hs, alpha: drag && drag.from === i ? 0.25 : 1, ph: u.ph, rec: u.rec, look: !!frontEnemy(c), flash: u.flash || 0 });
+      const _s = { scale: (1 + Math.min(1, u.pop) * 0.3) * hs, alpha: drag && drag.from === i ? 0.25 : 1, ph: u.ph, rec: u.rec, look: !!frontEnemy(c), flash: u.flash || 0 };
+      drawUnit(u.el, u.tier, x, y, _s);
+      if (u.stun > 0 || u.lock > 0) drawStatus(u, x, y);
     }
     for (let i = g.anims.length - 1; i >= 0; i--) {
       const a = g.anims[i], p = (T - a.t0) / a.dur;
@@ -1243,6 +1369,8 @@ function draw(now) {
       else if (f.type === 'zap') { ctx.globalAlpha = a; ctx.strokeStyle = '#fff3a0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(f.x1, f.y1); ctx.lineTo((f.x1 + f.x2) / 2 + rand(-6, 6), (f.y1 + f.y2) / 2); ctx.lineTo(f.x2, f.y2); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'pop') { const col = (f.boss ? ERAS[G.era].boss : ERAS[G.era].en)[0]; ctx.globalAlpha = a * .8; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1 + pr * .9), 0, TAU); ctx.fill(); ctx.globalAlpha = a; ctx.strokeStyle = '#fff'; ctx.lineWidth = 3 * a + 1; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.2 + pr * 1.6), 0, TAU); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'conf') { ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.globalAlpha = Math.min(1, a * 2); ctx.fillStyle = f.c; ctx.fillRect(-f.sz / 2, -f.sz / 4, f.sz, f.sz / 2); ctx.restore(); }
+      else if (f.type === 'lane') { const la = Math.min(1, a * 3) * .55; ctx.globalAlpha = la; ctx.fillStyle = f.c; ctx.fillRect(f.lane * CELL, FIELD_Y, CELL, H - FIELD_Y - 40); ctx.globalAlpha = 1; }
+      else if (f.type === 'warn') { const pu = .5 + .5 * Math.sin(T * 14); ctx.globalAlpha = .35 + .4 * pu; ctx.strokeStyle = '#ff5a4d'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(f.x, f.y, 24 + pu * 4, 0, TAU); ctx.stroke(); ctx.beginPath(); ctx.moveTo(f.x - 10, f.y); ctx.lineTo(f.x + 10, f.y); ctx.moveTo(f.x, f.y - 10); ctx.lineTo(f.x, f.y + 10); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'ripple') { ctx.globalAlpha = a * .7; ctx.strokeStyle = f.c; ctx.lineWidth = 3 * a + .8; const sz = f.s0 + pr * f.s1; rr(f.x - sz, f.y - sz, sz * 2, sz * 2, 16 + sz * .25); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'dna') { const x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 50; ctx.globalAlpha = Math.min(1, a * 4); helixGlyph(x, y, 16 * (1 - pr * .3), T * 6 + pr * 10); ctx.globalAlpha = 1; }
       else if (f.type === 'coin') { const k = eob(Math.min(1, pr * 1.2)) * .9 + pr * .1, x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 40; ctx.globalAlpha = Math.min(1, a * 3); coin(x, y, 5 * (1 - pr * .3)); ctx.globalAlpha = 1; void k; }
@@ -1276,6 +1404,7 @@ function drawHud(g) {
   heart(122, 21, 7, '#ff5d6c');
   const bx = 134, bw = 82, pct = Math.max(0, g.hp / g.maxhp);
   ctx.fillStyle = '#1c3050'; rr(bx, 14, bw, 16, 8); ctx.fill();
+  if (g.shield > 0) { ctx.fillStyle = '#5fe3ff'; ctx.beginPath(); ctx.moveTo(bx + bw / 2 - 12, 33); ctx.lineTo(bx + bw / 2 - 4, 33); ctx.lineTo(bx + bw / 2 - 4, 38); ctx.lineTo(bx + bw / 2 - 8, 41); ctx.lineTo(bx + bw / 2 - 12, 38); ctx.fill(); txt('x' + g.shield, bx + bw / 2, 37.5, 10, '#bff4ff', 'left', 700, 2); }
   g.hpShow = g.hpShow === undefined ? g.hp : g.hpShow + (g.hp - g.hpShow) * .06;
   if (g.hpShow > g.hp + .05) { ctx.fillStyle = 'rgba(255,255,255,.55)'; rr(bx, 14, Math.max(8, bw * g.hpShow / g.maxhp), 16, 8); ctx.fill(); }
   const hg = ctx.createLinearGradient(0, 14, 0, 30); const low = pct <= .5; hg.addColorStop(0, low ? '#ff8d98' : '#ffb066'); hg.addColorStop(1, low ? '#e0394d' : '#ff7a2a');
@@ -1312,6 +1441,7 @@ function drawHud(g) {
     const bg2 = ctx.createLinearGradient(0, y, 0, y + 10); bg2.addColorStop(0, '#ffd27a'); bg2.addColorStop(1, '#ff8a3d');
     ctx.fillStyle = bg2; rr(x, y, Math.max(6, w * p), 10, 5); ctx.fill();
     for (const th of [.33, .66]) { ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(x + w * th - 1, y, 2, 10); }
+    txt(bossName(), W / 2, y + 22, 11, '#ffd9a0', 'center', 700, 2.5);
   }
   if (g.combo >= 2 && g.comboT > 0) {
     const k = 1 + Math.max(0, g.comboT - 1.9) * 2.5, col = g.combo >= 6 ? '#ff6bd6' : g.combo >= 4 ? '#ffb347' : '#ffe27a';
@@ -1343,7 +1473,9 @@ function drawHud(g) {
     const b = g.banner, p = 1 - b.life / b.max, a = Math.min(1, b.life / .4), sc = .6 + .4 * eob(Math.min(1, p * 5));
     if (b.boss) { ctx.globalAlpha = a * .35; ctx.fillStyle = '#400010'; ctx.fillRect(0, FIELD_Y, W, BASE_Y - FIELD_Y); }
     ctx.globalAlpha = a; ctx.save(); ctx.translate(W / 2, 200); ctx.scale(sc, sc);
-    txt(b.s, 0, 0, b.boss ? 30 : 26, b.boss ? '#ffc247' : '#fff', 'center', 700, 5); ctx.restore(); ctx.globalAlpha = 1;
+    txt(b.s, 0, 0, b.boss ? 30 : 26, b.boss ? '#ffc247' : '#fff', 'center', 700, 5);
+    if (b.sub) txt(b.sub, 0, 34, 17, '#ffffff', 'center', 700, 4);
+    ctx.restore(); ctx.globalAlpha = 1;
   }
 }
 
@@ -1358,6 +1490,7 @@ function cellAt(x, y) {
 }
 cv.addEventListener('pointerdown', ev => {
   ensureAudio();
+  if (screen === 'hab' && !ov.hidden) { const [hx, hy] = toVirt(ev); habTap(hx, hy); return; }
   if (!G || G.mode !== 'play') return;
   const [x, y] = toVirt(ev);
   taps.push({ x, y, t0: T });
@@ -1366,6 +1499,7 @@ cv.addEventListener('pointerdown', ev => {
   if (x >= 12 && x <= 72 && y >= 679 && y <= 713) { save.speed = save.speed === 2 ? 1 : 2; persist(); return; }
   if (x >= 88 && x <= 272 && y >= 679 && y <= 713) { spawnManual(); G.idle = 0; return; }
   const i = cellAt(x, y);
+  if (i !== null && G.board[i] && G.board[i].lock > 0) { G.texts.push({ x: cellXY(Math.floor(i / COLS), i % COLS)[0], y: cellXY(Math.floor(i / COLS), i % COLS)[1] - 24, s: '✕', life: 0.5, max: 0.5, c: '#ff7a88', big: true }); return; }
   if (i !== null && G.board[i]) { drag = { from: i, x, y }; G.idle = 0; try { cv.setPointerCapture(ev.pointerId); } catch (e) {} }
 });
 cv.addEventListener('pointermove', ev => { if (drag) { const [x, y] = toVirt(ev); drag.x = x; drag.y = y; } });
@@ -1391,7 +1525,7 @@ function countUp(el, to, ms) {
   requestAnimationFrame(tick);
 }
 function render() {
-  ({ ach: showAch, result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
+  ({ hab: renderHab, ach: showAch, result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
 }
 
 /* Günlük ödül ve kuluçka (çevrimdışı DNA) */
@@ -1408,17 +1542,17 @@ function collectIdle() { const a = idleAcc(); if (a > 0) { save.dna += a; save.i
 
 const goalsHTML = () => '<div class="goals"><b>' + t('goalsT') + '</b>' + G.goals.map(x => `<div class="${x.done ? 'ok' : ''}"><span>${x.done ? '✓' : '○'}</span>${t(GOAL_KEY[x.id], x.n)} <i>${Math.min(goalVal(x.id), x.n)}/${x.n}</i></div>`).join('') + '</div>';
 function nextUpInfo() {
-  const costs = Object.keys(UPS).filter(k => save.up[k] < UPMAX).map(k => UPS[k].cost(save.up[k]));
+  const costs = Object.keys(UPS).filter(k => (save.up[k] || 0) < UPMAX).map(k => UPS[k].cost(save.up[k] || 0));
   if (!costs.length) return null; const c = Math.min(...costs); return { c, ready: save.dna >= c };
 }
 function nextUpHTML() {
   const n = nextUpInfo(); if (!n) return '';
   return `<div class="nextup"><small>${n.ready ? t('upReady') : t('nextUp') + ': ' + save.dna + '/' + n.c + DNA_SVG}</small><div class="bar"><i style="width:${Math.min(100, save.dna / n.c * 100)}%"></i></div></div>`;
 }
-const UP_COL = { atk: '#ff7a5c', hp: '#ff8ae2', spawn: '#5fe3ff' };
+const UP_COL = { atk: '#ff7a5c', hp: '#ff8ae2', spawn: '#5fe3ff', gold: '#ffd23f', dnaB: '#b08aff' };
 function labHTML() {
   return '<div class="lab">' + Object.keys(UPS).map(k => {
-    const u = UPS[k], l = save.up[k], cost = u.cost(l), max = l >= UPMAX, can = save.dna >= cost && !max;
+    const u = UPS[k], l = save.up[k] || 0, cost = u.cost(l), max = l >= UPMAX, can = save.dna >= cost && !max;
     return `<div class="row" style="--c:${UP_COL[k]}"><div class="rt"><b>${t(k)}</b> <span class="lv">${l}/${UPMAX}</span><small>${u.desc(l)} → ${u.desc(l + 1)}</small><div class="lvbar"><i style="width:${l / UPMAX * 100}%"></i></div></div>` +
       `<button class="mini" data-up="${k}" ${can ? '' : 'disabled'}>${max ? 'MAX' : cost + DNA_SVG}</button></div>`;
   }).join('') + '</div>';
@@ -1453,7 +1587,7 @@ function showMenu() {
       <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + DNA_SVG + ' · ' + t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
       <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
     </div>
-    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
+    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="hab">${t('habT')}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
 }
 function showLab() {
   screen = 'lab';
@@ -1515,18 +1649,31 @@ function showTutorial() {
 function startRun() { if (!save.tut) { tutStep = 0; tutFromSettings = false; showTutorial(); } else newGame(); }
 function showPause() {
   screen = 'pause';
-  setOv(`<h2>${t('pauseT')}</h2>${goalsHTML()}<button class="btn" data-act="resume">${t('resume')}</button>
+  setOv(`<h2>${t('pauseT')}</h2>${goalsHTML()}${mutsHTML()}<button class="btn" data-act="resume">${t('resume')}</button>
     <div class="pair"><button class="ghost" data-act="mute">${t('sound')}: ${save.muted ? t('off') : t('on')}</button><button class="ghost" data-act="vib">${t('vib')}: ${save.vib ? t('on') : t('off')}</button></div>
     <button class="ghost" data-act="quit">${t('toMenu')}</button>`);
 }
 function pauseGame() { if (G && G.mode === 'play') { G.mode = 'paused'; drag = null; showPause(); } }
-const MUT_COL = { boom: '#ff8a3d', fast: '#7bd34a', syn: '#5fe3ff', crit: '#ffd23f', slow: '#3aa9ff', tox: '#9be35a', volt: '#ffe27a' };
+const MUT_COL = { boom: '#ff8a3d', fast: '#7bd34a', syn: '#5fe3ff', crit: '#ffd23f', slow: '#3aa9ff', tox: '#9be35a', volt: '#ffe27a', rich: '#ffd23f', heal: '#ff8ae2', shield: '#5fe3ff', frenzy: '#ff7a5c', pierce: '#c4a6ff', luck: '#7bd34a', bomb: '#ff8a3d', giant: '#ffb347', leap: '#ffffff' };
 function showPick() {
   screen = 'pick';
   setOv(`<span class="tag">${t('wave')} ${G.waveReached}</span><h2>${t('pick')}</h2><div class="cards">` +
     G.pickOffer.map(id => { const l = G.muts[id] || 0, m = MUTS.find(x => x.id === id);
       return `<button class="card" style="--c:${MUT_COL[id]}" data-pick="${id}"><i class="chip">${m.ch}</i><div><b>${t(id)}${l ? ' · ' + (l + 1) : ''}</b><span>${t(id + 'D')}</span></div></button>`; }).join('') + '</div>');
 }
+function habTap(x, y) {
+  let best = null, bd = 1e9;
+  for (const c of habList) if (c.found) { const d = Math.hypot(c.x - x, c.y - y); if (d < 34 + c.tier * 1.5 && d < bd) { best = c; bd = d; } }
+  if (!best) return;
+  best.hop = 1; habTip = { c: best, t0: T }; sfx('spawn');
+  for (let i = 0; i < 4; i++) habFx.push({ type: 'heart', x: best.x + rand(-12, 12), y: best.y - 20, vy: -rand(30, 60), life: 1, max: 1 });
+  const pd = save.pet && save.pet.d === today() ? save.pet : (save.pet = { d: today(), k: {} });
+  if (!pd.k[best.key]) { pd.k[best.key] = 1; save.dna++; persist(); habFx.push({ type: 'txt', x: best.x, y: best.y - 36, vy: -30, s: '+1', life: 1.2, max: 1.2 }); }
+}
+function renderHab() {
+  setOv(`<div class="habtop"><button class="mini" data-hera="-1" ${habEra <= 0 ? 'disabled' : ''}>‹</button><div><span class="tag">${t('habT')}</span><b>${eraName(habEra)}</b><small>${habFound()}/${habList.length}</small><small class="habhint">${t('habHint')}</small></div><button class="mini" data-hera="1" ${habEra >= save.unlocked ? 'disabled' : ''}>›</button></div><button class="btn" data-act="back">${t('back')}</button>`, 'habitat');
+}
+function showHabitat() { screen = 'hab'; buildHab(); renderHab(); }
 function showAch() {
   screen = 'ach';
   const done = ACH.filter(a => save.ach[a.id]).length;
@@ -1535,6 +1682,7 @@ function showAch() {
   setOv(`<span class="tag">${t('achT')} ${done}/${ACH.length}</span><div class="lab">${rows}</div><button class="btn" data-act="back">${t('back')}</button>`);
 }
 const achHTML = g => g.newAch && g.newAch.length ? '<div class="goals ach"><b>' + t('achNew') + '</b>' + g.newAch.map(a => `<div class="ok"><span>★</span>${t(a.k, a.n)} <i>+${a.r}</i></div>`).join('') + '</div>' : '';
+const mutsHTML = () => { const ms = MUTS.filter(m => G && G.muts[m.id]); return ms.length ? '<div class="goals"><b>' + t('mutsT') + '</b>' + ms.map(m => `<div><span style="color:${MUT_COL[m.id]}">${m.ch}</span>${t(m.id)} <i>x${G.muts[m.id]}</i></div>`).join('') + '</div>' : ''; };
 const goSub = fn => { if (screen === 'menu' || screen === 'result') backTo = screen; fn(); };
 ov.addEventListener('click', ev => {
   ensureAudio();
@@ -1546,6 +1694,8 @@ ov.addEventListener('click', ev => {
   if (d.act === 'idle') { collectIdle(); sfx('discover'); showMenu(); return; }
   if (d.act === 'lab') { goSub(showLab); return; }
   if (d.act === 'ach') { goSub(showAch); return; }
+  if (d.act === 'hab') { habEra = Math.min(save.era, save.unlocked); goSub(showHabitat); return; }
+  if (d.hera) { habEra = Math.max(0, Math.min(save.unlocked, habEra + (+d.hera))); buildHab(); renderHab(); return; }
   if (d.mode) { save.mode = d.mode; persist(); showMenu(); return; }
   if (d.act === 'gfx') { save.gfx = save.gfx === 'low' ? 'auto' : 'low'; LOW = save.gfx === 'low'; fit(); persist(); render(); return; }
   if (d.act === 'codex') { codexEra = save.era; goSub(showCodex); return; }
@@ -1564,7 +1714,7 @@ ov.addEventListener('click', ev => {
   if (d.act === 'resetno') { confirmReset = false; showSettings(); return; }
   if (d.act === 'resetyes') {
     const keep = save.lang; try { localStorage.removeItem(KEY); } catch (e) {}
-    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
+    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
     persist(); confirmReset = false; G = null; backTo = 'menu'; showSettings(); return;
   }
   if (d.act === 'resume') { if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); } return; }
@@ -1574,8 +1724,8 @@ ov.addEventListener('click', ev => {
   if (d.cera) { codexEra = Math.max(0, Math.min(ERAS.length - 1, codexEra + (+d.cera))); showCodex(); return; }
   if (d.pick) { pickMut(d.pick); return; }
   if (d.up) {
-    const k = d.up, u = UPS[k], l = save.up[k], cost = u.cost(l);
-    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k]++; persist(); showLab(); }
+    const k = d.up, u = UPS[k], l = save.up[k] || 0, cost = u.cost(l);
+    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k] = l + 1; persist(); showLab(); }
   }
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
@@ -1586,7 +1736,7 @@ function handleBack() {
   if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); return true; }
   if (screen === 'pick') return true;
   if (screen === 'tut') { tutFromSettings ? showSettings() : showMenu(); return true; }
-  if (screen === 'lab' || screen === 'codex' || screen === 'settings') { backTo === 'result' && G && G.mode === 'over' ? showResult() : showMenu(); return true; }
+  if (screen === 'lab' || screen === 'codex' || screen === 'settings' || screen === 'ach' || screen === 'hab') { backTo === 'result' && G && G.mode === 'over' ? showResult() : showMenu(); return true; }
   if (screen === 'result') { showMenu(); return true; }
   return false;
 }
@@ -1616,6 +1766,6 @@ LOW = save.gfx === 'low'; fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+window.__evolute = { habTap, showHabitat, get habList() { return habList; }, bossAbility, BOSS_AB, DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 })();
 </script>

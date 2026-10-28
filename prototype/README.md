@@ -36,6 +36,10 @@
 - **22 başarım:** Toplam birleştirme/öldürme, sayı, galibiyet, kombo, katalog, çağ, tur sayısı. Her biri DNA verir, sonuç ekranında ve Başarımlar ekranında görünür.
 - **Grafik kalitesi:** Oyun yavaşlarsa kendiliğinden düşük efekt moduna geçer (Ayarlar > Grafik ile elle de seçilir).
 - **Ekstra animasyonlar:** Dokunma halkası, arka planda hafif kayma, düşman patlaması, hasar sayıları, zaferde konfeti, parıldayan başlık.
+- **16 mutasyon:** İlk 7'ye ek olarak Altın Akını, Yenilenme, Kalkan, Çılgınlık, Delici Atış, Şanslı Üretim, Ölüm Patlaması, Dev Avcısı, Evrim Sıçraması. Duraklatma ekranı aktif mutasyonları listeler.
+- **Boss yetenekleri (çağa özel):** Deniz: mürekkep bulutu (bir şeridi susturur). Orman: kökler (2 yaratığı kilitler, taşınamaz). Buzul: dondurma (3 yaratık saldıramaz). Çöl: skarab sürüsü. Siber: arıza (4 yaratığın yeri karışır). Uzay: meteorlar (uyarı işaretli, vurduğu yaratığı sersemletir). Her çağın boss'u kendi adıyla gelir.
+- **Teraryum:** Menüden açılır. Keşfedilen her tür seçili çağın arka planında dolaşır, dokununca ismi çıkar, kalp verir ve günde bir kez türü başına +1 DNA kazandırır. Altta çağın 24 türünü gösteren koleksiyon şeridi vardır. Bir çağın katalogunu tamamlamak başarım verir.
+- **Laboratuvar:** Saldırı, Dayanıklılık, Üretim, Hazine (başlangıç altını), Genetik (DNA kazancı).
 - **Müzik:** Çok kısık üretken fon müziği (çağa göre ölçü), Ayarlar'dan kapatılır. Gerçek kulakla denenmedi.
 - **Android geri tuşu:** oyunda duraklatır, alt ekranlarda geri gider, ana menüde çıkar (Capacitor App eklentisiyle).
 

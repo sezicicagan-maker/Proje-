@@ -20,7 +20,9 @@ Mobil merge + roguelite + idle oyunu. Google Play için hazırlanıyor. Bu proje
 - 5×5 tahta, 5 şerit. Aynı element ve sayıdaki canlıları sürükleyip birleştir. Canlılar kendi şeridindeki düşmana saldırır.
 - **6 çağ** (İlkel Deniz, Sisli Orman, Buzul Çağı, Çöl Kumulları, Siber Şehir, Yıldız Boşluğu), her birinde kendi dünyası, 10 dalga ve boss.
 - **4 mod:** Hikaye, Sonsuz, Boss Akını (5 boss art arda), Günlük Meydan Okuma (her gün farklı kural).
-- Sonsuz mod (her çağ tamamlanınca açılır, rekor tutulur), 22 başarım, otomatik grafik kalitesi.
+- Sonsuz mod (her çağ tamamlanınca açılır, rekor tutulur), 26 başarım, otomatik grafik kalitesi.
+- **Çağa özel boss yetenekleri** (mürekkep, kökler, dondurma, skarab sürüsü, arıza, meteor) ve her çağın boss'una isim.
+- **Teraryum:** Keşfettiğin yaratıklar serbestçe dolaşır, dokunup sevebilirsin (günde bir kez +1 DNA).
 - 7 mutasyon, 144 türlük katalog, laboratuvar yükseltmeleri, günlük ödül, kuluçka (çevrimdışı DNA).
 - 5 dil: Türkçe, English, Deutsch, Español, Português (cihaz diline göre seçilir).
 - Duraklatma, eğitim, ses ve titreşim ayarları, Android geri tuşu desteği.

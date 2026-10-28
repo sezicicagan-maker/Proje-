@@ -15,11 +15,13 @@ Drag matching creatures together and watch them grow. Every creature fires at th
 • Merge to evolve: same element and same number merge into something stronger.
 • Lane strategy: move your strongest creature under the column that is in danger.
 • Synergy: neighbors of the same element boost each other.
-• Roguelite mutations: pick 1 of 3 each few waves. No two runs play the same.
+• 16 roguelite mutations: pick 1 of 3 every few waves. No two runs play the same.
+• Every era has its own boss with a unique ability: ink clouds, roots, freezing, scarab swarms, glitches and meteors.
+• A Terrarium where the species you discover roam freely and can be petted.
 • 6 eras, 6 bosses: Primordial Sea, Misty Forest, Ice Age, Desert Dunes, Cyber City and Star Void. Each has its own world and is harder than the last.
 • 4 game modes: Story, Endless, Boss Rush (5 bosses back to back) and a Daily Challenge with a new rule every day.
 • 144 species to discover in the Codex, with bonus DNA for every new find.
-• Endless mode, 22 achievements and a 3-star rating for every run.
+• Endless mode, 26 achievements and a 3-star rating for every run.
 • Lab upgrades, daily rewards and an incubator that collects DNA while you are away.
 • Short runs, perfect for a few minutes. Works offline.
 • Available in English, Türkçe, Deutsch, Español and Português.
@@ -37,11 +39,13 @@ Aynı canlıları sürükleyip birleştir ve büyümelerini izle. Her canlı ken
 • Birleştir ve evrimleştir: aynı element ve aynı sayı, daha güçlü bir canlıya dönüşür.
 • Şerit stratejisi: en güçlü canlıyı tehlike altındaki sütuna taşı.
 • Sinerji: aynı elementten komşular birbirini güçlendirir.
-• Roguelite mutasyonlar: birkaç dalgada bir 3 mutasyondan 1'ini seç. İki oyun asla aynı geçmez.
+• 16 roguelite mutasyon: birkaç dalgada bir 3 mutasyondan 1'ini seç. İki oyun asla aynı geçmez.
+• Her çağın kendi boss'u ve özel yeteneği var: mürekkep bulutu, kökler, dondurma, skarab sürüsü, arıza ve meteorlar.
+• Keşfettiğin türlerin serbestçe dolaştığı ve sevebildiğin bir Teraryum.
 • 6 çağ, 6 boss: İlkel Deniz, Sisli Orman, Buzul Çağı, Çöl Kumulları, Siber Şehir ve Yıldız Boşluğu. Her birinin kendi dünyası var ve her biri öncekinden zor.
 • 4 oyun modu: Hikaye, Sonsuz, Boss Akını (art arda 5 boss) ve her gün yeni kuralı olan Günlük Meydan Okuma.
 • Katalogda keşfedilecek 144 tür, her yeni tür için bonus DNA.
-• Sonsuz mod, 22 başarım ve her tur için 3 yıldız değerlendirmesi.
+• Sonsuz mod, 26 başarım ve her tur için 3 yıldız değerlendirmesi.
 • Laboratuvar yükseltmeleri, günlük ödül ve sen yokken DNA biriktiren kuluçka makinesi.
 • Kısa turlar, birkaç dakikalık oyun için ideal. Çevrimdışı çalışır.
 • English, Türkçe, Deutsch, Español ve Português dilleri.
