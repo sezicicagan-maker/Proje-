@@ -10,6 +10,7 @@ Gereksinim: `npm i -D playwright` (ve bir kez `npx playwright install chromium`)
 | `test6.js` | 16 mutasyon, boss yetenekleri, Teraryum |
 | `test7.js` | **Güvenlik:** kayıt kurcalama, düşmanca kayıt, saat geri alma, çökme kurtarma |
 | `test8.js` | **Üretim derlemesi** (`npm run build:www` sonrası `www/`): kanca yok, CSP ihlali yok, dış ağ yok |
+| `test9.js` | **Düğme animasyonları:** her düğme türü kendi animasyonu/parçacığı, ekran geçiş yönleri, azaltılmış hareket |
 | `monkey.js` | Rastgele dokunma/sürükleme/tıklama ile hata avı: `node tests/monkey.js <tohum> <eylem sayısı>` |
 | `bal.js` | Çağ başına zorluk ölçümü (bot) |
 
