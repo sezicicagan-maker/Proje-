@@ -1,0 +1,66 @@
+name: Android build
+
+# Elle çalıştır: GitHub > Actions > "Android build" > Run workflow.
+# Çıktı: test için debug APK + Google Play'e yüklenecek release AAB (imza anahtarı tanımlıysa imzalı).
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'versionCode (her Play yüklemesinde artmalı)'
+        required: true
+        default: '1'
+      version_name:
+        description: 'versionName'
+        required: true
+        default: '1.0.0'
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build:www
+      - run: npx cap add android
+      - name: Patch Android project
+        env:
+          VERSION_CODE: ${{ github.event.inputs.version_code || github.run_number }}
+          VERSION_NAME: ${{ github.event.inputs.version_name || github.ref_name }}
+        run: node scripts/patch-android.js
+      - run: npx capacitor-assets generate --android
+      - run: npx cap sync android
+      - name: Prepare signing key (optional)
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android/app/upload.keystore
+            cat > android/keystore.properties <<PROPS
+          storeFile=upload.keystore
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          PROPS
+            echo "Signing: enabled"
+          else
+            echo "Signing: no keystore secret, release AAB will be unsigned"
+          fi
+      - name: Build
+        working-directory: android
+        run: ./gradlew assembleDebug bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evolute-android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/bundle/release/*.aab

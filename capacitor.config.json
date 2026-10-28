@@ -1,0 +1,9 @@
+{
+  "appId": "com.evolute.merge",
+  "appName": "Evolute",
+  "webDir": "www",
+  "backgroundColor": "#0b1626",
+  "android": {
+    "allowMixedContent": false
+  }
+}

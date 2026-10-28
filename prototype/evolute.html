@@ -21,8 +21,8 @@ body{
 #wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;min-height:0}
 #stage{position:relative;--u:1px;border-radius:calc(var(--u)*14);overflow:hidden;background:#0c1a2e;box-shadow:0 0 0 1px #1d3556}
 #c{display:block;width:100%;height:100%;touch-action:none}
-.ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  gap:calc(var(--u)*10);padding:calc(var(--u)*18);background:rgba(7,13,24,.86);text-align:center}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;padding:calc(var(--u)*16);background:rgba(7,13,24,.88);text-align:center;overflow-y:auto;touch-action:pan-y}
+.in{margin:auto;display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*10);width:100%}
 .ov h1{margin:0;font-size:calc(var(--u)*44);letter-spacing:.06em;line-height:1;text-wrap:balance}
 .ov h2{margin:0;font-size:calc(var(--u)*30);line-height:1.05;text-wrap:balance}
 .ov p{margin:0;font-size:calc(var(--u)*14);color:var(--muted);line-height:1.35;max-width:calc(var(--u)*290)}
@@ -57,6 +57,12 @@ body{
 .pair{display:flex;gap:calc(var(--u)*8);flex-wrap:wrap;justify-content:center}
 .crow{display:flex;gap:calc(var(--u)*9);align-items:flex-start;text-align:left;background:var(--panel);border-radius:calc(var(--u)*10);padding:calc(var(--u)*8) calc(var(--u)*10);font-size:calc(var(--u)*14)}
 .crow .dot{margin-top:calc(var(--u)*4);flex:none} .crow small{display:block;color:var(--muted);font-size:calc(var(--u)*12);line-height:1.5} .crow small b{color:var(--ink);font-size:inherit} .crow small i{opacity:.55}
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*8);width:100%;max-width:calc(var(--u)*310)}
+.mini-card{background:var(--panel);border-radius:calc(var(--u)*12);padding:calc(var(--u)*9) calc(var(--u)*8);display:flex;flex-direction:column;gap:calc(var(--u)*5);align-items:center;font-size:calc(var(--u)*14)}
+.mini-card small{color:var(--muted);font-size:calc(var(--u)*11.5);line-height:1.25}
+.ghost.sel{border-color:var(--accent);color:var(--accent)} .danger{color:#ff8d98;border-color:#6b2a36}
+.mini.danger{background:#6b2a36;color:#ffd6db}
+p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 
@@ -77,50 +83,205 @@ const FIELD_Y = 48, BASE_Y = 308, BOARD_Y = 312;
 const MAXT = 8, WAVES = 10, WAVE_LEN = 9;
 const ATK = 0.9, BASE_DMG = 6, TIERMUL = 2.4;
 const BASE_HP = 10, UPMAX = 20;
+/* ---------- Diller ---------- */
+const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', pt: 'Português' };
+const STR = {
+  tr: {
+    tagline: 'Birleştir. Evrimleştir.', how: 'Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır.',
+    play: 'Başla', again: 'Tekrar Oyna', next: 'Bir Tur Daha', codex: 'Katalog', settings: 'Ayarlar', lab: 'Laboratuvar', era: 'Çağ',
+    eraNext: "Sonraki çağ için boss'u devir", cleared: 'Tamamlandı ×{0}', bossWave: 'Boss: dalga {0}', bank: 'Kasa',
+    atk: 'Saldırı', hp: 'Dayanıklılık', spawn: 'Üretim', atkD: 'Hasar +%{0}', hpD: 'Taban canı +{0}', spawnD: 'Üretim hızı +%{0}',
+    wave: 'DALGA', spawnBtn: 'ÜRET', sound: 'SES', bannerWave: 'DALGA {0}', bannerBoss: 'BOSS GELİYOR', toastNew: 'Yeni tür: {0}  +{1} DNA',
+    hint: 'Aynı renk ve sayıyı sürükleyip birleştir', pick: 'Mutasyon seç',
+    boom: 'Birleşme Patlaması', boomD: 'Her birleşme, o şeritteki tüm düşmanlara hasar verir.',
+    fast: 'Hızlı Üreme', fastD: 'Otomatik üretim %20 hızlanır.',
+    syn: 'Sinerji Ağı', synD: 'Aynı elementten komşu bonusu +%12 artar.',
+    crit: 'Kritik Vuruş', critD: 'Atışlar %15 ihtimalle 2,2 kat vurur.',
+    slow: 'Buz Gibi Su', slowD: 'Su atışları düşmanı yavaşlatır.',
+    tox: 'Zehir Bulutu', toxD: 'Zehir atışları 3 sn ek hasar verir.',
+    volt: 'Elektrik Zinciri', voltD: 'Elektrik atışları yan şeritlere sıçrar.',
+    winTag: 'Boss devrildi', loseTag: 'Taban düştü', win: 'ZAFER', lose: 'YENİLDİN',
+    sWave: 'Dalga', sTier: 'En yüksek sayı', sMerge: 'Birleştirme', sKill: 'Öldürülen', sFirst: 'İlk birleştirme', sTime: 'Süre', sec: 'sn',
+    newEra: 'Yeni çağ açıldı: {0}', gainDna: '+{0} DNA', gainCodex: '+{0} katalog', pickEra: 'Çağ Seç',
+    codexTitle: 'Tür Kataloğu', codexNote: 'Her yeni türü ilk kez bulunca sayısı × 3 DNA kazanırsın.', back: 'Geri',
+    lang: 'Dil', on: 'Açık', off: 'Kapalı', vib: 'Titreşim', reset: 'İlerlemeyi sil', resetAsk: 'Tüm ilerleme silinsin mi? Bu geri alınamaz.',
+    resetYes: 'Evet, sil', cancel: 'Vazgeç', howTo: 'Nasıl oynanır', pauseT: 'Duraklatıldı', resume: 'Devam', toMenu: 'Menüye dön',
+    dailyT: 'Günlük ödül', streak: 'Seri: {0}. gün', claim: 'Al', claimed: 'Yarın gel', idleT: 'Kuluçka', idleAcc: '{0} DNA birikti', idleRate: '{0} DNA/sa · en fazla 4 sa',
+    collect: 'Topla', tut1: 'Aynı renk ve sayıdaki iki canlıyı sürükleyip birleştir. Sayı büyüdükçe güçlenir.',
+    tut2: 'Canlılar kendi sütunlarındaki düşmana saldırır. Güçlü canlıyı tehdidin geldiği sütuna taşı.',
+    tut3: 'Altınla ÜRET\'e basarak yeni canlı çağır. Aynı elementten komşular sinerji verir.', nextBtn: 'İleri', startBtn: 'Oyna',
+    elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı'],
+  },
+  en: {
+    tagline: 'Merge. Evolve.', how: 'Drag matching creatures together to merge them. Your army fires at enemies in its own lane.',
+    play: 'Play', again: 'Play Again', next: 'One More Run', codex: 'Codex', settings: 'Settings', lab: 'Lab', era: 'Era',
+    eraNext: 'Beat the boss to unlock the next era', cleared: 'Cleared ×{0}', bossWave: 'Boss: wave {0}', bank: 'Bank',
+    atk: 'Attack', hp: 'Toughness', spawn: 'Spawn', atkD: 'Damage +{0}%', hpD: 'Base HP +{0}', spawnD: 'Spawn speed +{0}%',
+    wave: 'WAVE', spawnBtn: 'SPAWN', sound: 'SFX', bannerWave: 'WAVE {0}', bannerBoss: 'BOSS INCOMING', toastNew: 'New species: {0}  +{1} DNA',
+    hint: 'Drag matching color and number together', pick: 'Pick a mutation',
+    boom: 'Merge Blast', boomD: 'Every merge damages all enemies in that lane.',
+    fast: 'Fast Breeding', fastD: 'Auto spawn is 20% faster.',
+    syn: 'Synergy Web', synD: 'Same-element neighbor bonus +12%.',
+    crit: 'Critical Hit', critD: 'Shots have a 15% chance to deal 2.2× damage.',
+    slow: 'Frozen Water', slowD: 'Water shots slow enemies.',
+    tox: 'Toxic Cloud', toxD: 'Poison shots deal extra damage for 3 s.',
+    volt: 'Chain Lightning', voltD: 'Electric shots jump to neighboring lanes.',
+    winTag: 'Boss defeated', loseTag: 'Base destroyed', win: 'VICTORY', lose: 'DEFEATED',
+    sWave: 'Wave', sTier: 'Highest tier', sMerge: 'Merges', sKill: 'Kills', sFirst: 'First merge', sTime: 'Time', sec: 's',
+    newEra: 'New era unlocked: {0}', gainDna: '+{0} DNA', gainCodex: '+{0} codex', pickEra: 'Choose Era',
+    codexTitle: 'Species Codex', codexNote: 'Discover a new species to earn its tier × 3 DNA.', back: 'Back',
+    lang: 'Language', on: 'On', off: 'Off', vib: 'Vibration', reset: 'Erase progress', resetAsk: 'Erase all progress? This cannot be undone.',
+    resetYes: 'Yes, erase', cancel: 'Cancel', howTo: 'How to play', pauseT: 'Paused', resume: 'Resume', toMenu: 'Back to menu',
+    dailyT: 'Daily reward', streak: 'Streak: day {0}', claim: 'Claim', claimed: 'Come back tomorrow', idleT: 'Incubator', idleAcc: '{0} DNA ready', idleRate: '{0} DNA/h · max 4 h',
+    collect: 'Collect', tut1: 'Drag two creatures with the same color and number together to merge them. Higher numbers hit harder.',
+    tut2: 'Creatures attack enemies in their own column. Move your strongest one to the column under threat.',
+    tut3: 'Tap SPAWN to call new creatures with gold. Same-element neighbors give a synergy bonus.', nextBtn: 'Next', startBtn: 'Play',
+    elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age'],
+  },
+  de: {
+    tagline: 'Verschmelzen. Entwickeln.', how: 'Ziehe gleiche Wesen zusammen, um sie zu verschmelzen. Deine Armee schießt auf Gegner in der eigenen Spur.',
+    play: 'Spielen', again: 'Nochmal', next: 'Noch eine Runde', codex: 'Kodex', settings: 'Einstellungen', lab: 'Labor', era: 'Zeitalter',
+    eraNext: 'Besiege den Boss für das nächste Zeitalter', cleared: 'Geschafft ×{0}', bossWave: 'Boss: Welle {0}', bank: 'Vorrat',
+    atk: 'Angriff', hp: 'Robustheit', spawn: 'Erzeugung', atkD: 'Schaden +{0}%', hpD: 'Basis-LP +{0}', spawnD: 'Erzeugungstempo +{0}%',
+    wave: 'WELLE', spawnBtn: 'RUFEN', sound: 'TON', bannerWave: 'WELLE {0}', bannerBoss: 'BOSS KOMMT', toastNew: 'Neue Art: {0}  +{1} DNA',
+    hint: 'Gleiche Farbe und Zahl zusammenziehen', pick: 'Mutation wählen',
+    boom: 'Fusionsknall', boomD: 'Jede Verschmelzung trifft alle Gegner in der Spur.',
+    fast: 'Schnelle Zucht', fastD: 'Automatische Erzeugung 20 % schneller.',
+    syn: 'Synergie-Netz', synD: 'Nachbar-Bonus gleicher Elemente +12 %.',
+    crit: 'Kritischer Treffer', critD: 'Schüsse treffen mit 15 % Chance 2,2-fach.',
+    slow: 'Eiswasser', slowD: 'Wasserschüsse verlangsamen Gegner.',
+    tox: 'Giftwolke', toxD: 'Giftschüsse verursachen 3 s lang Zusatzschaden.',
+    volt: 'Kettenblitz', voltD: 'Blitzschüsse springen auf Nachbarspuren.',
+    winTag: 'Boss besiegt', loseTag: 'Basis zerstört', win: 'SIEG', lose: 'BESIEGT',
+    sWave: 'Welle', sTier: 'Höchste Stufe', sMerge: 'Fusionen', sKill: 'Besiegt', sFirst: 'Erste Fusion', sTime: 'Zeit', sec: 's',
+    newEra: 'Neues Zeitalter: {0}', gainDna: '+{0} DNA', gainCodex: '+{0} Kodex', pickEra: 'Zeitalter wählen',
+    codexTitle: 'Artenkodex', codexNote: 'Neue Art entdecken: Stufe × 3 DNA Belohnung.', back: 'Zurück',
+    lang: 'Sprache', on: 'An', off: 'Aus', vib: 'Vibration', reset: 'Fortschritt löschen', resetAsk: 'Gesamten Fortschritt löschen? Das lässt sich nicht rückgängig machen.',
+    resetYes: 'Ja, löschen', cancel: 'Abbrechen', howTo: 'Spielanleitung', pauseT: 'Pausiert', resume: 'Weiter', toMenu: 'Zum Menü',
+    dailyT: 'Tagesbelohnung', streak: 'Serie: Tag {0}', claim: 'Abholen', claimed: 'Komm morgen wieder', idleT: 'Brutkasten', idleAcc: '{0} DNA bereit', idleRate: '{0} DNA/Std. · max. 4 Std.',
+    collect: 'Einsammeln', tut1: 'Ziehe zwei Wesen mit gleicher Farbe und Zahl zusammen. Höhere Zahlen treffen härter.',
+    tut2: 'Wesen greifen Gegner in ihrer Spalte an. Bringe dein stärkstes in die bedrohte Spalte.',
+    tut3: 'Tippe auf RUFEN, um mit Gold neue Wesen zu rufen. Nachbarn gleicher Elemente geben Synergie.', nextBtn: 'Weiter', startBtn: 'Spielen',
+    elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit'],
+  },
+  es: {
+    tagline: 'Fusiona. Evoluciona.', how: 'Arrastra criaturas iguales para fusionarlas. Tu ejército dispara a los enemigos de su propio carril.',
+    play: 'Jugar', again: 'Jugar otra vez', next: 'Una partida más', codex: 'Códice', settings: 'Ajustes', lab: 'Laboratorio', era: 'Era',
+    eraNext: 'Derrota al jefe para desbloquear la siguiente era', cleared: 'Completada ×{0}', bossWave: 'Jefe: oleada {0}', bank: 'Banco',
+    atk: 'Ataque', hp: 'Resistencia', spawn: 'Generación', atkD: 'Daño +{0}%', hpD: 'Vida de la base +{0}', spawnD: 'Velocidad de generación +{0}%',
+    wave: 'OLEADA', spawnBtn: 'CREAR', sound: 'SONIDO', bannerWave: 'OLEADA {0}', bannerBoss: 'LLEGA EL JEFE', toastNew: 'Nueva especie: {0}  +{1} ADN',
+    hint: 'Arrastra mismo color y número para fusionar', pick: 'Elige una mutación',
+    boom: 'Explosión de fusión', boomD: 'Cada fusión daña a todos los enemigos del carril.',
+    fast: 'Cría rápida', fastD: 'La generación automática es un 20 % más rápida.',
+    syn: 'Red de sinergia', synD: 'Bonus de vecinos del mismo elemento +12 %.',
+    crit: 'Golpe crítico', critD: 'Los disparos tienen un 15 % de hacer 2,2× de daño.',
+    slow: 'Agua helada', slowD: 'Los disparos de agua ralentizan a los enemigos.',
+    tox: 'Nube tóxica', toxD: 'Los disparos de veneno hacen daño extra durante 3 s.',
+    volt: 'Cadena eléctrica', voltD: 'Los disparos eléctricos saltan a los carriles vecinos.',
+    winTag: 'Jefe derrotado', loseTag: 'Base destruida', win: 'VICTORIA', lose: 'DERROTA',
+    sWave: 'Oleada', sTier: 'Nivel máximo', sMerge: 'Fusiones', sKill: 'Derrotados', sFirst: 'Primera fusión', sTime: 'Tiempo', sec: 's',
+    newEra: 'Nueva era desbloqueada: {0}', gainDna: '+{0} ADN', gainCodex: '+{0} códice', pickEra: 'Elegir era',
+    codexTitle: 'Códice de especies', codexNote: 'Al descubrir una especie nueva ganas su nivel × 3 ADN.', back: 'Atrás',
+    lang: 'Idioma', on: 'Sí', off: 'No', vib: 'Vibración', reset: 'Borrar progreso', resetAsk: '¿Borrar todo el progreso? No se puede deshacer.',
+    resetYes: 'Sí, borrar', cancel: 'Cancelar', howTo: 'Cómo jugar', pauseT: 'En pausa', resume: 'Continuar', toMenu: 'Volver al menú',
+    dailyT: 'Premio diario', streak: 'Racha: día {0}', claim: 'Reclamar', claimed: 'Vuelve mañana', idleT: 'Incubadora', idleAcc: '{0} ADN listo', idleRate: '{0} ADN/h · máx. 4 h',
+    collect: 'Recoger', tut1: 'Arrastra dos criaturas del mismo color y número para fusionarlas. Más número, más daño.',
+    tut2: 'Las criaturas atacan a los enemigos de su columna. Lleva la más fuerte a la columna amenazada.',
+    tut3: 'Pulsa CREAR para invocar criaturas con oro. Los vecinos del mismo elemento dan sinergia.', nextBtn: 'Siguiente', startBtn: 'Jugar',
+    elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo'],
+  },
+  pt: {
+    tagline: 'Funda. Evolua.', how: 'Arraste criaturas iguais para fundi-las. Seu exército atira nos inimigos da própria pista.',
+    play: 'Jogar', again: 'Jogar de novo', next: 'Mais uma partida', codex: 'Códice', settings: 'Configurações', lab: 'Laboratório', era: 'Era',
+    eraNext: 'Derrote o chefe para liberar a próxima era', cleared: 'Concluída ×{0}', bossWave: 'Chefe: onda {0}', bank: 'Banco',
+    atk: 'Ataque', hp: 'Resistência', spawn: 'Geração', atkD: 'Dano +{0}%', hpD: 'Vida da base +{0}', spawnD: 'Velocidade de geração +{0}%',
+    wave: 'ONDA', spawnBtn: 'CRIAR', sound: 'SOM', bannerWave: 'ONDA {0}', bannerBoss: 'O CHEFE CHEGA', toastNew: 'Nova espécie: {0}  +{1} DNA',
+    hint: 'Arraste mesma cor e número para fundir', pick: 'Escolha uma mutação',
+    boom: 'Explosão de fusão', boomD: 'Cada fusão causa dano a todos os inimigos da pista.',
+    fast: 'Criação rápida', fastD: 'A geração automática fica 20% mais rápida.',
+    syn: 'Rede de sinergia', synD: 'Bônus de vizinhos do mesmo elemento +12%.',
+    crit: 'Golpe crítico', critD: 'Os tiros têm 15% de chance de causar 2,2× de dano.',
+    slow: 'Água gelada', slowD: 'Os tiros de água desaceleram os inimigos.',
+    tox: 'Nuvem tóxica', toxD: 'Os tiros de veneno causam dano extra por 3 s.',
+    volt: 'Corrente elétrica', voltD: 'Os tiros elétricos saltam para as pistas vizinhas.',
+    winTag: 'Chefe derrotado', loseTag: 'Base destruída', win: 'VITÓRIA', lose: 'DERROTA',
+    sWave: 'Onda', sTier: 'Nível máximo', sMerge: 'Fusões', sKill: 'Derrotados', sFirst: 'Primeira fusão', sTime: 'Tempo', sec: 's',
+    newEra: 'Nova era liberada: {0}', gainDna: '+{0} DNA', gainCodex: '+{0} códice', pickEra: 'Escolher era',
+    codexTitle: 'Códice de espécies', codexNote: 'Ao descobrir uma espécie nova você ganha o nível × 3 DNA.', back: 'Voltar',
+    lang: 'Idioma', on: 'Ligado', off: 'Desligado', vib: 'Vibração', reset: 'Apagar progresso', resetAsk: 'Apagar todo o progresso? Isso não pode ser desfeito.',
+    resetYes: 'Sim, apagar', cancel: 'Cancelar', howTo: 'Como jogar', pauseT: 'Pausado', resume: 'Continuar', toMenu: 'Voltar ao menu',
+    dailyT: 'Prêmio diário', streak: 'Sequência: dia {0}', claim: 'Resgatar', claimed: 'Volte amanhã', idleT: 'Incubadora', idleAcc: '{0} DNA pronto', idleRate: '{0} DNA/h · máx. 4 h',
+    collect: 'Coletar', tut1: 'Arraste duas criaturas de mesma cor e número para fundi-las. Número maior, mais dano.',
+    tut2: 'As criaturas atacam os inimigos da própria coluna. Leve a mais forte para a coluna ameaçada.',
+    tut3: 'Toque em CRIAR para chamar criaturas com ouro. Vizinhos do mesmo elemento dão sinergia.', nextBtn: 'Avançar', startBtn: 'Jogar',
+    elWater: 'Água', elPoison: 'Veneno', elVolt: 'Raio', eraNames: ['Mar primordial', 'Floresta nebulosa', 'Era do gelo'],
+  },
+};
+/* Tür adları: dil -> çağ -> element (virgülle ayrılmış 8 sayı seviyesi). */
+const SPECIES_RAW = {
+  tr: ['Plankton,Karides,Yengeç,Mürekkep Balığı,Ahtapot,Orka,Kraken,Leviathan;Alg,Denizanası,Deniz Kestanesi,Zehirli Balık,Taş Balığı,Halkalı Ahtapot,Zehir Ejderi,Abis Yılanı;Parıltı,Fener Balığı,Torpido,Elektrik Yılanı,Işık Yengeci,Fırtına Vatozu,Şimşek Köpekbalığı,Tesla Leviathan',
+       'Tohum,Filiz,Yosun,Eğrelti,Çalı,Meşe,Ağaç Ruhu,Ana Orman;Spor,Küf,Mantar,Zehirli Mantar,Sarmaşık,Etobur Bitki,Mantar Kral,Çürük Ana;Ateş Böceği,Kıvılcım Kelebeği,Uğur Böceği,Yıldırım Böceği,Mor Güve,Boynuzlu Böcek,Gök Kartalı,Şimşek Ejderi',
+       'Kar Tanesi,Buz Parçası,Kutup Tilkisi,Penguen,Fok,Mamut,Buz Devi,Donmuş Titan;Kristal Tozu,Don Çiçeği,Sarkıt,Soğuk Örümcek,Buz Yılanı,Kristal Akrep,Don Ejderi,Ebedi Kış;Kıvılcım,Kar Fırtınası,Şimşek Bulutu,Aurora,Fırtına Kuşu,Yıldırım Kurdu,Kutup Işığı Ejderi,Fırtına Tanrısı'],
+  en: ['Plankton,Shrimp,Crab,Squid,Octopus,Orca,Kraken,Leviathan;Algae,Jellyfish,Sea Urchin,Pufferfish,Stonefish,Blue-Ringed Octopus,Venom Drake,Abyss Serpent;Glimmer,Anglerfish,Torpedo Ray,Electric Eel,Light Crab,Storm Ray,Lightning Shark,Tesla Leviathan',
+       'Seed,Sprout,Moss,Fern,Bush,Oak,Tree Spirit,Mother Forest;Spore,Mold,Mushroom,Toadstool,Creeper,Pitcher Plant,Mushroom King,Rot Mother;Firefly,Spark Moth,Ladybug,Thunder Beetle,Violet Moth,Horned Beetle,Sky Eagle,Lightning Drake',
+       'Snowflake,Ice Shard,Arctic Fox,Penguin,Seal,Mammoth,Ice Giant,Frozen Titan;Crystal Dust,Frost Bloom,Icicle,Cold Spider,Ice Serpent,Crystal Scorpion,Frost Drake,Eternal Winter;Spark,Blizzard,Thunder Cloud,Aurora,Storm Bird,Lightning Wolf,Aurora Drake,Storm God'],
+  de: ['Plankton,Garnele,Krabbe,Tintenfisch,Oktopus,Orca,Kraken,Leviathan;Alge,Qualle,Seeigel,Kugelfisch,Steinfisch,Blauringkrake,Giftdrache,Abgrundschlange;Schimmer,Anglerfisch,Zitterrochen,Zitteraal,Lichtkrabbe,Sturmrochen,Blitzhai,Tesla-Leviathan',
+       'Samen,Spross,Moos,Farn,Busch,Eiche,Baumgeist,Urwaldmutter;Spore,Schimmel,Pilz,Fliegenpilz,Kriechranke,Kannenpflanze,Pilzkönig,Fäulnismutter;Glühwürmchen,Funkenfalter,Marienkäfer,Donnerkäfer,Violetter Falter,Hirschkäfer,Himmelsadler,Blitzdrache',
+       'Schneeflocke,Eisscherbe,Polarfuchs,Pinguin,Robbe,Mammut,Eisriese,Gefrorener Titan;Kristallstaub,Frostblume,Eiszapfen,Kältespinne,Eisschlange,Kristallskorpion,Frostdrache,Ewiger Winter;Funke,Schneesturm,Gewitterwolke,Polarlicht,Sturmvogel,Blitzwolf,Polarlichtdrache,Sturmgott'],
+  es: ['Plancton,Camarón,Cangrejo,Calamar,Pulpo,Orca,Kraken,Leviatán;Alga,Medusa,Erizo de mar,Pez globo,Pez piedra,Pulpo de anillos azules,Dragón venenoso,Serpiente abisal;Destello,Rape,Raya torpedo,Anguila eléctrica,Cangrejo luminoso,Raya tormenta,Tiburón rayo,Leviatán Tesla',
+       'Semilla,Brote,Musgo,Helecho,Arbusto,Roble,Espíritu del árbol,Madre bosque;Espora,Moho,Hongo,Amanita,Enredadera,Planta carnívora,Rey hongo,Madre podrida;Luciérnaga,Polilla chispa,Mariquita,Escarabajo trueno,Polilla violeta,Escarabajo cornudo,Águila celeste,Dragón relámpago',
+       'Copo de nieve,Fragmento de hielo,Zorro ártico,Pingüino,Foca,Mamut,Gigante de hielo,Titán helado;Polvo de cristal,Flor de escarcha,Carámbano,Araña fría,Serpiente de hielo,Escorpión de cristal,Dragón de escarcha,Invierno eterno;Chispa,Ventisca,Nube de trueno,Aurora,Ave tormenta,Lobo relámpago,Dragón aurora,Dios tormenta'],
+  pt: ['Plâncton,Camarão,Caranguejo,Lula,Polvo,Orca,Kraken,Leviatã;Alga,Água-viva,Ouriço-do-mar,Baiacu,Peixe-pedra,Polvo-de-anéis-azuis,Dragão venenoso,Serpente abissal;Brilho,Peixe-pescador,Raia torpedo,Enguia elétrica,Caranguejo de luz,Raia tempestade,Tubarão relâmpago,Leviatã Tesla',
+       'Semente,Broto,Musgo,Samambaia,Arbusto,Carvalho,Espírito da árvore,Mãe floresta;Esporo,Mofo,Cogumelo,Amanita,Trepadeira,Planta carnívora,Rei cogumelo,Mãe podre;Vaga-lume,Mariposa faísca,Joaninha,Besouro trovão,Mariposa violeta,Besouro chifrudo,Águia do céu,Dragão relâmpago',
+       'Floco de neve,Estilhaço de gelo,Raposa do ártico,Pinguim,Foca,Mamute,Gigante de gelo,Titã congelado;Pó de cristal,Flor de geada,Pingente de gelo,Aranha fria,Serpente de gelo,Escorpião de cristal,Dragão de geada,Inverno eterno;Faísca,Nevasca,Nuvem de trovão,Aurora,Ave tempestade,Lobo relâmpago,Dragão aurora,Deus da tempestade'],
+};
+const SPECIES = {};
+for (const l in SPECIES_RAW) SPECIES[l] = SPECIES_RAW[l].map(era => era.split(';').map(el => el.split(',')));
+function detectLang() {
+  try { const c = (navigator.language || 'en').slice(0, 2).toLowerCase(); if (LANGS[c]) return c; } catch (e) {}
+  return 'en';
+}
+let LANG = 'en';
+function t(k) {
+  let s = (STR[LANG] && STR[LANG][k]); if (s === undefined) s = STR.en[k]; if (s === undefined) return k;
+  for (let i = 1; i < arguments.length; i++) s = s.split('{' + (i - 1) + '}').join(arguments[i]);
+  return s;
+}
+const speciesName = (era, el, tier) => ((SPECIES[LANG] || SPECIES.en)[era][el][tier - 1]);
+const eraName = i => t('eraNames')[i] || STR.en.eraNames[i];
+
 const EL = [
-  { k: 'water',  name: 'Su',       c: '#3aa9ff', d: '#1d6fb8' },
-  { k: 'poison', name: 'Zehir',    c: '#7bd34a', d: '#4a9a24' },
-  { k: 'volt',   name: 'Elektrik', c: '#ffd23f', d: '#c99a00' },
+  { k: 'water',  c: '#3aa9ff', d: '#1d6fb8' },
+  { k: 'poison', c: '#7bd34a', d: '#4a9a24' },
+  { k: 'volt',   c: '#ffd23f', d: '#c99a00' },
 ];
 const MUTS = [
-  { id: 'boom', ch: 'P', name: 'Birleşme Patlaması', desc: 'Her birleşme, o şeritteki tüm düşmanlara hasar verir.' },
-  { id: 'fast', ch: 'H', name: 'Hızlı Üreme',        desc: 'Otomatik üretim %20 hızlanır.' },
-  { id: 'syn',  ch: 'S', name: 'Sinerji Ağı',        desc: 'Aynı elementten komşu bonusu +%12 artar.' },
-  { id: 'crit', ch: 'K', name: 'Kritik Vuruş',       desc: 'Atışlar %15 ihtimalle 2,2 kat vurur.' },
-  { id: 'slow', ch: 'B', name: 'Buz Gibi Su',        desc: 'Su atışları düşmanı yavaşlatır.' },
-  { id: 'tox',  ch: 'Z', name: 'Zehir Bulutu',       desc: 'Zehir atışları 3 sn ek hasar verir.' },
-  { id: 'volt', ch: 'E', name: 'Elektrik Zinciri',   desc: 'Elektrik atışları yan şeritlere sıçrar.' },
+  { id: 'boom', ch: 'P' }, { id: 'fast', ch: 'H' }, { id: 'syn', ch: 'S' }, { id: 'crit', ch: 'K' },
+  { id: 'slow', ch: 'B' }, { id: 'tox', ch: 'Z' }, { id: 'volt', ch: 'E' },
 ];
 const UPS = {
-  atk:   { name: 'Saldırı',      desc: l => `Hasar +%${l * 8}`,        cost: l => Math.round(20 * Math.pow(1.5, l)) },
-  hp:    { name: 'Dayanıklılık', desc: l => `Taban canı +${l}`,        cost: l => Math.round(25 * Math.pow(1.6, l)) },
-  spawn: { name: 'Üretim',       desc: l => `Üretim hızı +%${l * 5}`,  cost: l => Math.round(30 * Math.pow(1.6, l)) },
+  atk:   { desc: l => t('atkD', l * 8),   cost: l => Math.round(20 * Math.pow(1.5, l)) },
+  hp:    { desc: l => t('hpD', l),        cost: l => Math.round(25 * Math.pow(1.6, l)) },
+  spawn: { desc: l => t('spawnD', l * 5), cost: l => Math.round(30 * Math.pow(1.6, l)) },
 };
-
-/* Çağlar: görünüm, zorluk ve tür adları. Mekanik (3 element) tüm çağlarda aynı. */
+/* Çağlar: görünüm ve zorluk. Mekanik (3 element) tüm çağlarda aynı. */
 const ERAS = [
-  { name: 'İlkel Deniz', bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1,
-    species: [['Plankton', 'Karides', 'Yengeç', 'Mürekkep Balığı', 'Ahtapot', 'Orka', 'Kraken', 'Leviathan'],
-              ['Alg', 'Denizanası', 'Deniz Kestanesi', 'Zehirli Balık', 'Taş Balığı', 'Halkalı Ahtapot', 'Zehir Ejderi', 'Abis Yılanı'],
-              ['Parıltı', 'Fener Balığı', 'Torpido', 'Elektrik Yılanı', 'Işık Yengeci', 'Fırtına Vatozu', 'Şimşek Köpekbalığı', 'Tesla Leviathan']] },
-  { name: 'Sisli Orman', bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6,
-    species: [['Tohum', 'Filiz', 'Yosun', 'Eğrelti', 'Çalı', 'Meşe', 'Ağaç Ruhu', 'Ana Orman'],
-              ['Spor', 'Küf', 'Mantar', 'Zehirli Mantar', 'Sarmaşık', 'Etobur Bitki', 'Mantar Kral', 'Çürük Ana'],
-              ['Ateş Böceği', 'Kıvılcım Kelebeği', 'Uğur Böceği', 'Yıldırım Böceği', 'Mor Güve', 'Boynuzlu Böcek', 'Gök Kartalı', 'Şimşek Ejderi']] },
-  { name: 'Buzul Çağı', bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4,
-    species: [['Kar Tanesi', 'Buz Parçası', 'Kutup Tilkisi', 'Penguen', 'Fok', 'Mamut', 'Buz Devi', 'Donmuş Titan'],
-              ['Kristal Tozu', 'Don Çiçeği', 'Sarkıt', 'Soğuk Örümcek', 'Buz Yılanı', 'Kristal Akrep', 'Don Ejderi', 'Ebedi Kış'],
-              ['Kıvılcım', 'Kar Fırtınası', 'Şimşek Bulutu', 'Aurora', 'Fırtına Kuşu', 'Yıldırım Kurdu', 'Kutup Işığı Ejderi', 'Fırtına Tanrısı']] },
+  { bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1 },
+  { bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6 },
+  { bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4 },
 ];
 const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
 const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false };
+let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0 };
 try {
   const s = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0 }, s.up || {}); }
 } catch (e) {}
+if (!save.lang || !LANGS[save.lang]) save.lang = detectLang();
+LANG = save.lang; try { document.documentElement.lang = LANG; } catch (e) {}
+if (!save.idleT) save.idleT = Date.now();
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -157,7 +318,7 @@ function discover(el, tier) {
   if (save.codex[k]) return;
   save.codex[k] = 1;
   const bonus = tier * 3; save.dna += bonus; G.disc += bonus; persist();
-  G.toast = { s: 'Yeni tür: ' + ERAS[G.era].species[el][tier - 1] + '  +' + bonus + ' DNA', life: 2.4, max: 2.4 };
+  G.toast = { s: t('toastNew', speciesName(G.era, el, tier), bonus), life: 2.4, max: 2.4 };
   sfx('discover');
 }
 
@@ -242,7 +403,7 @@ function drop(from, to) {
       G.fx.push({ type: 'beam', x, y1: y, y2: FIELD_Y, c: EL[A.el].c, life: 0.25, max: 0.25 });
       G.texts.push({ x, y: y - 30, s: Math.round(d), life: 0.7, max: 0.7, c: '#fff' });
     }
-    try { navigator.vibrate && navigator.vibrate(12); } catch (e) {}
+    try { save.vib && navigator.vibrate && navigator.vibrate(12); } catch (e) {}
     return 'merge';
   }
   G.board[to] = A; G.board[from] = B;
@@ -265,9 +426,9 @@ function startWave(w) {
   for (let i = 0; i < n; i++) G.queue.push({ t: G.t + 0.4 + (i * span) / n + rand(0, 0.3), lane: Math.floor(Math.random() * COLS), boss: false, w });
   if (w === WAVES) {
     G.queue.push({ t: G.t + 1.2, lane: 2, boss: true, w });
-    G.banner = { s: 'BOSS GELİYOR', life: 1.8, max: 1.8 };
+    G.banner = { s: t('bannerBoss'), boss: true, life: 1.8, max: 1.8 };
   } else {
-    G.banner = { s: 'DALGA ' + w, life: 1.1, max: 1.1 };
+    G.banner = { s: t('bannerWave', w), boss: false, life: 1.1, max: 1.1 };
   }
   if (w % 2 === 0 && w < WAVES) offerPick();
 }
@@ -385,6 +546,7 @@ function step(dt) {
     if (f.life <= 0) g.fx.splice(i, 1);
   }
   for (let i = g.texts.length - 1; i >= 0; i--) { const t = g.texts[i]; t.life -= dt; t.y -= 28 * dt; if (t.life <= 0) g.texts.splice(i, 1); }
+  if (g.toast) { g.toast.life -= dt; if (g.toast.life <= 0) g.toast = null; }
   if (g.banner) { g.banner.life -= dt; if (g.banner.life <= 0) g.banner = null; }
   g.shake = Math.max(0, g.shake - dt);
   if (g.mode === 'ending') { g.endT -= dt; if (g.endT <= 0) { g.mode = 'over'; finishRun(); } }
@@ -494,6 +656,10 @@ function draw(now) {
     const [x, y] = cellXY(r, c);
     ctx.fillStyle = '#132540'; rr(x - 33, y - 33, 66, 66, 12); ctx.fill();
   }
+  if (!g) {
+    const k = now / 1000;
+    for (let i = 0; i < 5; i++) drawUnit(i % 3, 2 + (i * 2) % 5, i * CELL + 36, 150 + (i % 2) * 70 + Math.sin(k * 1.3 + i) * 9, 1, 1);
+  }
   if (g) {
     // komşu sinerji çizgileri
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
@@ -510,7 +676,7 @@ function draw(now) {
       if (p) {
         const pulse = 0.5 + 0.5 * Math.sin(now / 220);
         for (const i of p) { const [x, y] = cellXY(Math.floor(i / COLS), i % COLS); ctx.strokeStyle = `rgba(255,255,255,${.35 + .5 * pulse})`; ctx.lineWidth = 3; rr(x - 35, y - 35, 70, 70, 14); ctx.stroke(); }
-        if (g.merges === 0) txt('Aynı renk ve sayıyı sürükleyip birleştir', W / 2, BASE_Y - 24, 14, '#e9f2ff', 'center', 500);
+        if (g.merges === 0) txt(t('hint'), W / 2, BASE_Y - 24, 14, '#e9f2ff', 'center', 500);
       }
     }
     // birimler
@@ -547,15 +713,16 @@ function draw(now) {
 }
 function drawHud(g) {
   ctx.fillStyle = '#0a1424'; ctx.fillRect(0, 0, W, FIELD_Y - 2);
-  txt('DALGA ' + Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES, 12, 17, 15, '#e9f2ff');
+  txt(t('wave') + ' ' + Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES, 12, 17, 15, '#e9f2ff');
   // taban canı
   const bw = 104, bx = 146;
   ctx.fillStyle = '#1c3050'; rr(bx, 9, bw, 16, 8); ctx.fill();
   ctx.fillStyle = g.hp / g.maxhp > .5 ? '#ff8a3d' : '#ff4d5e'; rr(bx, 9, Math.max(0, bw * g.hp / g.maxhp), 16, 8); ctx.fill();
   txt(g.hp + '/' + g.maxhp, bx + bw / 2, 17.5, 12, '#fff', 'center');
   // altın
-  ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(W - 62, 17, 7, 0, 6.2832); ctx.fill();
-  txt(String(g.gold), W - 50, 17, 16, '#ffd23f');
+  ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(262, 17, 7, 0, 6.2832); ctx.fill();
+  txt(String(g.gold), 274, 17, 16, '#ffd23f');
+  ctx.fillStyle = '#e9f2ff'; rr(330, 9, 6, 16, 2); ctx.fill(); rr(342, 9, 6, 16, 2); ctx.fill();
   // dalga ilerleme çubuğu
   const prog = Math.min(1, g.t / (WAVES * WAVE_LEN));
   ctx.fillStyle = '#1c3050'; ctx.fillRect(0, FIELD_Y - 5, W, 3);
@@ -571,13 +738,13 @@ function drawHud(g) {
   // üret düğmesi
   const cost = spawnCost(), can = g.gold >= cost && g.board.some(u => !u);
   ctx.fillStyle = can ? '#ff8a3d' : '#2a3c58'; rr(88, 679, 184, 34, 14); ctx.fill();
-  txt('ÜRET', 150, 696, 17, can ? '#241206' : '#6d83a3', 'center');
+  txt(t('spawnBtn'), 150, 696, 17, can ? '#241206' : '#6d83a3', 'center');
   ctx.fillStyle = can ? '#241206' : '#6d83a3'; ctx.beginPath(); ctx.arc(196, 696, 6, 0, 6.2832); ctx.fill();
   txt(String(cost), 206, 696.5, 16, can ? '#241206' : '#6d83a3', 'left');
-  txt('SES', 320, 696, 13, '#92a9c8', 'center', 500);
+  txt(t('sound'), 320, 696, 12, '#92a9c8', 'center', 500);
   if (save.muted) { ctx.strokeStyle = '#ff4d5e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(305, 703); ctx.lineTo(335, 689); ctx.stroke(); }
-  if (g.toast) { g.toast.life -= 0.016; if (g.toast.life <= 0) g.toast = null; else { ctx.globalAlpha = Math.min(1, g.toast.life / 0.5); txt(g.toast.s, W / 2, 112, 14, '#ffd23f', 'center'); ctx.globalAlpha = 1; } }
-  if (g.banner) { const a = Math.min(1, g.banner.life / 0.4); ctx.globalAlpha = a; txt(g.banner.s, W / 2, 170, g.banner.s.startsWith('BOSS') ? 30 : 26, g.banner.s.startsWith('BOSS') ? '#ffc247' : '#fff', 'center'); ctx.globalAlpha = 1; }
+  if (g.toast) { ctx.globalAlpha = Math.min(1, g.toast.life / 0.5); txt(g.toast.s, W / 2, 112, 14, '#ffd23f', 'center'); ctx.globalAlpha = 1; }
+  if (g.banner) { const a = Math.min(1, g.banner.life / 0.4); ctx.globalAlpha = a; txt(g.banner.s, W / 2, 170, g.banner.boss ? 28 : 26, g.banner.boss ? '#ffc247' : '#fff', 'center'); ctx.globalAlpha = 1; }
 }
 
 /* ---------- Girdi ---------- */
@@ -593,6 +760,7 @@ cv.addEventListener('pointerdown', ev => {
   ensureAudio();
   if (!G || G.mode !== 'play') return;
   const [x, y] = toVirt(ev);
+  if (x >= 318 && y <= 40) { pauseGame(); return; }
   if (x >= 290 && x <= 350 && y >= 679 && y <= 713) { toggleMute(); return; }
   if (x >= 88 && x <= 272 && y >= 679 && y <= 713) { spawnManual(); G.idle = 0; return; }
   const i = cellAt(x, y);
@@ -609,81 +777,170 @@ cv.addEventListener('pointercancel', () => { drag = null; });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 
 /* ---------- Arayüz katmanları ---------- */
-let screen = 'menu', codexEra = 0;
+let screen = 'menu', backTo = 'menu', codexEra = 0, confirmReset = false, tutStep = 0, tutFromSettings = false;
+const ELN = ['elWater', 'elPoison', 'elVolt'];
 function hideOv() { ov.hidden = true; ov.innerHTML = ''; }
-function render() { if (screen === 'result') showResult(); else if (screen === 'codex') showCodex(); else showMenu(); }
+function setOv(html) { ov.hidden = false; ov.innerHTML = '<div class="in">' + html + '</div>'; ov.scrollTop = 0; }
+function render() {
+  ({ result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
+}
+
+/* Günlük ödül ve kuluçka (çevrimdışı DNA) */
+const dstr = d => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+const today = () => dstr(new Date()), yesterday = () => dstr(new Date(Date.now() - 864e5));
+const dailyReady = () => save.daily.last !== today();
+const nextStreak = () => save.daily.last === yesterday() ? save.daily.streak + 1 : 1;
+const dailyReward = s => 20 + 10 * Math.min(s, 7);
+function claimDaily() { if (!dailyReady()) return; const s = nextStreak(); save.dna += dailyReward(s); save.daily = { last: today(), streak: s }; persist(); }
+const IDLE_CAP = 4 * 3600 * 1000;
+const idleRate = () => Math.round((8 + save.wins * 2 + save.bestWave) * (1 + save.unlocked * 0.5));
+const idleAcc = () => Math.floor(Math.min(IDLE_CAP, Math.max(0, Date.now() - save.idleT)) / 3600000 * idleRate());
+function collectIdle() { const a = idleAcc(); if (a > 0) { save.dna += a; save.idleT = Date.now(); persist(); } }
+
 function labHTML() {
   return '<div class="lab">' + Object.keys(UPS).map(k => {
     const u = UPS[k], l = save.up[k], cost = u.cost(l), max = l >= UPMAX, can = save.dna >= cost && !max;
-    return `<div class="row"><div><b>${u.name}</b> <span class="lv">Sv.${l}</span><small>${u.desc(l)} → ${u.desc(l + 1)}</small></div>` +
+    return `<div class="row"><div><b>${t(k)}</b> <span class="lv">${l}</span><small>${u.desc(l)} → ${u.desc(l + 1)}</small></div>` +
       `<button class="mini" data-up="${k}" ${can ? '' : 'disabled'}>${max ? 'MAX' : cost + ' DNA'}</button></div>`;
   }).join('') + '</div>';
 }
 const codexCount = () => Object.keys(save.codex).length;
 function eraRow() {
-  const E = ERAS[save.era], c = save.clears[save.era] || 0;
-  const next = save.era >= save.unlocked && save.era < ERAS.length - 1 ? 'Sonraki çağ için boss\'u devir' : (c ? 'Tamamlandı ×' + c : 'Boss: dalga ' + WAVES);
-  return `<div class="eras"><button class="mini" data-era="-1" aria-label="Önceki çağ" ${save.era <= 0 ? 'disabled' : ''}>‹</button>` +
-    `<div><span class="tag">Çağ ${save.era + 1}/${ERAS.length}</span><b>${E.name}</b><small>${next}</small></div>` +
-    `<button class="mini" data-era="1" aria-label="Sonraki çağ" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>`;
+  const c = save.clears[save.era] || 0;
+  const next = save.era >= save.unlocked && save.era < ERAS.length - 1 ? t('eraNext') : (c ? t('cleared', c) : t('bossWave', WAVES));
+  return `<div class="eras"><button class="mini" data-era="-1" aria-label="‹" ${save.era <= 0 ? 'disabled' : ''}>‹</button>` +
+    `<div><span class="tag">${t('era')} ${save.era + 1}/${ERAS.length}</span><b>${eraName(save.era)}</b><small>${next}</small></div>` +
+    `<button class="mini" data-era="1" aria-label="›" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>`;
 }
-const soundBtn = () => `<button class="ghost" data-act="mute">Ses: ${save.muted ? 'Kapalı' : 'Açık'}</button>`;
 function showMenu() {
-  screen = 'menu'; ov.hidden = false;
-  ov.innerHTML = `<span class="tag">Prototip G1</span><h1>EVOLUTE</h1>
-    <p>Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır.</p>
-    <div class="how"><span class="dot" style="background:var(--water)"></span>Su <span class="dot" style="background:var(--poison)"></span>Zehir <span class="dot" style="background:var(--volt)"></span>Elektrik</div>
-    ${eraRow()}<div class="bank">Kasa <b>${save.dna}</b> DNA</div>${labHTML()}
-    <button class="btn" data-act="start">${save.runs ? 'Tekrar Oyna' : 'Başla'}</button>
-    <div class="pair"><button class="ghost" data-act="codex">Katalog ${codexCount()}/${CODEX_TOTAL}</button>${soundBtn()}</div>`;
+  screen = 'menu';
+  const dr = dailyReady(), acc = idleAcc();
+  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
+    <div class="bank">${t('bank')} <b>${save.dna}</b> DNA</div>
+    <div class="cards2">
+      <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + ' DNA · ' : ''}${dr ? t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
+      <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
+    </div>
+    <button class="btn" data-act="start">${t('play')}</button>
+    <div class="pair"><button class="ghost" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`);
+}
+function showLab() {
+  screen = 'lab';
+  setOv(`<span class="tag">${t('lab')}</span><div class="bank">${t('bank')} <b>${save.dna}</b> DNA</div>${labHTML()}<button class="btn" data-act="back">${t('back')}</button>`);
 }
 function showResult() {
-  const g = G; screen = 'result'; ov.hidden = false;
-  const fm = g.firstMerge === null ? '-' : g.firstMerge.toFixed(1) + ' sn';
-  const nxt = g.newEra ? `<div class="bank"><b>Yeni çağ açıldı: ${ERAS[save.unlocked].name}</b></div>` : '';
-  ov.innerHTML = `<span class="tag">${g.win ? 'Boss devrildi' : 'Taban düştü'}</span><h2>${g.win ? 'ZAFER' : 'YENİLDİN'}</h2>
-    <div class="stats"><span>Dalga <b>${g.waveReached}/${WAVES}</b></span><span>En yüksek sayı <b>${g.maxTier}</b></span>
-    <span>Birleştirme <b>${g.merges}</b></span><span>Öldürülen <b>${g.kills}</b></span>
-    <span>İlk birleştirme <b>${fm}</b></span><span>Süre <b>${Math.round(g.t)} sn</b></span></div>
-    ${nxt}<div class="bank">+${g.gain} DNA${g.disc ? ' · +' + g.disc + ' katalog' : ''} · Kasa <b>${save.dna}</b></div>${labHTML()}
-    <button class="btn" data-act="again">Bir Tur Daha</button>
-    <div class="pair"><button class="ghost" data-act="menu">Çağ Seç</button><button class="ghost" data-act="codex">Katalog</button></div>`;
+  const g = G; screen = 'result';
+  const fm = g.firstMerge === null ? '-' : g.firstMerge.toFixed(1) + ' ' + t('sec');
+  const nxt = g.newEra ? `<div class="bank"><b>${t('newEra', eraName(save.unlocked))}</b></div>` : '';
+  setOv(`<span class="tag">${g.win ? t('winTag') : t('loseTag')}</span><h2>${g.win ? t('win') : t('lose')}</h2>
+    <div class="stats"><span>${t('sWave')} <b>${g.waveReached}/${WAVES}</b></span><span>${t('sTier')} <b>${g.maxTier}</b></span>
+    <span>${t('sMerge')} <b>${g.merges}</b></span><span>${t('sKill')} <b>${g.kills}</b></span>
+    <span>${t('sFirst')} <b>${fm}</b></span><span>${t('sTime')} <b>${Math.round(g.t)} ${t('sec')}</b></span></div>
+    ${nxt}<div class="bank">${t('gainDna', g.gain)}${g.disc ? ' · ' + t('gainCodex', g.disc) : ''} · ${t('bank')} <b>${save.dna}</b></div>
+    <button class="btn" data-act="again">${t('next')}</button>
+    <div class="pair"><button class="ghost" data-act="lab">${t('lab')}</button><button class="ghost" data-act="menu">${t('pickEra')}</button><button class="ghost" data-act="codex">${t('codex')}</button></div>`);
 }
 function showCodex() {
-  screen = 'codex'; ov.hidden = false;
-  const E = ERAS[codexEra];
+  screen = 'codex';
   const rows = [0, 1, 2].map(el => {
-    const names = E.species[el].map((n, i) => save.codex[codexEra + ':' + el + ':' + (i + 1)] ? `<b>${i + 1}</b> ${n}` : `<i>${i + 1} ???</i>`).join(' · ');
-    return `<div class="crow"><span class="dot" style="background:${EL[el].c}"></span><div><b>${EL[el].name}</b><small>${names}</small></div></div>`;
+    const names = [1, 2, 3, 4, 5, 6, 7, 8].map(i => save.codex[codexEra + ':' + el + ':' + i] ? `<b>${i}</b> ${speciesName(codexEra, el, i)}` : `<i>${i} ???</i>`).join(' · ');
+    return `<div class="crow"><span class="dot" style="background:${EL[el].c}"></span><div><b>${t(ELN[el])}</b><small>${names}</small></div></div>`;
   }).join('');
-  ov.innerHTML = `<span class="tag">Tür Kataloğu ${codexCount()}/${CODEX_TOTAL}</span>
-    <div class="eras"><button class="mini" data-cera="-1" aria-label="Önceki çağ" ${codexEra <= 0 ? 'disabled' : ''}>‹</button><div><span class="tag">Çağ ${codexEra + 1}</span><b>${E.name}</b></div><button class="mini" data-cera="1" aria-label="Sonraki çağ" ${codexEra >= ERAS.length - 1 ? 'disabled' : ''}>›</button></div>
-    <div class="lab">${rows}</div><p>Her yeni türü ilk kez bulunca sayısı × 3 DNA kazanırsın.</p>
-    <button class="btn" data-act="${G && G.mode === 'over' ? 'back' : 'menu'}">Geri</button>`;
+  setOv(`<span class="tag">${t('codexTitle')} ${codexCount()}/${CODEX_TOTAL}</span>
+    <div class="eras"><button class="mini" data-cera="-1" aria-label="‹" ${codexEra <= 0 ? 'disabled' : ''}>‹</button><div><span class="tag">${t('era')} ${codexEra + 1}</span><b>${eraName(codexEra)}</b></div><button class="mini" data-cera="1" aria-label="›" ${codexEra >= ERAS.length - 1 ? 'disabled' : ''}>›</button></div>
+    <div class="lab">${rows}</div><p>${t('codexNote')}</p><button class="btn" data-act="back">${t('back')}</button>`);
 }
+function showSettings() {
+  screen = 'settings';
+  const langs = Object.keys(LANGS).map(l => `<button class="ghost ${l === LANG ? 'sel' : ''}" data-lang="${l}">${LANGS[l]}</button>`).join('');
+  const rst = confirmReset
+    ? `<div class="row"><small>${t('resetAsk')}</small></div><div class="pair"><button class="ghost danger" data-act="resetyes">${t('resetYes')}</button><button class="ghost" data-act="resetno">${t('cancel')}</button></div>`
+    : `<div class="row"><b>${t('reset')}</b><button class="mini danger" data-act="reset">!</button></div>`;
+  setOv(`<span class="tag">${t('settings')}</span><div class="lab"><div class="row"><b>${t('lang')}</b></div><div class="pair">${langs}</div>
+    <div class="row"><b>${t('sound')}</b><button class="mini" data-act="mute">${save.muted ? t('off') : t('on')}</button></div>
+    <div class="row"><b>${t('vib')}</b><button class="mini" data-act="vib">${save.vib ? t('on') : t('off')}</button></div>
+    <div class="row"><b>${t('howTo')}</b><button class="mini" data-act="tut">?</button></div>${rst}</div>
+    <button class="btn" data-act="back">${t('back')}</button>`);
+}
+function showTutorial() {
+  screen = 'tut';
+  const last = tutStep >= 2;
+  const dots = '<div class="how"><span class="dot" style="background:var(--water)"></span><span class="dot" style="background:var(--poison)"></span><span class="dot" style="background:var(--volt)"></span></div>';
+  setOv(`<span class="tag">${t('howTo')} ${tutStep + 1}/3</span>${dots}<p class="big">${t('tut' + (tutStep + 1))}</p>
+    <button class="btn" data-act="tnext">${last ? t('startBtn') : t('nextBtn')}</button>`);
+}
+function startRun() { if (!save.tut) { tutStep = 0; tutFromSettings = false; showTutorial(); } else newGame(); }
+function showPause() {
+  screen = 'pause';
+  setOv(`<h2>${t('pauseT')}</h2><button class="btn" data-act="resume">${t('resume')}</button>
+    <div class="pair"><button class="ghost" data-act="mute">${t('sound')}: ${save.muted ? t('off') : t('on')}</button><button class="ghost" data-act="vib">${t('vib')}: ${save.vib ? t('on') : t('off')}</button></div>
+    <button class="ghost" data-act="quit">${t('toMenu')}</button>`);
+}
+function pauseGame() { if (G && G.mode === 'play') { G.mode = 'paused'; drag = null; showPause(); } }
 function showPick() {
-  ov.hidden = false;
-  ov.innerHTML = `<span class="tag">Dalga ${G.waveReached}</span><h2>Mutasyon seç</h2><div class="cards">` +
-    G.pickOffer.map(id => { const m = MUTS.find(x => x.id === id), l = G.muts[id] || 0;
-      return `<button class="card" data-pick="${id}"><b>${m.name}${l ? ' · Sv.' + (l + 1) : ''}</b><span>${m.desc}</span></button>`; }).join('') + '</div>';
+  screen = 'pick';
+  setOv(`<span class="tag">${t('wave')} ${G.waveReached}</span><h2>${t('pick')}</h2><div class="cards">` +
+    G.pickOffer.map(id => { const l = G.muts[id] || 0;
+      return `<button class="card" data-pick="${id}"><b>${t(id)}${l ? ' · ' + (l + 1) : ''}</b><span>${t(id + 'D')}</span></button>`; }).join('') + '</div>');
 }
+const goSub = fn => { if (screen === 'menu' || screen === 'result') backTo = screen; fn(); };
 ov.addEventListener('click', ev => {
   ensureAudio();
-  const t = ev.target.closest('button'); if (!t) return;
-  const d = t.dataset;
-  if (d.act === 'start' || d.act === 'again') { newGame(); return; }
-  if (d.act === 'codex') { codexEra = save.era; showCodex(); return; }
+  const b = ev.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (d.act === 'start') { startRun(); return; }
+  if (d.act === 'again') { newGame(); return; }
+  if (d.act === 'daily') { claimDaily(); sfx('discover'); showMenu(); return; }
+  if (d.act === 'idle') { collectIdle(); sfx('discover'); showMenu(); return; }
+  if (d.act === 'lab') { goSub(showLab); return; }
+  if (d.act === 'codex') { codexEra = save.era; goSub(showCodex); return; }
+  if (d.act === 'settings') { confirmReset = false; goSub(showSettings); return; }
   if (d.act === 'menu') { showMenu(); return; }
-  if (d.act === 'back') { showResult(); return; }
+  if (d.act === 'back') { backTo === 'result' && G && G.mode === 'over' ? showResult() : showMenu(); return; }
   if (d.act === 'mute') { toggleMute(); render(); return; }
-  if (d.era) { save.era = Math.max(0, Math.min(save.unlocked, save.era + (+d.era))); persist(); render(); return; }
+  if (d.act === 'vib') { save.vib = !save.vib; persist(); render(); return; }
+  if (d.act === 'tut') { tutStep = 0; tutFromSettings = true; showTutorial(); return; }
+  if (d.act === 'tnext') {
+    if (tutStep < 2) { tutStep++; showTutorial(); return; }
+    save.tut = 1; persist(); if (tutFromSettings) showSettings(); else newGame(); return;
+  }
+  if (d.act === 'reset') { confirmReset = true; showSettings(); return; }
+  if (d.act === 'resetno') { confirmReset = false; showSettings(); return; }
+  if (d.act === 'resetyes') {
+    const keep = save.lang; try { localStorage.removeItem(KEY); } catch (e) {}
+    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep });
+    persist(); confirmReset = false; G = null; backTo = 'menu'; showSettings(); return;
+  }
+  if (d.act === 'resume') { if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); } return; }
+  if (d.act === 'quit') { G = null; drag = null; showMenu(); return; }
+  if (d.lang) { LANG = d.lang; save.lang = d.lang; persist(); try { document.documentElement.lang = LANG; } catch (e) {} showSettings(); return; }
+  if (d.era) { save.era = Math.max(0, Math.min(save.unlocked, save.era + (+d.era))); persist(); showMenu(); return; }
   if (d.cera) { codexEra = Math.max(0, Math.min(ERAS.length - 1, codexEra + (+d.cera))); showCodex(); return; }
   if (d.pick) { pickMut(d.pick); return; }
   if (d.up) {
     const k = d.up, u = UPS[k], l = save.up[k], cost = u.cost(l);
-    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k]++; persist(); render(); }
+    if (save.dna >= cost && l < UPMAX) { save.dna -= cost; save.up[k]++; persist(); showLab(); }
   }
 });
+document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+
+/* Android geri tuşu ve uygulama arka plana geçişi (Capacitor App eklentisi varsa; tarayıcıda etkisiz). */
+function handleBack() {
+  if (G && G.mode === 'play') { pauseGame(); return true; }
+  if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); return true; }
+  if (screen === 'pick') return true;
+  if (screen === 'tut') { tutFromSettings ? showSettings() : showMenu(); return true; }
+  if (screen === 'lab' || screen === 'codex' || screen === 'settings') { backTo === 'result' && G && G.mode === 'over' ? showResult() : showMenu(); return true; }
+  if (screen === 'result') { showMenu(); return true; }
+  return false;
+}
+try {
+  const CapApp = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+  if (CapApp) {
+    CapApp.addListener('backButton', () => { if (!handleBack()) CapApp.exitApp(); });
+    CapApp.addListener('pause', () => pauseGame());
+  }
+} catch (e) {}
 
 /* ---------- Döngü ---------- */
 let last = 0;
@@ -697,6 +954,6 @@ fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { ERAS, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+window.__evolute = { handleBack, ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 })();
 </script>

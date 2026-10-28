@@ -1,4 +1,4 @@
-# Evolute Prototipi (G0 + G1)
+# Evolute (oyun kaynağı)
 
 `OYUN_FIKRI.md` içindeki **G0 kapısı** (çekirdek eğlence testi) için oynanabilir prototip. Tek dosya: `evolute.html`.
 
@@ -17,7 +17,11 @@
 - 10. dalgada boss gelir. Koşu sonunda DNA kazanılır ve Laboratuvar'da kalıcı yükseltmeye harcanır.
 - **3 Çağ:** İlkel Deniz, Sisli Orman, Buzul Çağı. Bir çağın boss'unu devirince sonraki açılır. Çağlar daha çok can, daha çok DNA verir. Tamamlanan her çağ kalıcı +%10 hasar sağlar.
 - **Tür Kataloğu:** 3 çağ × 3 element × 8 sayı = 72 tür. Bir türü ilk kez bulunca sayısı × 3 DNA kazanılır.
-- **Ses:** Dosyasız (WebAudio) efektler. Sağ alttaki SES ile veya menüden kapatılır.
+- **Ses:** Dosyasız (WebAudio) efektler. Sağ alttaki SES ile veya Ayarlar'dan kapatılır.
+- **5 dil:** Türkçe, English, Deutsch, Español, Português. Cihaz diline göre seçilir, Ayarlar'dan değişir. Bilinmeyen dilde İngilizce.
+- **Duraklatma** (sağ üst), ilk açılışta 3 adımlık **eğitim**, titreşim ayarı, ilerlemeyi silme (onaylı).
+- **Günlük ödül:** 20 DNA + seri başına 10 (en çok 7 seri). **Kuluçka:** sen yokken DNA biriktirir (en fazla 4 saat; hız kazanılan galibiyet, en iyi dalga ve açık çağlarla artar).
+- **Android geri tuşu:** oyunda duraklatır, alt ekranlarda geri gider, ana menüde çıkar (Capacitor App eklentisiyle).
 
 ## G0 için ne ölçülmeli
 
