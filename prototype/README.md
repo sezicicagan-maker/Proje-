@@ -25,6 +25,10 @@
 - **Oynanış çeşitliliği:** 3 düşman tipi (normal, hızlı koşucu, yavaş tank), boss %66 ve %33 canda takviye çağırır, şeritte tehlike uyarısı.
 - **His (juice):** Birleştirme şok dalgası ve yıldızlar, kombo (ardışık birleştirmede ek altın), uçan altınlar, vuruş kıvılcımları, ekran sarsıntısı, yeni tür keşfinde tam ekran kutlama.
 - **Kısa vadeli hedefler:** Her turda 3 hedef (sayı, öldürme, kombo, birleştirme), tamamlanınca DNA. 2× hız düğmesi. Sonuç ekranında sonraki yükseltmeye ilerleme çubuğu.
+- **DNA kimliği:** Menüde dönen çift sarmal ve süzülen yaratıklar, DNA simgesi (arayüzde ve oyun içi sayaçta), öldürülen düşmandan sayaca uçan DNA, sonuçta DNA sayacı animasyonu ve 3 yıldız (tamamlanan hedeflere göre).
+- **Hücre görünümü:** Tahta karoları petri kuyucuğu gibi detaylı (metalik çerçeve, çukur derinlik, organeller, çağa özel doku: balon, yosun filizi, kristal) ve içinde süzülen parçacıklar. Dolu hücrede elemente göre ışıma.
+- **Animasyonlar:** Yaratık doğarken yumurtadan çıkar gibi büyür (dalgacık), sürüklenen yaratık hücreler arası uçar, birleşmede iki yaratık buluşup parlayarak yeni evrime geçer, düşman portalden belirir, canı azalınca kırmızı ekran vurgusu, can çubuğunda gecikmeli iz.
+- **Arayüz:** Cam görünümlü paneller, kabartmalı düğmeler (basma animasyonu), kayarak giren öğeler, seviye çubuklu laboratuvar, renk kodlu mutasyon kartları, animasyonlu eğitim.
 - **Müzik:** Çok kısık üretken fon müziği (çağa göre ölçü), Ayarlar'dan kapatılır. Gerçek kulakla denenmedi.
 - **Android geri tuşu:** oyunda duraklatır, alt ekranlarda geri gider, ana menüde çıkar (Capacitor App eklentisiyle).
 

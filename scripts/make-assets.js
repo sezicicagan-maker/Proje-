@@ -21,7 +21,13 @@ const creature = (size, extra) => `
   <path d="M440 590 Q512 650 584 590" fill="none" stroke="#10243f" stroke-width="22" stroke-linecap="round"/>
   <text x="512" y="720" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="120" fill="#10243f" opacity=".0">8</text>
 </svg>`;
+const helix = (x, flip) => {
+  let a = '', b = '', r = '';
+  for (let i = 0; i <= 40; i++) { const u = i / 40, y = 150 + u * 720, xa = x + Math.sin(u * 6.2832 * 2.2 + (flip ? 3.14 : 0)) * 46, xb = x - Math.sin(u * 6.2832 * 2.2 + (flip ? 3.14 : 0)) * 46; a += (i ? 'L' : 'M') + xa.toFixed(1) + ' ' + y.toFixed(1); b += (i ? 'L' : 'M') + xb.toFixed(1) + ' ' + y.toFixed(1); if (i % 4 === 2) r += `<line x1="${xa.toFixed(1)}" y1="${y.toFixed(1)}" x2="${xb.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#fff" stroke-opacity=".35" stroke-width="8"/>`; }
+  return `<path d="${a}" fill="none" stroke="#5fe3ff" stroke-width="16" stroke-linecap="round" opacity=".55"/><path d="${b}" fill="none" stroke="#ff8ae2" stroke-width="16" stroke-linecap="round" opacity=".55"/>${r}`;
+};
 const sparks = `
+  ${helix(150, false)}${helix(874, true)}
   <g opacity=".95">
     <polygon points="250,250 310,200 370,250 310,300" fill="#ffd23f" stroke="#c99a00" stroke-width="14"/>
     <polygon points="780,230 850,260 850,330 780,360 710,330 710,260" fill="#7bd34a" stroke="#4a9a24" stroke-width="14"/>

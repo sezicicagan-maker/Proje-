@@ -71,6 +71,49 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 .pulse{border-color:var(--volt)!important;color:var(--volt)!important;animation:pl 1.2s ease-in-out infinite} @keyframes pl{50%{box-shadow:0 0 0 calc(var(--u)*5) rgba(255,210,63,.22)}}
 @media (prefers-reduced-motion:reduce){.pulse{animation:none}}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+
+/* ---- Arayüz yenileme ---- */
+.ov{background:radial-gradient(ellipse at 50% 35%,rgba(7,13,24,.82),rgba(5,9,18,.94));animation:ovin .22s ease-out both}
+.ov.menu{background:radial-gradient(ellipse at 50% 38%,rgba(6,12,24,.18),rgba(6,12,24,.62))}
+@keyframes ovin{from{opacity:0}to{opacity:1}}
+.in>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.in>*:nth-child(2){animation-delay:.05s}.in>*:nth-child(3){animation-delay:.1s}.in>*:nth-child(4){animation-delay:.15s}.in>*:nth-child(5){animation-delay:.2s}.in>*:nth-child(6){animation-delay:.25s}.in>*:nth-child(7){animation-delay:.3s}.in>*:nth-child(8){animation-delay:.35s}.in>*:nth-child(n+9){animation-delay:.4s}
+@keyframes rise{from{opacity:0;transform:translateY(calc(var(--u)*16)) scale(.98)}to{opacity:1;transform:none}}
+.ov h1{background:linear-gradient(180deg,#ffffff 20%,#8fd0ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 calc(var(--u)*14) rgba(95,227,255,.35));letter-spacing:.08em}
+.btn{background:linear-gradient(180deg,#ffb066,#ff7a2a);box-shadow:0 calc(var(--u)*4) 0 #b3501c,0 calc(var(--u)*12) calc(var(--u)*22) rgba(255,122,42,.3);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(calc(var(--u)*3));box-shadow:0 calc(var(--u)*1) 0 #b3501c,0 calc(var(--u)*6) calc(var(--u)*12) rgba(255,122,42,.25)}
+.mini{background:linear-gradient(180deg,#ffe27a,#ffc414);box-shadow:0 calc(var(--u)*2) 0 #9c7600;transition:transform .08s}
+.mini:active:not(:disabled){transform:translateY(calc(var(--u)*2));box-shadow:none}
+.mini:disabled{box-shadow:none;background:#2a3c58}
+.ghost{background:rgba(255,255,255,.04);border:2px solid rgba(130,170,230,.28);transition:transform .08s,background .15s}
+.ghost:active{transform:scale(.96);background:rgba(255,255,255,.09)}
+.row,.eras,.mini-card,.goals,.crow,.card{background:linear-gradient(180deg,rgba(32,56,92,.92),rgba(20,38,64,.92));border:1px solid rgba(160,200,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 calc(var(--u)*6) calc(var(--u)*14) rgba(0,0,0,.25)}
+.row{border-left:calc(var(--u)*4) solid var(--c,rgba(160,200,255,.2))}
+.rt{flex:1;min-width:0}
+.lvbar{height:calc(var(--u)*4);background:rgba(0,0,0,.35);border-radius:calc(var(--u)*3);margin-top:calc(var(--u)*5);overflow:hidden}
+.lvbar i{display:block;height:100%;background:var(--c,#5fe3ff);border-radius:inherit}
+.dna{width:calc(var(--u)*13);height:calc(var(--u)*18);vertical-align:middle;margin-left:calc(var(--u)*3);animation:dnaspin 3s ease-in-out infinite}
+@keyframes dnaspin{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.gain{font-size:calc(var(--u)*46);font-weight:700;color:#e9f2ff;display:flex;align-items:center;justify-content:center;line-height:1;text-shadow:0 0 calc(var(--u)*18) rgba(95,227,255,.35)}
+.gain .dna{width:calc(var(--u)*22);height:calc(var(--u)*32);margin-left:calc(var(--u)*6)}
+.stars{display:flex;gap:calc(var(--u)*8);font-size:calc(var(--u)*34);line-height:1}
+.star{color:#27405f;transform:scale(.6);opacity:0;animation:starin .5s cubic-bezier(.2,1.6,.4,1) forwards}
+.star.on{color:#ffd23f;filter:drop-shadow(0 0 calc(var(--u)*8) rgba(255,210,63,.6))}
+@keyframes starin{to{transform:scale(1);opacity:1}}
+.dots{display:flex;gap:calc(var(--u)*5);justify-content:center;margin-top:calc(var(--u)*3)}
+.dots i{width:calc(var(--u)*6);height:calc(var(--u)*6);border-radius:50%;background:#37557f}
+.dots i.on{background:var(--accent);box-shadow:0 0 calc(var(--u)*6) var(--accent)}
+.card{display:flex;gap:calc(var(--u)*11);align-items:center;border-left:calc(var(--u)*4) solid var(--c);transition:transform .1s}
+.card:active{transform:scale(.98)} .card b{color:var(--c)} .card>div{min-width:0}
+.chip{flex:none;width:calc(var(--u)*34);height:calc(var(--u)*34);border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:calc(var(--u)*16);color:#0b1626;background:var(--c);box-shadow:0 0 calc(var(--u)*10) var(--c)}
+.tutdemo{position:relative;width:calc(var(--u)*180);height:calc(var(--u)*70)}
+.tutdemo i{position:absolute;top:50%;width:calc(var(--u)*34);height:calc(var(--u)*34);margin-top:calc(var(--u)*-17);border-radius:50%;background:radial-gradient(circle at 35% 30%,#b4e5ff,#3aa9ff 60%,#1d6fb8)}
+.tutdemo .a{left:calc(var(--u)*20);animation:ta 2.4s ease-in-out infinite}.tutdemo .b{right:calc(var(--u)*20);animation:tb 2.4s ease-in-out infinite}
+.tutdemo .c{left:50%;width:calc(var(--u)*52);height:calc(var(--u)*52);margin-left:calc(var(--u)*-26);margin-top:calc(var(--u)*-26);opacity:0;animation:tc 2.4s ease-in-out infinite}
+@keyframes ta{0%,15%{transform:none;opacity:1}45%,100%{transform:translateX(calc(var(--u)*50));opacity:0}}
+@keyframes tb{0%,15%{transform:none;opacity:1}45%,100%{transform:translateX(calc(var(--u)*-50));opacity:0}}
+@keyframes tc{0%,40%{opacity:0;transform:scale(.3)}55%{opacity:1;transform:scale(1.2)}70%,92%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.in>*,.ov,.dna,.star{animation:none!important}.star{opacity:1;transform:none}.tutdemo i{animation:none!important}.tutdemo .c{opacity:1}}
 </style>
 
 <div id="wrap">
@@ -278,9 +321,9 @@ const UPS = {
 };
 /* Çağlar: görünüm ve zorluk. Mekanik (3 element) tüm çağlarda aynı. */
 const ERAS = [
-  { bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1, tile: ['#1d3a62', '#112642'] },
-  { bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6, tile: ['#21432f', '#12281b'] },
-  { bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4, tile: ['#2d5073', '#1b3350'] },
+  { bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1, tile: ['#1d3a62', '#112642'], mote: '#9fe3ff' },
+  { bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6, tile: ['#21432f', '#12281b'], mote: '#d6ff9a' },
+  { bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4, tile: ['#2d5073', '#1b3350'], mote: '#e8f6ff' },
 ];
 const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
@@ -357,7 +400,7 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const mutLv = id => (G && G.muts[id]) || 0;
 const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function mkUnit(el, tier) { return { el, tier, cd: rand(0, ATK), pop: 1, ph: rand(0, 6.28), rec: 0 }; }
+function mkUnit(el, tier) { return { el, tier, cd: rand(0, ATK), pop: 0, ph: rand(0, 6.28), rec: 0, born: T, hide: 0, flash: 0 }; }
 
 /* Tur hedefleri */
 const GOAL_KEY = { tier: 'goalTier', kills: 'goalKills', combo: 'goalCombo', merges: 'goalMerges' };
@@ -379,11 +422,12 @@ function newGame() {
     board: new Array(ROWS * COLS).fill(null),
     enemies: [], proj: [], fx: [], texts: [], queue: [], muts: {},
     spawnT: 1.8, kills: 0, merges: 0, maxTier: 1, firstMerge: null,
-    era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
+    anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
   };
   // İlk birleştirmeyi ilk saniyelerde yaptırmak için iki hazır çift.
   G.board[idx(4, 0)] = mkUnit(0, 1); G.board[idx(4, 1)] = mkUnit(0, 1);
   G.board[idx(4, 3)] = mkUnit(2, 1); G.board[idx(4, 4)] = mkUnit(2, 1);
+  [idx(4, 0), idx(4, 1), idx(4, 3), idx(4, 4)].forEach((k, j) => { G.board[k].born = T + 0.12 * j; });
   discover(0, 1); discover(2, 1);
   hideOv();
 }
@@ -399,6 +443,8 @@ function spawnUnit() {
   const i = empty[Math.floor(Math.random() * empty.length)];
   const u = mkUnit(Math.floor(Math.random() * 3), 1);
   G.board[i] = u; discover(u.el, 1); sfx('spawn');
+  const [hx, hy] = cellXY(Math.floor(i / COLS), i % COLS);
+  G.fx.push({ type: 'ripple', x: hx, y: hy, c: EL[u.el].l, s0: 14, s1: 22, life: 0.5, max: 0.5 }); burst(hx, hy, '#ffffff', 5);
   return true;
 }
 function spawnManual() {
@@ -422,13 +468,15 @@ function neighbors(r, c, el) {
 }
 
 /* Sürükle-bırak: boş hücreye taşır, aynı el+tier ise birleştirir, aksi halde yer değiştirir. */
-function drop(from, to) {
+function drop(from, to, px, py) {
   if (!G || G.mode !== 'play' || from === to) return 'none';
   const A = G.board[from], B = G.board[to];
   if (!A) return 'none';
-  if (!B) { G.board[to] = A; G.board[from] = null; return 'move'; }
+  const [fx0, fy0] = cellXY(Math.floor(from / COLS), from % COLS), [tx0, ty0] = cellXY(Math.floor(to / COLS), to % COLS), sx0 = px === undefined ? fx0 : px, sy0 = py === undefined ? fy0 : py;
+  if (!B) { G.board[to] = A; G.board[from] = null; A.hide = T + 0.13; G.anims.push({ el: A.el, tier: A.tier, ph: A.ph, x0: sx0, y0: sy0, x1: tx0, y1: ty0, t0: T, dur: 0.13 }); return 'move'; }
   if (A.el === B.el && A.tier === B.tier && A.tier < MAXT) {
-    const nu = mkUnit(A.el, A.tier + 1); nu.pop = 1.6;
+    const nu = mkUnit(A.el, A.tier + 1); nu.pop = 1.6; nu.born = T + 0.16; nu.flash = 1;
+    G.anims.push({ el: A.el, tier: A.tier, ph: A.ph, x0: sx0, y0: sy0, x1: tx0, y1: ty0, t0: T, dur: 0.16 }, { el: B.el, tier: B.tier, ph: B.ph, x0: tx0, y0: ty0, x1: tx0, y1: ty0, t0: T, dur: 0.16 });
     G.board[to] = nu; G.board[from] = null;
     G.merges++; G.maxTier = Math.max(G.maxTier, nu.tier);
     if (G.firstMerge === null) G.firstMerge = G.t;
@@ -449,22 +497,25 @@ function drop(from, to) {
     try { save.vib && navigator.vibrate && navigator.vibrate(12); } catch (e) {}
     return 'merge';
   }
-  G.board[to] = A; G.board[from] = B;
+  G.board[to] = A; G.board[from] = B; A.hide = B.hide = T + 0.13;
+  G.anims.push({ el: A.el, tier: A.tier, ph: A.ph, x0: sx0, y0: sy0, x1: tx0, y1: ty0, t0: T, dur: 0.13 }, { el: B.el, tier: B.tier, ph: B.ph, x0: tx0, y0: ty0, x1: fx0, y1: fy0, t0: T, dur: 0.13 });
   return 'swap';
 }
 
-function burst(x, y, color, n) {
+function burst(x, y, color, n, delay) {
   for (let i = 0; i < n; i++) {
     const a = rand(0, 6.28), s = rand(40, 130);
-    G.fx.push({ type: 'p', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, c: color, life: 0.45, max: 0.45 });
+    G.fx.push({ type: 'p', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, c: color, life: 0.45, max: 0.45, delay: delay || 0 });
   }
 }
 function mergeFx(x, y, el, tier) {
   const c = EL[el].c;
-  burst(x, y, c, 8 + tier * 2);
-  G.fx.push({ type: 'ring', x, y, c: '#ffffff', r0: 8, r1: 30 + tier * 5, life: 0.4, max: 0.4 });
-  G.fx.push({ type: 'ring', x, y, c, r0: 4, r1: 20 + tier * 3, life: 0.55, max: 0.55 });
-  for (let i = 0; i < 3 + tier; i++) { const a = rand(0, 6.28), s = rand(50, 150); G.fx.push({ type: 'star', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 30, c: i % 2 ? EL[el].l : '#fff6b0', sz: rand(3, 6), life: 0.7, max: 0.7 }); }
+  const d = 0.16;
+  burst(x, y, c, 8 + tier * 2, d);
+  G.fx.push({ type: 'ring', x, y, c: '#ffffff', r0: 8, r1: 30 + tier * 5, life: 0.4, max: 0.4, delay: d });
+  G.fx.push({ type: 'ring', x, y, c, r0: 4, r1: 20 + tier * 3, life: 0.55, max: 0.55, delay: d });
+  G.fx.push({ type: 'ripple', x, y, c: '#ffffff', s0: 20, s1: 18 + tier * 2, life: 0.5, max: 0.5, delay: d });
+  for (let i = 0; i < 3 + tier; i++) { const a = rand(0, 6.28), s = rand(50, 150); G.fx.push({ type: 'star', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 30, c: i % 2 ? EL[el].l : '#fff6b0', sz: rand(3, 6), life: 0.7, max: 0.7, delay: d }); }
 }
 
 /* ---------- Dalgalar ve düşmanlar ---------- */
@@ -503,7 +554,8 @@ function spawnEnemy(q) {
   if (ty === 'r') { hp *= 0.55; spd *= 1.75; r = 11; }
   if (ty === 't') { hp *= 2.3; spd *= 0.62; r = 19; dmg = 2; }
   hp = Math.round(hp);
-  G.enemies.push({ lane: q.lane, x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, hp, maxhp: hp, spd, r, dmg, type: ty, boss, ph: rand(0, 6.28), kb: 0, slow: 0, tox: null, flash: 0, dead: false });
+  G.fx.push({ type: 'ring', x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, c: '#c47bff', r0: 6, r1: boss ? 44 : 26, life: 0.5, max: 0.5 });
+  G.enemies.push({ lane: q.lane, x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, hp, maxhp: hp, spd, r, dmg, type: ty, boss, born: T, ph: rand(0, 6.28), kb: 0, slow: 0, tox: null, flash: 0, dead: false });
 }
 function bossAdds(e) {
   for (const ln of [e.lane - 1, e.lane + 1, e.lane + 2 < COLS ? e.lane + 2 : e.lane - 2]) if (ln >= 0 && ln < COLS) G.queue.push({ t: G.t + 0.3, lane: ln, boss: false, type: 'r', w: G.waveReached });
@@ -528,6 +580,7 @@ function hurt(e, d) {
     e.dead = true; G.kills++; const gv = e.boss ? 40 : (e.type === 't' ? 5 : 3); G.gold += gv; G.goldPop = 1; sfx('kill');
     burst(e.x, e.y, e.boss ? '#ffb347' : '#ff7a88', e.boss ? 26 : 8);
     for (let i = 0; i < (e.boss ? 8 : 1); i++) G.fx.push({ type: 'coin', x: e.x + rand(-8, 8), y: e.y, x1: 238, y1: 22, life: 0.7 + i * 0.05, max: 0.7 + i * 0.05 });
+    for (let i = 0; i < (e.boss ? 6 : 1); i++) G.fx.push({ type: 'dna', x: e.x, y: e.y, x1: W - 60, y1: FIELD_Y + 38, life: 0.85 + i * 0.06, max: 0.85 + i * 0.06 });
     checkGoals();
     if (e.boss) { G.bossKilled = true; endRun(true); }
   }
@@ -582,7 +635,7 @@ function step(dt) {
       if (g.spawnT <= 0) g.spawnT = spawnUnit() ? autoInterval() : 0.5;
       for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
         const u = g.board[idx(r, c)]; if (!u) continue;
-        u.cd -= dt; u.pop = Math.max(0, u.pop - dt * 4); u.rec = Math.max(0, u.rec - dt * 6);
+        u.cd -= dt; u.pop = Math.max(0, u.pop - dt * 4); u.rec = Math.max(0, u.rec - dt * 6); u.flash = Math.max(0, (u.flash || 0) - dt * 3);
         if (u.cd <= 0) { const t = frontEnemy(c); if (t) { fire(u, r, c, t); u.cd = ATK; } else u.cd = 0; }
       }
     }
@@ -599,22 +652,22 @@ function step(dt) {
       e.slow = Math.max(0, e.slow - dt); e.flash = Math.max(0, e.flash - dt); e.kb += (0 - e.kb) * Math.min(1, dt * 14);
       e.y += e.spd * (e.slow > 0 ? 0.55 : 1) * dt;
       if (e.y >= BASE_Y) {
-        e.dead = true; g.hp -= e.dmg; g.shake = 0.25; sfx('base');
+        e.dead = true; g.hp -= e.dmg; g.shake = 0.25; g.hitFlash = 0.4; sfx('base');
         if (g.hp <= 0) { g.hp = 0; endRun(false); }
       }
     }
     g.enemies = g.enemies.filter(e => !e.dead);
   }
   for (let i = g.fx.length - 1; i >= 0; i--) {
-    const f = g.fx[i]; f.life -= dt;
+    const f = g.fx[i]; if (f.delay > 0) { f.delay -= dt; continue; } f.life -= dt;
     if (f.type === 'p') { f.x += f.vx * dt; f.y += f.vy * dt; }
     else if (f.type === 'star') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 160 * dt; }
-    if (f.life <= 0) g.fx.splice(i, 1);
+    if (f.life <= 0) { if (f.type === 'dna') g.dnaPop = 1; g.fx.splice(i, 1); }
   }
   for (let i = g.texts.length - 1; i >= 0; i--) { const t = g.texts[i]; t.life -= dt; t.y -= 28 * dt; if (t.life <= 0) g.texts.splice(i, 1); }
   if (g.toast) { g.toast.life -= dt; if (g.toast.life <= 0) g.toast = null; }
   if (g.banner) { g.banner.life -= dt; if (g.banner.life <= 0) g.banner = null; }
-  g.shake = Math.max(0, g.shake - dt);
+  g.shake = Math.max(0, g.shake - dt); g.hitFlash = Math.max(0, (g.hitFlash || 0) - dt);
   if (g.comboT > 0) { g.comboT -= dt; if (g.comboT <= 0) g.combo = 0; }
   if (g.mode === 'ending') { g.endT -= dt; if (g.endT <= 0) { g.mode = 'over'; finishRun(); } }
 }
@@ -681,6 +734,20 @@ function coin(x, y, r) {
   ctx.strokeStyle = '#a87c00'; ctx.lineWidth = 1.2; ctx.stroke();
   ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(x, y, r * .6, 3.6, 5.2); ctx.stroke();
 }
+
+const DNA_A = '#5fe3ff', DNA_B = '#ff8ae2';
+function helixGlyph(x, y, sz, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.lineCap = 'round';
+  for (let k = 0; k < 2; k++) {
+    ctx.strokeStyle = k ? DNA_B : DNA_A; ctx.lineWidth = sz * .13; ctx.beginPath();
+    for (let i = 0; i <= 14; i++) { const u = i / 14, yy = (u - .5) * sz, xx = Math.sin(u * TAU + rot + k * Math.PI) * sz * .3; i ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+    ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = sz * .07;
+  for (let j = 0; j < 4; j++) { const u = (j + .5) / 4, yy = (u - .5) * sz, xx = Math.sin(u * TAU + rot) * sz * .3; ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(-xx, yy); ctx.stroke(); }
+  ctx.restore();
+}
+const runDna = g => Math.round((Math.max(0, g.waveReached) * 8 + g.kills * 0.6 + (g.win ? 60 : 0)) * ERAS[g.era].dnaMul) + g.disc + g.goalDna;
 
 /* ---- Yaratık gövdeleri: bir kez dokulu olarak çizilip önbelleğe alınır ---- */
 const SPR = 3, bodyCache = {};
@@ -749,6 +816,7 @@ function drawUnit(el, tier, x, y, o) {
   }
   ctx.translate(x, yy); ctx.scale(sx, sy);
   ctx.drawImage(s.c, -s.size / 2, -s.size / 2, s.size, s.size);
+  if (o.flash > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.min(1, o.flash) * .85 * al; ctx.drawImage(s.c, -s.size / 2, -s.size / 2, s.size, s.size); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = al; }
   const er = Math.max(2.7, R * .17), ey = -R * .1, blink = ((T + ph * 2) % 4.3) > 4.18;
   for (const sg of [-1, 1]) {
     const ex = sg * R * .3;
@@ -771,6 +839,7 @@ function drawEnemy(e) {
   const wob = Math.sin(T * 6 + e.ph) * .06, light = hexMix(col[0], '#ffffff', .38), dark = col[1];
   ctx.save();
   ctx.translate(e.x, e.y + e.kb); ctx.scale(1 + wob, 1 - wob);
+  const bk = Math.max(.01, eob(Math.min(1, (T - (e.born || 0)) / .45))); ctx.scale(bk, bk);
   ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(0, r * .9, r * .9, r * .27, 0, 0, TAU); ctx.fill();
   if (e.boss) {
     const a = .3 + .12 * Math.sin(T * 4); ctx.globalCompositeOperation = 'lighter';
@@ -861,13 +930,34 @@ function boardLayer(era) {
 }
 function tileSprite(era) {
   if (tileCache[era]) return tileCache[era];
-  const S = 3, c = mk(70 * S, 70 * S), g = c.getContext('2d'); g.scale(S, S);
-  const E = ERAS[era];
-  g.fillStyle = 'rgba(0,0,0,.4)'; g.beginPath(); g.roundRect(3, 4, 64, 64, 13); g.fill();
-  const gr = g.createLinearGradient(0, 2, 0, 66); gr.addColorStop(0, E.tile[0]); gr.addColorStop(1, E.tile[1]);
-  g.fillStyle = gr; g.beginPath(); g.roundRect(2, 2, 64, 64, 13); g.fill();
-  g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 1.5; g.beginPath(); g.roundRect(3, 3, 62, 62, 12); g.stroke();
-  g.strokeStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.moveTo(8, 66); g.lineTo(60, 66); g.stroke();
+  const S = 3, c = mk(74 * S, 74 * S), g = c.getContext('2d'); g.scale(S, S);
+  const E = ERAS[era], r = rng(era * 53 + 9), cx = 37, cy = 37;
+  g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.roundRect(5, 6, 64, 64, 19); g.fill();
+  let gr = g.createLinearGradient(0, 3, 0, 71); gr.addColorStop(0, hexMix(E.tile[0], '#ffffff', .22)); gr.addColorStop(.5, E.tile[0]); gr.addColorStop(1, hexMix(E.tile[1], '#000000', .35));
+  g.fillStyle = gr; g.beginPath(); g.roundRect(4, 4, 66, 66, 19); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 1.2; g.beginPath(); g.roundRect(4.6, 4.6, 64.8, 64.8, 18.5); g.stroke();
+  g.save(); g.beginPath(); g.roundRect(9, 9, 56, 56, 14); g.clip();
+  gr = g.createRadialGradient(cx - 6, cy - 8, 4, cx, cy, 42); gr.addColorStop(0, hexMix(E.tile[0], '#ffffff', .08)); gr.addColorStop(.6, E.tile[1]); gr.addColorStop(1, hexMix(E.tile[1], '#000000', .5));
+  g.fillStyle = gr; g.fillRect(8, 8, 58, 58);
+  g.fillStyle = hexA(E.mote, .09); g.beginPath(); g.ellipse(cx + 6, cy + 5, 13, 10, .5, 0, TAU); g.fill();
+  g.fillStyle = hexA(E.mote, .12); g.beginPath(); g.arc(cx + 6, cy + 5, 4.5, 0, TAU); g.fill();
+  for (let i = 0; i < 9; i++) { const x = 12 + r() * 50, y = 12 + r() * 50, rad = .8 + r() * 2.2; g.fillStyle = hexA(E.mote, .1 + r() * .14); g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill(); }
+  if (era === 0) { g.strokeStyle = hexA('#bfe9ff', .1); g.lineWidth = .9; for (let i = 0; i < 7; i++) { g.beginPath(); g.arc(12 + r() * 50, 12 + r() * 50, 2 + r() * 4, 0, TAU); g.stroke(); } }
+  else if (era === 1) {
+    g.strokeStyle = hexA('#9be35a', .22); g.lineWidth = 1.2; g.lineCap = 'round';
+    for (const [x, y] of [[13, 61], [61, 61], [13, 13]]) { const d = x < 37 ? 1 : -1; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 4 * d, y - 8, x + 2 * d, y - 14); g.stroke(); }
+    g.fillStyle = hexA('#7bd34a', .12); for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(12 + r() * 50, 50 + r() * 14, 1.6 + r() * 2.2, 0, TAU); g.fill(); }
+  } else {
+    g.strokeStyle = hexA('#ffffff', .3); g.lineWidth = 1; g.lineCap = 'round';
+    for (const [x, y, sx, sy] of [[11, 11, 1, 1], [63, 11, -1, 1], [11, 63, 1, -1], [63, 63, -1, -1]]) for (const a of [0, .6, 1.2]) { g.beginPath(); g.moveTo(x, y); g.lineTo(x + sx * Math.cos(a) * 11, y + sy * Math.sin(a) * 11); g.stroke(); }
+  }
+  g.restore();
+  g.save(); g.beginPath(); g.roundRect(9, 9, 56, 56, 14); g.clip();
+  gr = g.createLinearGradient(9, 9, 65, 65); gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(.45, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(255,255,255,.14)');
+  g.strokeStyle = gr; g.lineWidth = 5; g.beginPath(); g.roundRect(9, 9, 56, 56, 14); g.stroke(); g.restore();
+  g.strokeStyle = hexA(E.mote, .28); g.lineWidth = 1; g.beginPath(); g.roundRect(9.5, 9.5, 55, 55, 13.5); g.stroke();
+  g.fillStyle = 'rgba(255,255,255,.1)'; g.beginPath(); g.ellipse(26, 15, 15, 4.2, -.18, 0, TAU); g.fill();
+  g.fillStyle = 'rgba(255,255,255,.5)'; g.beginPath(); g.arc(17, 17.5, 1.5, 0, TAU); g.fill();
   return (tileCache[era] = c);
 }
 function drawAmbient(era) {
@@ -893,6 +983,28 @@ function drawAmbient(era) {
   }
 }
 
+function drawMenu(era) {
+  const E = ERAS[era];
+  ctx.drawImage(bgLayer(era), 0, 0, W, BOARD_Y);
+  const fl = ctx.createLinearGradient(0, BOARD_Y, 0, H); fl.addColorStop(0, E.bg[1]); fl.addColorStop(1, hexMix(E.bg[1], '#000000', .7));
+  ctx.fillStyle = fl; ctx.fillRect(0, BOARD_Y, W, H - BOARD_Y);
+  drawAmbient(era);
+  const cx = W / 2, N = 72;
+  for (let pass = 0; pass < 2; pass++) for (let i = 0; i < N; i++) {
+    const u = i / (N - 1), y = 30 + u * (H - 60), a = u * TAU * 3.2 + T * .9;
+    for (const k of [0, 1]) {
+      const ph = a + k * Math.PI, x = cx + Math.sin(ph) * 78, depth = Math.cos(ph);
+      if ((depth > 0) !== (pass === 1)) continue;
+      ctx.globalAlpha = .26 + .24 * (depth * .5 + .5); ctx.fillStyle = k ? DNA_B : DNA_A;
+      ctx.beginPath(); ctx.arc(x, y, 3.8 + depth * 1.6, 0, TAU); ctx.fill();
+    }
+    if (pass === 0 && i % 3 === 0) { ctx.globalAlpha = .12; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx + Math.sin(a) * 78, y); ctx.lineTo(cx + Math.sin(a + Math.PI) * 78, y); ctx.stroke(); }
+  }
+  ctx.globalAlpha = 1;
+  for (let i = 0; i < 6; i++) { const row = i < 3 ? 0 : 1, k = i % 3; drawUnit(k, 4 + ((i * 2) % 5), 62 + k * 118, (row ? 668 : 82) + Math.sin(T * 1.1 + i * 1.7) * 9, { ph: i * 1.7, scale: .9, look: true }); }
+  const vg = ctx.createRadialGradient(W / 2, H / 2, 150, W / 2, H / 2, 480); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.45)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
+
 /* ---- Ana çizim ---- */
 let drag = null;
 function draw(now) {
@@ -902,6 +1014,7 @@ function draw(now) {
   const g = G, era = g ? g.era : save.era;
   ctx.save();
   if (g && g.shake > 0 && !reduceMotion) ctx.translate(rand(-3, 3) * g.shake * 4, rand(-3, 3) * g.shake * 4);
+  if (!g || (screen === 'menu' && !ov.hidden)) { drawMenu(era); ctx.restore(); return; }
   ctx.drawImage(bgLayer(era), 0, 0, W, BOARD_Y);
   drawAmbient(era);
   for (let c = 0; c < COLS; c++) { ctx.fillStyle = c % 2 ? 'rgba(255,255,255,.028)' : 'rgba(0,0,0,.05)'; ctx.fillRect(c * CELL, FIELD_Y, CELL, BASE_Y - FIELD_Y); }
@@ -913,11 +1026,16 @@ function draw(now) {
   ctx.strokeStyle = `rgba(${lineC},.28)`; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, BASE_Y + 2); ctx.lineTo(W, BASE_Y + 2); ctx.stroke();
   ctx.strokeStyle = `rgb(${lineC})`; ctx.lineWidth = 2.5; ctx.stroke();
   ctx.drawImage(boardLayer(era), 0, BOARD_Y, W, H - BOARD_Y);
-  const tile = tileSprite(era);
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { const [x, y] = cellXY(r, c); ctx.drawImage(tile, x - 35, y - 35, 70, 70); }
-  if (!g) {
-    for (let i = 0; i < 5; i++) drawUnit(i % 3, 2 + (i * 2) % 7, i * CELL + 36, 150 + (i % 2) * 70 + Math.sin(T * 1.3 + i) * 9, { ph: i * 1.7 });
+  const tile = tileSprite(era), mote = ERAS[era].mote;
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const [x, y] = cellXY(r, c), k = r * COLS + c;
+    ctx.drawImage(tile, x - 37, y - 37, 74, 74);
+    if (!g.board[k]) for (let j = 0; j < 2; j++) {
+      ctx.globalAlpha = .2 + .16 * Math.sin(T * 1.2 + k + j); ctx.fillStyle = mote; ctx.beginPath();
+      ctx.arc(x + Math.sin(T * .4 + k + j * 2.1) * 17, y + Math.cos(T * .33 + k * 1.3 + j * 1.7) * 15, 1.3 + j * .6, 0, TAU); ctx.fill();
+    }
   }
+  ctx.globalAlpha = 1;
   if (g) {
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const u = g.board[idx(r, c)]; if (!u) continue;
@@ -931,25 +1049,34 @@ function draw(now) {
       const p = findPair();
       if (p) {
         const pulse = .5 + .5 * Math.sin(T * 4.5);
-        for (const i of p) { const [x, y] = cellXY(Math.floor(i / COLS), i % COLS); ctx.strokeStyle = `rgba(255,255,255,${.35 + .5 * pulse})`; ctx.lineWidth = 3; rr(x - 35, y - 35, 70, 70, 14); ctx.stroke(); }
+        for (const i of p) { const [x, y] = cellXY(Math.floor(i / COLS), i % COLS); ctx.strokeStyle = `rgba(255,255,255,${.35 + .5 * pulse})`; ctx.lineWidth = 3; rr(x - 35, y - 35, 70, 70, 20); ctx.stroke(); }
         if (g.merges === 0) txt(t('hint'), W / 2, BASE_Y - 24, 14, '#e9f2ff', 'center', 500, 3);
       }
     }
     if (drag) {   // birleşebilecek hedefler parlar
       const A = g.board[drag.from];
-      if (A) for (let i = 0; i < g.board.length; i++) { const B = g.board[i]; if (i !== drag.from && B && B.el === A.el && B.tier === A.tier && A.tier < MAXT) { const [x, y] = cellXY(Math.floor(i / COLS), i % COLS); ctx.strokeStyle = `rgba(255,255,255,${.4 + .4 * Math.sin(T * 8)})`; ctx.lineWidth = 3; rr(x - 35, y - 35, 70, 70, 14); ctx.stroke(); } }
+      if (A) for (let i = 0; i < g.board.length; i++) { const B = g.board[i]; if (i !== drag.from && B && B.el === A.el && B.tier === A.tier && A.tier < MAXT) { const [x, y] = cellXY(Math.floor(i / COLS), i % COLS); ctx.strokeStyle = `rgba(255,255,255,${.4 + .4 * Math.sin(T * 8)})`; ctx.lineWidth = 3; rr(x - 35, y - 35, 70, 70, 20); ctx.stroke(); } }
     }
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const i = idx(r, c), u = g.board[i]; if (!u) continue;
       const [x, y] = cellXY(r, c);
-      drawUnit(u.el, u.tier, x, y, { scale: 1 + Math.min(1, u.pop) * 0.3, alpha: drag && drag.from === i ? 0.25 : 1, ph: u.ph, rec: u.rec, look: !!frontEnemy(c) });
+      const age = T - (u.born || 0); if (age < 0 || T < (u.hide || 0)) continue;
+      const hs = age < .45 ? Math.max(.01, eob(age / .45)) : 1, E2 = EL[u.el], ga = (.16 + .06 * Math.sin(T * 2 + u.ph)) * Math.min(1, hs);
+      const gg = ctx.createRadialGradient(x, y, 4, x, y, 34); gg.addColorStop(0, hexA(E2.c, ga)); gg.addColorStop(1, hexA(E2.c, 0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, 34, 0, TAU); ctx.fill();
+      drawUnit(u.el, u.tier, x, y, { scale: (1 + Math.min(1, u.pop) * 0.3) * hs, alpha: drag && drag.from === i ? 0.25 : 1, ph: u.ph, rec: u.rec, look: !!frontEnemy(c), flash: u.flash || 0 });
+    }
+    for (let i = g.anims.length - 1; i >= 0; i--) {
+      const a = g.anims[i], p = (T - a.t0) / a.dur;
+      if (p >= 1) { g.anims.splice(i, 1); continue; } if (p < 0) continue;
+      const e2 = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      drawUnit(a.el, a.tier, a.x0 + (a.x1 - a.x0) * e2, a.y0 + (a.y1 - a.y0) * e2 - Math.sin(p * Math.PI) * 8, { ph: a.ph, scale: 1.04 });
     }
     if (drag) {
       const A = g.board[drag.from], to = cellAt(drag.x, drag.y);
       if (A && to !== null && to !== drag.from) {
         const B = g.board[to], ok = B && A.el === B.el && A.tier === B.tier && A.tier < MAXT;
         const [x, y] = cellXY(Math.floor(to / COLS), to % COLS);
-        ctx.strokeStyle = ok ? '#fff' : 'rgba(255,255,255,.25)'; ctx.lineWidth = ok ? 4 : 2; rr(x - 35, y - 35, 70, 70, 14); ctx.stroke();
+        ctx.strokeStyle = ok ? '#fff' : 'rgba(255,255,255,.25)'; ctx.lineWidth = ok ? 4 : 2; rr(x - 35, y - 35, 70, 70, 20); ctx.stroke();
       }
     }
     for (const e of g.enemies) drawEnemy(e);
@@ -963,6 +1090,7 @@ function draw(now) {
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x, p.y, p.crit ? 3 : 2, 0, TAU); ctx.fill();
     }
     for (const f of g.fx) {
+      if (f.delay > 0) continue;
       const a = Math.max(0, f.life / f.max), pr = 1 - a;
       if (f.type === 'p') { ctx.globalAlpha = a; ctx.fillStyle = f.c; ctx.beginPath(); ctx.arc(f.x, f.y, 3 * (.4 + a), 0, TAU); ctx.fill(); ctx.globalAlpha = 1; }
       else if (f.type === 'star') { ctx.globalAlpha = a; sparkle(f.x, f.y, f.sz * (.5 + a), f.c); ctx.globalAlpha = 1; }
@@ -970,12 +1098,15 @@ function draw(now) {
       else if (f.type === 'spark') { ctx.globalAlpha = a; ctx.strokeStyle = f.c; ctx.lineWidth = 2; for (let k = 0; k < 4; k++) { const an = f.a + k * 1.57, d0 = 3 + pr * 5, d1 = 8 + pr * 9; ctx.beginPath(); ctx.moveTo(f.x + Math.cos(an) * d0, f.y + Math.sin(an) * d0); ctx.lineTo(f.x + Math.cos(an) * d1, f.y + Math.sin(an) * d1); ctx.stroke(); } ctx.globalAlpha = 1; }
       else if (f.type === 'beam') { ctx.globalAlpha = a; ctx.strokeStyle = f.c; ctx.lineWidth = 16 * a; ctx.beginPath(); ctx.moveTo(f.x, f.y1); ctx.lineTo(f.x, f.y2); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'zap') { ctx.globalAlpha = a; ctx.strokeStyle = '#fff3a0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(f.x1, f.y1); ctx.lineTo((f.x1 + f.x2) / 2 + rand(-6, 6), (f.y1 + f.y2) / 2); ctx.lineTo(f.x2, f.y2); ctx.stroke(); ctx.globalAlpha = 1; }
+      else if (f.type === 'ripple') { ctx.globalAlpha = a * .7; ctx.strokeStyle = f.c; ctx.lineWidth = 3 * a + .8; const sz = f.s0 + pr * f.s1; rr(f.x - sz, f.y - sz, sz * 2, sz * 2, 16 + sz * .25); ctx.stroke(); ctx.globalAlpha = 1; }
+      else if (f.type === 'dna') { const x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 50; ctx.globalAlpha = Math.min(1, a * 4); helixGlyph(x, y, 16 * (1 - pr * .3), T * 6 + pr * 10); ctx.globalAlpha = 1; }
       else if (f.type === 'coin') { const k = eob(Math.min(1, pr * 1.2)) * .9 + pr * .1, x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 40; ctx.globalAlpha = Math.min(1, a * 3); coin(x, y, 5 * (1 - pr * .3)); ctx.globalAlpha = 1; void k; }
     }
     for (const tx of g.texts) { ctx.globalAlpha = Math.max(0, tx.life / tx.max); txt(String(tx.s), tx.x, tx.y, tx.big ? 20 : 15, tx.c, 'center', 700, 3); ctx.globalAlpha = 1; }
     if (drag) { const A = g.board[drag.from]; if (A) drawUnit(A.el, A.tier, drag.x, drag.y - 14, { scale: 1.15, ph: A.ph }); }
     drawHud(g);
     for (const f of g.fx) if (f.type === 'reveal') drawReveal(f);
+    if (g.hitFlash > 0) { const v2 = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 470); v2.addColorStop(0, 'rgba(255,40,70,0)'); v2.addColorStop(1, `rgba(255,40,70,${Math.min(.5, g.hitFlash * 1.2)})`); ctx.fillStyle = v2; ctx.fillRect(0, 0, W, H); }
   }
   ctx.restore();
 }
@@ -999,6 +1130,8 @@ function drawHud(g) {
   heart(122, 21, 7, '#ff5d6c');
   const bx = 134, bw = 82, pct = Math.max(0, g.hp / g.maxhp);
   ctx.fillStyle = '#1c3050'; rr(bx, 14, bw, 16, 8); ctx.fill();
+  g.hpShow = g.hpShow === undefined ? g.hp : g.hpShow + (g.hp - g.hpShow) * .06;
+  if (g.hpShow > g.hp + .05) { ctx.fillStyle = 'rgba(255,255,255,.55)'; rr(bx, 14, Math.max(8, bw * g.hpShow / g.maxhp), 16, 8); ctx.fill(); }
   const hg = ctx.createLinearGradient(0, 14, 0, 30); const low = pct <= .5; hg.addColorStop(0, low ? '#ff8d98' : '#ffb066'); hg.addColorStop(1, low ? '#e0394d' : '#ff7a2a');
   ctx.fillStyle = hg; rr(bx, 14, Math.max(8, bw * pct), 16, 8); ctx.fill();
   ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(bx + 3, 16, Math.max(4, bw * pct - 6), 4, 2); ctx.fill();
@@ -1011,6 +1144,7 @@ function drawHud(g) {
   const prog = Math.min(1, g.t / (WAVES * WAVE_LEN));
   ctx.fillStyle = '#1c3050'; ctx.fillRect(0, FIELD_Y - 5, W, 3);
   ctx.fillStyle = '#ff8a3d'; ctx.fillRect(0, FIELD_Y - 5, W * prog, 3);
+  ctx.fillStyle = 'rgba(255,190,120,.9)'; ctx.beginPath(); ctx.arc(W * prog, FIELD_Y - 3.5, 3.6, 0, TAU); ctx.fill();
   for (let i = 1; i < WAVES; i++) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(W * i / WAVES - .5, FIELD_Y - 5, 1, 3); }
   let cx = 14; const cy = FIELD_Y + 14;
   for (const m of MUTS) if (g.muts[m.id]) {
@@ -1054,6 +1188,9 @@ function drawHud(g) {
   ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 2; ctx.lineCap = 'round';
   if (!save.muted) { for (const k of [1, 2]) { ctx.beginPath(); ctx.arc(319, 696, 4 + k * 4, -.9, .9); ctx.stroke(); } }
   else { ctx.strokeStyle = '#ff4d5e'; ctx.beginPath(); ctx.moveTo(323, 689); ctx.lineTo(337, 703); ctx.moveTo(337, 689); ctx.lineTo(323, 703); ctx.stroke(); }
+  g.dnaPop = Math.max(0, (g.dnaPop || 0) - 0.05);
+  helixGlyph(W - 60, FIELD_Y + 38, 17 + g.dnaPop * 5, T * 2.2);
+  txt(String(runDna(g)), W - 12, FIELD_Y + 38.5, 14 + g.dnaPop * 3, '#bff4ff', 'right', 700, 3);
   if (g.toast) { ctx.globalAlpha = Math.min(1, g.toast.life / 0.5); txt(g.toast.s, W / 2, 132, 14, '#ffd23f', 'center', 700, 3.5); ctx.globalAlpha = 1; }
   if (g.banner) {
     const b = g.banner, p = 1 - b.life / b.max, a = Math.min(1, b.life / .4), sc = .6 + .4 * eob(Math.min(1, p * 5));
@@ -1087,7 +1224,7 @@ cv.addEventListener('pointermove', ev => { if (drag) { const [x, y] = toVirt(ev)
 function endDrag(ev) {
   if (!drag) return;
   const [x, y] = toVirt(ev); const to = cellAt(x, y), from = drag.from; drag = null;
-  if (to !== null) drop(from, to);
+  if (to !== null) drop(from, to, x, y - 14);
 }
 cv.addEventListener('pointerup', endDrag);
 cv.addEventListener('pointercancel', () => { drag = null; });
@@ -1097,7 +1234,14 @@ cv.addEventListener('contextmenu', e => e.preventDefault());
 let screen = 'menu', backTo = 'menu', codexEra = 0, confirmReset = false, tutStep = 0, tutFromSettings = false;
 const ELN = ['elWater', 'elPoison', 'elVolt'];
 function hideOv() { ov.hidden = true; ov.innerHTML = ''; }
-function setOv(html) { ov.hidden = false; ov.innerHTML = '<div class="in">' + html + '</div>'; ov.scrollTop = 0; }
+function setOv(html, cls) { ov.hidden = false; ov.className = 'ov' + (cls ? ' ' + cls : ''); ov.innerHTML = '<div class="in">' + html + '</div>'; ov.scrollTop = 0; }
+const DNA_SVG = '<svg class="dna" viewBox="0 0 20 28" aria-hidden="true"><path d="M4 2C18 8 2 20 16 26" fill="none" stroke="#5fe3ff" stroke-width="2.8" stroke-linecap="round"/><path d="M16 2C2 8 18 20 4 26" fill="none" stroke="#ff8ae2" stroke-width="2.8" stroke-linecap="round"/><path d="M7 7.5h6M5.5 14h9M7 20.5h6" stroke="#e9f2ff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg>';
+const bankHTML = () => `<div class="bank">${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>`;
+function countUp(el, to, ms) {
+  if (!el) return; const t0 = performance.now();
+  const tick = now => { const p = Math.min(1, (now - t0) / ms); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1 && el.isConnected) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
 function render() {
   ({ result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
 }
@@ -1121,51 +1265,57 @@ function nextUpInfo() {
 }
 function nextUpHTML() {
   const n = nextUpInfo(); if (!n) return '';
-  return `<div class="nextup"><small>${n.ready ? t('upReady') : t('nextUp') + ': ' + save.dna + '/' + n.c + ' DNA'}</small><div class="bar"><i style="width:${Math.min(100, save.dna / n.c * 100)}%"></i></div></div>`;
+  return `<div class="nextup"><small>${n.ready ? t('upReady') : t('nextUp') + ': ' + save.dna + '/' + n.c + DNA_SVG}</small><div class="bar"><i style="width:${Math.min(100, save.dna / n.c * 100)}%"></i></div></div>`;
 }
+const UP_COL = { atk: '#ff7a5c', hp: '#ff8ae2', spawn: '#5fe3ff' };
 function labHTML() {
   return '<div class="lab">' + Object.keys(UPS).map(k => {
     const u = UPS[k], l = save.up[k], cost = u.cost(l), max = l >= UPMAX, can = save.dna >= cost && !max;
-    return `<div class="row"><div><b>${t(k)}</b> <span class="lv">${l}</span><small>${u.desc(l)} → ${u.desc(l + 1)}</small></div>` +
-      `<button class="mini" data-up="${k}" ${can ? '' : 'disabled'}>${max ? 'MAX' : cost + ' DNA'}</button></div>`;
+    return `<div class="row" style="--c:${UP_COL[k]}"><div class="rt"><b>${t(k)}</b> <span class="lv">${l}/${UPMAX}</span><small>${u.desc(l)} → ${u.desc(l + 1)}</small><div class="lvbar"><i style="width:${l / UPMAX * 100}%"></i></div></div>` +
+      `<button class="mini" data-up="${k}" ${can ? '' : 'disabled'}>${max ? 'MAX' : cost + DNA_SVG}</button></div>`;
   }).join('') + '</div>';
 }
 const codexCount = () => Object.keys(save.codex).length;
 function eraRow() {
   const c = save.clears[save.era] || 0;
   const next = save.era >= save.unlocked && save.era < ERAS.length - 1 ? t('eraNext') : (c ? t('cleared', c) : t('bossWave', WAVES));
+  const dots = ERAS.map((_, i) => `<i class="${i === save.era ? 'on' : ''}"></i>`).join('');
   return `<div class="eras"><button class="mini" data-era="-1" aria-label="‹" ${save.era <= 0 ? 'disabled' : ''}>‹</button>` +
-    `<div><span class="tag">${t('era')} ${save.era + 1}/${ERAS.length}</span><b>${eraName(save.era)}</b><small>${next}</small></div>` +
+    `<div><span class="tag">${t('era')} ${save.era + 1}/${ERAS.length}</span><b>${eraName(save.era)}</b><small>${next}</small><div class="dots">${dots}</div></div>` +
     `<button class="mini" data-era="1" aria-label="›" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>`;
 }
 function showMenu() {
   screen = 'menu';
   const dr = dailyReady(), acc = idleAcc();
-  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
-    <div class="bank">${t('bank')} <b>${save.dna}</b> DNA</div>
+  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}${bankHTML()}
     <div class="cards2">
-      <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + ' DNA · ' : ''}${dr ? t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
+      <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + DNA_SVG + ' · ' + t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
       <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
     </div>
     <button class="btn" data-act="start">${t('play')}</button>
-    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`);
+    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
 }
 function showLab() {
   screen = 'lab';
-  setOv(`<span class="tag">${t('lab')}</span><div class="bank">${t('bank')} <b>${save.dna}</b> DNA</div>${labHTML()}<button class="btn" data-act="back">${t('back')}</button>`);
+  setOv(`<span class="tag">${t('lab')}</span>${bankHTML()}${labHTML()}<button class="btn" data-act="back">${t('back')}</button>`);
 }
 function showResult() {
   const g = G; screen = 'result';
   const fm = g.firstMerge === null ? '-' : g.firstMerge.toFixed(1) + ' ' + t('sec');
   const nxt = g.newEra ? `<div class="bank"><b>${t('newEra', eraName(save.unlocked))}</b></div>` : '';
+  const done = g.goals.filter(x => x.done).length;
+  const stars = [0, 1, 2].map(i => `<span class="star ${i < done ? 'on' : ''}" style="animation-delay:${.35 + i * .18}s">★</span>`).join('');
   setOv(`<span class="tag">${g.win ? t('winTag') : t('loseTag')}</span><h2>${g.win ? t('win') : t('lose')}</h2>
+    <div class="stars">${stars}</div>
+    <div class="gain">+<span id="gainnum">0</span>${DNA_SVG}</div>
     <div class="stats"><span>${t('sWave')} <b>${g.waveReached}/${WAVES}</b></span><span>${t('sTier')} <b>${g.maxTier}</b></span>
     <span>${t('sMerge')} <b>${g.merges}</b></span><span>${t('sKill')} <b>${g.kills}</b></span>
     <span>${t('sFirst')} <b>${fm}</b></span><span>${t('sTime')} <b>${Math.round(g.t)} ${t('sec')}</b></span></div>
-    ${nxt}<div class="bank">${t('gainDna', g.gain)}${g.disc ? ' · ' + t('gainCodex', g.disc) : ''} · ${t('bank')} <b>${save.dna}</b></div>
+    ${nxt}<div class="bank">${g.disc ? t('gainCodex', g.disc) + ' · ' : ''}${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>
     ${goalsHTML()}${nextUpHTML()}
     <button class="btn" data-act="again">${t('next')}</button>
     <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="menu">${t('pickEra')}</button><button class="ghost" data-act="codex">${t('codex')}</button></div>`);
+  countUp(document.getElementById('gainnum'), g.gain, 900);
 }
 function showCodex() {
   screen = 'codex';
@@ -1193,8 +1343,9 @@ function showSettings() {
 function showTutorial() {
   screen = 'tut';
   const last = tutStep >= 2;
-  const dots = '<div class="how"><span class="dot" style="background:var(--water)"></span><span class="dot" style="background:var(--poison)"></span><span class="dot" style="background:var(--volt)"></span></div>';
-  setOv(`<span class="tag">${t('howTo')} ${tutStep + 1}/3</span>${dots}<p class="big">${t('tut' + (tutStep + 1))}</p>
+  const demo = tutStep === 0 ? '<div class="tutdemo"><i class="a"></i><i class="b"></i><i class="c"></i></div>'
+    : '<div class="how"><span class="dot" style="background:var(--water)"></span><span class="dot" style="background:var(--poison)"></span><span class="dot" style="background:var(--volt)"></span></div>';
+  setOv(`<span class="tag">${t('howTo')} ${tutStep + 1}/3</span>${demo}<p class="big">${t('tut' + (tutStep + 1))}</p>
     <button class="btn" data-act="tnext">${last ? t('startBtn') : t('nextBtn')}</button>`);
 }
 function startRun() { if (!save.tut) { tutStep = 0; tutFromSettings = false; showTutorial(); } else newGame(); }
@@ -1205,11 +1356,12 @@ function showPause() {
     <button class="ghost" data-act="quit">${t('toMenu')}</button>`);
 }
 function pauseGame() { if (G && G.mode === 'play') { G.mode = 'paused'; drag = null; showPause(); } }
+const MUT_COL = { boom: '#ff8a3d', fast: '#7bd34a', syn: '#5fe3ff', crit: '#ffd23f', slow: '#3aa9ff', tox: '#9be35a', volt: '#ffe27a' };
 function showPick() {
   screen = 'pick';
   setOv(`<span class="tag">${t('wave')} ${G.waveReached}</span><h2>${t('pick')}</h2><div class="cards">` +
-    G.pickOffer.map(id => { const l = G.muts[id] || 0;
-      return `<button class="card" data-pick="${id}"><b>${t(id)}${l ? ' · ' + (l + 1) : ''}</b><span>${t(id + 'D')}</span></button>`; }).join('') + '</div>');
+    G.pickOffer.map(id => { const l = G.muts[id] || 0, m = MUTS.find(x => x.id === id);
+      return `<button class="card" style="--c:${MUT_COL[id]}" data-pick="${id}"><i class="chip">${m.ch}</i><div><b>${t(id)}${l ? ' · ' + (l + 1) : ''}</b><span>${t(id + 'D')}</span></div></button>`; }).join('') + '</div>');
 }
 const goSub = fn => { if (screen === 'menu' || screen === 'result') backTo = screen; fn(); };
 ov.addEventListener('click', ev => {
