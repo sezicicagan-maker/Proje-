@@ -15,8 +15,8 @@
 - **ÜRET** düğmesi altınla anında canlı üretir. Otomatik üretim de var.
 - Dalga 2, 4, 6, 8 başlangıcında 3 mutasyondan 1'i seçilir.
 - 10. dalgada boss gelir. Koşu sonunda DNA kazanılır ve Laboratuvar'da kalıcı yükseltmeye harcanır.
-- **3 Çağ:** İlkel Deniz, Sisli Orman, Buzul Çağı. Bir çağın boss'unu devirince sonraki açılır. Çağlar daha çok can, daha çok DNA verir. Tamamlanan her çağ kalıcı +%10 hasar sağlar.
-- **Tür Kataloğu:** 3 çağ × 3 element × 8 sayı = 72 tür. Bir türü ilk kez bulunca sayısı × 3 DNA kazanılır.
+- **6 Çağ:** İlkel Deniz, Sisli Orman, Buzul Çağı, Çöl Kumulları, Siber Şehir, Yıldız Boşluğu. Her çağın kendi arka planı, hücre dokusu, düşman süsü, ortam efekti ve müzik ölçüsü var. Bir çağın boss'unu devirince sonraki açılır. Çağlar daha çok can, daha çok DNA verir. Tamamlanan her çağ kalıcı +%10 hasar sağlar.
+- **Tür Kataloğu:** 6 çağ × 3 element × 8 sayı = 144 tür. Bir türü ilk kez bulunca sayısı × 3 DNA kazanılır.
 - **Ses:** Dosyasız (WebAudio) efektler. Sağ alttaki SES ile veya Ayarlar'dan kapatılır.
 - **5 dil:** Türkçe, English, Deutsch, Español, Português. Cihaz diline göre seçilir, Ayarlar'dan değişir. Bilinmeyen dilde İngilizce.
 - **Duraklatma** (sağ üst), ilk açılışta 3 adımlık **eğitim**, titreşim ayarı, ilerlemeyi silme (onaylı).
@@ -29,6 +29,9 @@
 - **Hücre görünümü:** Tahta karoları petri kuyucuğu gibi detaylı (metalik çerçeve, çukur derinlik, organeller, çağa özel doku: balon, yosun filizi, kristal) ve içinde süzülen parçacıklar. Dolu hücrede elemente göre ışıma.
 - **Animasyonlar:** Yaratık doğarken yumurtadan çıkar gibi büyür (dalgacık), sürüklenen yaratık hücreler arası uçar, birleşmede iki yaratık buluşup parlayarak yeni evrime geçer, düşman portalden belirir, canı azalınca kırmızı ekran vurgusu, can çubuğunda gecikmeli iz.
 - **Arayüz:** Cam görünümlü paneller, kabartmalı düğmeler (basma animasyonu), kayarak giren öğeler, seviye çubuklu laboratuvar, renk kodlu mutasyon kartları, animasyonlu eğitim.
+- **Modlar:** Menüdeki seçiciden: **Hikaye** (çağları sırayla bitir), **Sonsuz**, **Boss Akını** ve **Günlük**. Sonsuz ve Boss Akını o çağı bitirince açılır.
+- **Boss Akını:** 5 boss art arda (her biri öncekinden güçlü, aralarda mutasyon seçimi). En iyi boss sayısı ve en iyi süre kaydedilir.
+- **Günlük Meydan Okuma:** Her gün farklı kural: Sürü, Cam Top, Acele, Kıtlık, Devler, Tek Tür. Günün ilk galibiyeti bonus DNA verir.
 - **Sonsuz mod:** Bir çağı bitirince o çağda açılır. Dalgalar bitmez, her 10. dalgada boss gelir, en iyi dalga kaydedilir.
 - **22 başarım:** Toplam birleştirme/öldürme, sayı, galibiyet, kombo, katalog, çağ, tur sayısı. Her biri DNA verir, sonuç ekranında ve Başarımlar ekranında görünür.
 - **Grafik kalitesi:** Oyun yavaşlarsa kendiliğinden düşük efekt moduna geçer (Ayarlar > Grafik ile elle de seçilir).

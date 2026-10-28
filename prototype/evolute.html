@@ -117,8 +117,8 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 
 .ov h1{background:linear-gradient(100deg,#8fd0ff 0%,#ffffff 30%,#8fd0ff 50%,#ffffff 70%,#8fd0ff 100%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;animation:shine 5s linear infinite}
 @keyframes shine{to{background-position:200% 0}}
-.modes{display:flex;gap:calc(var(--u)*8);justify-content:center}
-.bestl{color:var(--muted);font-size:calc(var(--u)*12);margin-top:calc(var(--u)*-4)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*8);width:100%;max-width:calc(var(--u)*310)}
+.bestl{color:var(--muted);font-size:calc(var(--u)*12);margin-top:calc(var(--u)*-4);max-width:calc(var(--u)*300);line-height:1.35} .bestl b{color:var(--accent)}
 .ghost:disabled{opacity:.4;cursor:default}
 .trophy{font-size:calc(var(--u)*26);color:#4d6a92;line-height:1}.trophy.on{color:#ffd23f;filter:drop-shadow(0 0 calc(var(--u)*6) rgba(255,210,63,.55))}
 .goals.ach{border-color:rgba(255,210,63,.35)} .goals.ach b{color:#ffd23f}
@@ -147,7 +147,8 @@ const BASE_HP = 10, UPMAX = 20;
 const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', pt: 'Português' };
 const STR = {
   tr: {
-    modeN:'Normal',modeE:'Sonsuz',modeLock:'Sonsuz mod için bu çağı tamamla',best:'En iyi: dalga {0}',newBest:'YENİ REKOR!',achT:'Başarımlar',achMerge:'Toplam {0} birleştirme yap',achKill:'Toplam {0} düşman yen',achTier:'{0} sayısına ulaş',achWin:'{0} kez kazan',achCombo:'{0}x kombo yap',achCodex:'{0} tür keşfet',achEra:'{0}. çağı aç',achRuns:'{0} tur oyna',achNew:'Başarım açıldı!',gfx:'Grafik',gfxAuto:'Otomatik',gfxLow:'Düşük',
+    modeB:'Boss Akını',modeD:'Günlük',modeSD:'Çağları sırayla bitir. 10. dalgada boss.',modeED:'Dalgalar bitmez. En iyi dalgayı geç.',modeBD:'Art arda 5 boss ile savaş.',modeDD:'Bugünün kuralı: {0}',dailyDone:'Bugünkü ödül alındı',dailyBonus:'Günlük bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'En iyi: {0}/5 boss',bestTime:'En iyi süre: {0} sn',modeLockG:'Bu modu açmak için çağı tamamla',modSwarm:'Sürü',modSwarmD:'Daha çok ama daha zayıf düşman.',modGlass:'Cam Top',modGlassD:'Taban canı 3, ama hasarın 2,2 kat.',modRush:'Acele',modRushD:'Düşmanlar hızlı, senin üretimin de hızlı.',modPoor:'Kıtlık',modPoorD:'Altın yarı yarıya, ücretsiz üretim hızlı.',modTitan:'Devler',modTitanD:'Yalnızca yavaş ve dayanıklı tanklar.',modMono:'Tek Tür',modMonoD:'Tek element, sinerji iki kat.',
+    modeN:'Hikaye',modeE:'Sonsuz',modeLock:'Sonsuz mod için bu çağı tamamla',best:'En iyi: dalga {0}',newBest:'YENİ REKOR!',achT:'Başarımlar',achMerge:'Toplam {0} birleştirme yap',achKill:'Toplam {0} düşman yen',achTier:'{0} sayısına ulaş',achWin:'{0} kez kazan',achCombo:'{0}x kombo yap',achCodex:'{0} tür keşfet',achEra:'{0}. çağı aç',achRuns:'{0} tur oyna',achNew:'Başarım açıldı!',gfx:'Grafik',gfxAuto:'Otomatik',gfxLow:'Düşük',
     music:'Müzik',goalsT:'Hedefler',goalTier:'{0} sayısına ulaş',goalKills:'{0} düşman yen',goalCombo:'{0}x kombo yap',goalMerges:'{0} kez birleştir',goalDone:'Hedef tamam! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'YENİ TÜR',bossAdds:'TAKVİYE GELİYOR!',nextUp:'Sonraki yükseltme',upReady:'Yükseltme hazır!',
     tagline: 'Birleştir. Evrimleştir.', how: 'Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır.',
     play: 'Başla', again: 'Tekrar Oyna', next: 'Bir Tur Daha', codex: 'Katalog', settings: 'Ayarlar', lab: 'Laboratuvar', era: 'Çağ',
@@ -172,10 +173,11 @@ const STR = {
     collect: 'Topla', tut1: 'Aynı renk ve sayıdaki iki canlıyı sürükleyip birleştir. Sayı büyüdükçe güçlenir.',
     tut2: 'Canlılar kendi sütunlarındaki düşmana saldırır. Güçlü canlıyı tehdidin geldiği sütuna taşı.',
     tut3: 'Altınla ÜRET\'e basarak yeni canlı çağır. Aynı elementten komşular sinerji verir.', nextBtn: 'İleri', startBtn: 'Oyna',
-    elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı'],
+    elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı', 'Çöl Kumulları', 'Siber Şehir', 'Yıldız Boşluğu'],
   },
   en: {
-    modeN:'Normal',modeE:'Endless',modeLock:'Clear this era to unlock Endless',best:'Best: wave {0}',newBest:'NEW BEST!',achT:'Achievements',achMerge:'Merge {0} times in total',achKill:'Defeat {0} enemies in total',achTier:'Reach number {0}',achWin:'Win {0} time(s)',achCombo:'Reach a x{0} combo',achCodex:'Discover {0} species',achEra:'Unlock era {0}',achRuns:'Play {0} runs',achNew:'Achievement unlocked!',gfx:'Graphics',gfxAuto:'Auto',gfxLow:'Low',
+    modeB:'Boss Rush',modeD:'Daily',modeSD:'Clear the eras in order. Boss at wave 10.',modeED:'Waves never end. Beat your best wave.',modeBD:'Face 5 bosses back to back.',modeDD:'Today\'s rule: {0}',dailyDone:'Today\'s reward claimed',dailyBonus:'Daily bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Best: {0}/5 bosses',bestTime:'Best time: {0} s',modeLockG:'Clear this era to unlock this mode',modSwarm:'Swarm',modSwarmD:'More, weaker enemies.',modGlass:'Glass Cannon',modGlassD:'Base HP 3, but your damage is x2.2.',modRush:'Rush Hour',modRushD:'Enemies are faster, and so are your spawns.',modPoor:'Scarcity',modPoorD:'Half the gold, faster free spawns.',modTitan:'Titans',modTitanD:'Only slow, tough tanks.',modMono:'Monoculture',modMonoD:'One element only, double synergy.',
+    modeN:'Story',modeE:'Endless',modeLock:'Clear this era to unlock Endless',best:'Best: wave {0}',newBest:'NEW BEST!',achT:'Achievements',achMerge:'Merge {0} times in total',achKill:'Defeat {0} enemies in total',achTier:'Reach number {0}',achWin:'Win {0} time(s)',achCombo:'Reach a x{0} combo',achCodex:'Discover {0} species',achEra:'Unlock era {0}',achRuns:'Play {0} runs',achNew:'Achievement unlocked!',gfx:'Graphics',gfxAuto:'Auto',gfxLow:'Low',
     music:'Music',goalsT:'Goals',goalTier:'Reach number {0}',goalKills:'Defeat {0} enemies',goalCombo:'Chain a x{0} combo',goalMerges:'Merge {0} times',goalDone:'Goal complete! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NEW SPECIES',bossAdds:'REINFORCEMENTS!',nextUp:'Next upgrade',upReady:'Upgrade ready!',
     tagline: 'Merge. Evolve.', how: 'Drag matching creatures together to merge them. Your army fires at enemies in its own lane.',
     play: 'Play', again: 'Play Again', next: 'One More Run', codex: 'Codex', settings: 'Settings', lab: 'Lab', era: 'Era',
@@ -200,10 +202,11 @@ const STR = {
     collect: 'Collect', tut1: 'Drag two creatures with the same color and number together to merge them. Higher numbers hit harder.',
     tut2: 'Creatures attack enemies in their own column. Move your strongest one to the column under threat.',
     tut3: 'Tap SPAWN to call new creatures with gold. Same-element neighbors give a synergy bonus.', nextBtn: 'Next', startBtn: 'Play',
-    elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age'],
+    elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age', 'Desert Dunes', 'Cyber City', 'Star Void'],
   },
   de: {
-    modeN:'Normal',modeE:'Endlos',modeLock:'Schließe dieses Zeitalter ab, um Endlos freizuschalten',best:'Bestwert: Welle {0}',newBest:'NEUER REKORD!',achT:'Erfolge',achMerge:'Verschmelze insgesamt {0}-mal',achKill:'Besiege insgesamt {0} Gegner',achTier:'Erreiche Zahl {0}',achWin:'Gewinne {0}-mal',achCombo:'Erreiche eine {0}x-Kombo',achCodex:'Entdecke {0} Arten',achEra:'Schalte Zeitalter {0} frei',achRuns:'Spiele {0} Runden',achNew:'Erfolg freigeschaltet!',gfx:'Grafik',gfxAuto:'Auto',gfxLow:'Niedrig',
+    modeB:'Boss-Ansturm',modeD:'Täglich',modeSD:'Schließe die Zeitalter der Reihe nach ab. Boss in Welle 10.',modeED:'Die Wellen enden nie. Übertriff deine beste Welle.',modeBD:'Stelle dich 5 Bossen hintereinander.',modeDD:'Heutige Regel: {0}',dailyDone:'Heutige Belohnung erhalten',dailyBonus:'Tagesbonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Bestwert: {0}/5 Bosse',bestTime:'Bestzeit: {0} s',modeLockG:'Schließe dieses Zeitalter ab, um den Modus freizuschalten',modSwarm:'Schwarm',modSwarmD:'Mehr, aber schwächere Gegner.',modGlass:'Glaskanone',modGlassD:'Basis-LP 3, aber 2,2-facher Schaden.',modRush:'Stoßzeit',modRushD:'Gegner sind schneller, deine Erzeugung auch.',modPoor:'Knappheit',modPoorD:'Halbes Gold, schnellere kostenlose Erzeugung.',modTitan:'Titanen',modTitanD:'Nur langsame, zähe Tanks.',modMono:'Monokultur',modMonoD:'Nur ein Element, doppelte Synergie.',
+    modeN:'Story',modeE:'Endlos',modeLock:'Schließe dieses Zeitalter ab, um Endlos freizuschalten',best:'Bestwert: Welle {0}',newBest:'NEUER REKORD!',achT:'Erfolge',achMerge:'Verschmelze insgesamt {0}-mal',achKill:'Besiege insgesamt {0} Gegner',achTier:'Erreiche Zahl {0}',achWin:'Gewinne {0}-mal',achCombo:'Erreiche eine {0}x-Kombo',achCodex:'Entdecke {0} Arten',achEra:'Schalte Zeitalter {0} frei',achRuns:'Spiele {0} Runden',achNew:'Erfolg freigeschaltet!',gfx:'Grafik',gfxAuto:'Auto',gfxLow:'Niedrig',
     music:'Musik',goalsT:'Ziele',goalTier:'Erreiche Zahl {0}',goalKills:'Besiege {0} Gegner',goalCombo:'Schaffe eine {0}x-Kombo',goalMerges:'Verschmelze {0}-mal',goalDone:'Ziel erreicht! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'NEUE ART',bossAdds:'VERSTÄRKUNG!',nextUp:'Nächstes Upgrade',upReady:'Upgrade bereit!',
     tagline: 'Verschmelzen. Entwickeln.', how: 'Ziehe gleiche Wesen zusammen, um sie zu verschmelzen. Deine Armee schießt auf Gegner in der eigenen Spur.',
     play: 'Spielen', again: 'Nochmal', next: 'Noch eine Runde', codex: 'Kodex', settings: 'Einstellungen', lab: 'Labor', era: 'Zeitalter',
@@ -228,10 +231,11 @@ const STR = {
     collect: 'Einsammeln', tut1: 'Ziehe zwei Wesen mit gleicher Farbe und Zahl zusammen. Höhere Zahlen treffen härter.',
     tut2: 'Wesen greifen Gegner in ihrer Spalte an. Bringe dein stärkstes in die bedrohte Spalte.',
     tut3: 'Tippe auf RUFEN, um mit Gold neue Wesen zu rufen. Nachbarn gleicher Elemente geben Synergie.', nextBtn: 'Weiter', startBtn: 'Spielen',
-    elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit'],
+    elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit', 'Wüstendünen', 'Cyberstadt', 'Sternenleere'],
   },
   es: {
-    modeN:'Normal',modeE:'Infinito',modeLock:'Completa esta era para desbloquear Infinito',best:'Mejor: oleada {0}',newBest:'¡NUEVO RÉCORD!',achT:'Logros',achMerge:'Fusiona {0} veces en total',achKill:'Derrota a {0} enemigos en total',achTier:'Llega al número {0}',achWin:'Gana {0} vez/veces',achCombo:'Logra un combo x{0}',achCodex:'Descubre {0} especies',achEra:'Desbloquea la era {0}',achRuns:'Juega {0} partidas',achNew:'¡Logro desbloqueado!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Bajo',
+    modeB:'Asalto de jefes',modeD:'Diario',modeSD:'Completa las eras en orden. Jefe en la oleada 10.',modeED:'Las oleadas no terminan. Supera tu mejor oleada.',modeBD:'Enfréntate a 5 jefes seguidos.',modeDD:'Regla de hoy: {0}',dailyDone:'Premio de hoy reclamado',dailyBonus:'Bono diario +{0} ADN',bossLbl:'JEFE {0}/5',bestBoss:'Mejor: {0}/5 jefes',bestTime:'Mejor tiempo: {0} s',modeLockG:'Completa esta era para desbloquear este modo',modSwarm:'Enjambre',modSwarmD:'Más enemigos, pero más débiles.',modGlass:'Cañón de cristal',modGlassD:'Vida de la base 3, pero tu daño x2,2.',modRush:'Hora punta',modRushD:'Los enemigos son más rápidos, y tu generación también.',modPoor:'Escasez',modPoorD:'Mitad de oro, generación gratis más rápida.',modTitan:'Titanes',modTitanD:'Solo tanques lentos y duros.',modMono:'Monocultivo',modMonoD:'Un solo elemento, sinergia doble.',
+    modeN:'Historia',modeE:'Infinito',modeLock:'Completa esta era para desbloquear Infinito',best:'Mejor: oleada {0}',newBest:'¡NUEVO RÉCORD!',achT:'Logros',achMerge:'Fusiona {0} veces en total',achKill:'Derrota a {0} enemigos en total',achTier:'Llega al número {0}',achWin:'Gana {0} vez/veces',achCombo:'Logra un combo x{0}',achCodex:'Descubre {0} especies',achEra:'Desbloquea la era {0}',achRuns:'Juega {0} partidas',achNew:'¡Logro desbloqueado!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Bajo',
     music:'Música',goalsT:'Objetivos',goalTier:'Llega al número {0}',goalKills:'Derrota a {0} enemigos',goalCombo:'Logra un combo x{0}',goalMerges:'Fusiona {0} veces',goalDone:'¡Objetivo cumplido! +{0} ADN',combo:'COMBO x{0}',newSpecies:'NUEVA ESPECIE',bossAdds:'¡REFUERZOS!',nextUp:'Próxima mejora',upReady:'¡Mejora lista!',
     tagline: 'Fusiona. Evoluciona.', how: 'Arrastra criaturas iguales para fusionarlas. Tu ejército dispara a los enemigos de su propio carril.',
     play: 'Jugar', again: 'Jugar otra vez', next: 'Una partida más', codex: 'Códice', settings: 'Ajustes', lab: 'Laboratorio', era: 'Era',
@@ -256,10 +260,11 @@ const STR = {
     collect: 'Recoger', tut1: 'Arrastra dos criaturas del mismo color y número para fusionarlas. Más número, más daño.',
     tut2: 'Las criaturas atacan a los enemigos de su columna. Lleva la más fuerte a la columna amenazada.',
     tut3: 'Pulsa CREAR para invocar criaturas con oro. Los vecinos del mismo elemento dan sinergia.', nextBtn: 'Siguiente', startBtn: 'Jugar',
-    elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo'],
+    elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo', 'Dunas del desierto', 'Ciudad cibernética', 'Vacío estelar'],
   },
   pt: {
-    modeN:'Normal',modeE:'Infinito',modeLock:'Conclua esta era para liberar o Infinito',best:'Melhor: onda {0}',newBest:'NOVO RECORDE!',achT:'Conquistas',achMerge:'Funda {0} vezes no total',achKill:'Derrote {0} inimigos no total',achTier:'Chegue ao número {0}',achWin:'Vença {0} vez(es)',achCombo:'Faça um combo x{0}',achCodex:'Descubra {0} espécies',achEra:'Libere a era {0}',achRuns:'Jogue {0} partidas',achNew:'Conquista desbloqueada!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Baixo',
+    modeB:'Ataque de chefes',modeD:'Diário',modeSD:'Conclua as eras em ordem. Chefe na onda 10.',modeED:'As ondas nunca terminam. Supere sua melhor onda.',modeBD:'Enfrente 5 chefes seguidos.',modeDD:'Regra de hoje: {0}',dailyDone:'Prêmio de hoje resgatado',dailyBonus:'Bônus diário +{0} DNA',bossLbl:'CHEFE {0}/5',bestBoss:'Melhor: {0}/5 chefes',bestTime:'Melhor tempo: {0} s',modeLockG:'Conclua esta era para liberar este modo',modSwarm:'Enxame',modSwarmD:'Mais inimigos, porém mais fracos.',modGlass:'Canhão de vidro',modGlassD:'Vida da base 3, mas seu dano x2,2.',modRush:'Hora do rush',modRushD:'Inimigos mais rápidos, e sua geração também.',modPoor:'Escassez',modPoorD:'Metade do ouro, geração grátis mais rápida.',modTitan:'Titãs',modTitanD:'Apenas tanques lentos e resistentes.',modMono:'Monocultura',modMonoD:'Um só elemento, sinergia dupla.',
+    modeN:'História',modeE:'Infinito',modeLock:'Conclua esta era para liberar o Infinito',best:'Melhor: onda {0}',newBest:'NOVO RECORDE!',achT:'Conquistas',achMerge:'Funda {0} vezes no total',achKill:'Derrote {0} inimigos no total',achTier:'Chegue ao número {0}',achWin:'Vença {0} vez(es)',achCombo:'Faça um combo x{0}',achCodex:'Descubra {0} espécies',achEra:'Libere a era {0}',achRuns:'Jogue {0} partidas',achNew:'Conquista desbloqueada!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Baixo',
     music:'Música',goalsT:'Metas',goalTier:'Chegue ao número {0}',goalKills:'Derrote {0} inimigos',goalCombo:'Faça um combo x{0}',goalMerges:'Funda {0} vezes',goalDone:'Meta cumprida! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NOVA ESPÉCIE',bossAdds:'REFORÇOS!',nextUp:'Próximo upgrade',upReady:'Upgrade pronto!',
     tagline: 'Funda. Evolua.', how: 'Arraste criaturas iguais para fundi-las. Seu exército atira nos inimigos da própria pista.',
     play: 'Jogar', again: 'Jogar de novo', next: 'Mais uma partida', codex: 'Códice', settings: 'Configurações', lab: 'Laboratório', era: 'Era',
@@ -284,26 +289,41 @@ const STR = {
     collect: 'Coletar', tut1: 'Arraste duas criaturas de mesma cor e número para fundi-las. Número maior, mais dano.',
     tut2: 'As criaturas atacam os inimigos da própria coluna. Leve a mais forte para a coluna ameaçada.',
     tut3: 'Toque em CRIAR para chamar criaturas com ouro. Vizinhos do mesmo elemento dão sinergia.', nextBtn: 'Avançar', startBtn: 'Jogar',
-    elWater: 'Água', elPoison: 'Veneno', elVolt: 'Raio', eraNames: ['Mar primordial', 'Floresta nebulosa', 'Era do gelo'],
+    elWater: 'Água', elPoison: 'Veneno', elVolt: 'Raio', eraNames: ['Mar primordial', 'Floresta nebulosa', 'Era do gelo', 'Dunas do deserto', 'Cidade cibernética', 'Vazio estelar'],
   },
 };
 /* Tür adları: dil -> çağ -> element (virgülle ayrılmış 8 sayı seviyesi). */
 const SPECIES_RAW = {
   tr: ['Plankton,Karides,Yengeç,Mürekkep Balığı,Ahtapot,Orka,Kraken,Leviathan;Alg,Denizanası,Deniz Kestanesi,Zehirli Balık,Taş Balığı,Halkalı Ahtapot,Zehir Ejderi,Abis Yılanı;Parıltı,Fener Balığı,Torpido,Elektrik Yılanı,Işık Yengeci,Fırtına Vatozu,Şimşek Köpekbalığı,Tesla Leviathan',
        'Tohum,Filiz,Yosun,Eğrelti,Çalı,Meşe,Ağaç Ruhu,Ana Orman;Spor,Küf,Mantar,Zehirli Mantar,Sarmaşık,Etobur Bitki,Mantar Kral,Çürük Ana;Ateş Böceği,Kıvılcım Kelebeği,Uğur Böceği,Yıldırım Böceği,Mor Güve,Boynuzlu Böcek,Gök Kartalı,Şimşek Ejderi',
-       'Kar Tanesi,Buz Parçası,Kutup Tilkisi,Penguen,Fok,Mamut,Buz Devi,Donmuş Titan;Kristal Tozu,Don Çiçeği,Sarkıt,Soğuk Örümcek,Buz Yılanı,Kristal Akrep,Don Ejderi,Ebedi Kış;Kıvılcım,Kar Fırtınası,Şimşek Bulutu,Aurora,Fırtına Kuşu,Yıldırım Kurdu,Kutup Işığı Ejderi,Fırtına Tanrısı'],
+       'Kar Tanesi,Buz Parçası,Kutup Tilkisi,Penguen,Fok,Mamut,Buz Devi,Donmuş Titan;Kristal Tozu,Don Çiçeği,Sarkıt,Soğuk Örümcek,Buz Yılanı,Kristal Akrep,Don Ejderi,Ebedi Kış;Kıvılcım,Kar Fırtınası,Şimşek Bulutu,Aurora,Fırtına Kuşu,Yıldırım Kurdu,Kutup Işığı Ejderi,Fırtına Tanrısı',
+       'Çiy Damlası,Vaha Kurbağası,Gecko,Fennek Tilkisi,Deve,Kum Yılanı,Sfenks,Çöl Titanı;Diken Tohumu,Kaktüs Filizi,Kum Engereği,Akrep,Kobra,Kaktüs Devi,Zehirli Firavun,Kum Hidrası;Güneş Kıvılcımı,Güneş Böceği,Seraplı Peri,Güneş Şahini,Altın Scarab,Solar Kobra,Güneş Firavunu,Ra Titanı',
+       'Bit,Piksel,Nano Dron,Siber Balık,Devre Yengeci,Süzülen Bot,Mekanik Kraken,Veri Leviathan;Aksaklık,Solucan,Spam Böceği,Virüs,Truva Atı,Zararlı Canavar,Rootkit Ejderi,Kara Duvar;Kıvılcım Çipi,Kondansatör,Tesla Bobini,Plazma Küresi,Lazer Dronu,Ark Mekanı,Fırtına Çekirdeği,Yapay Zekâ Efendisi',
+       'Yıldız Tozu,Kuyruklu Yıldız,Ay Kayası,Asteroit,Uzay Balinası,Boşluk Vatozu,Nebula Titanı,Kozmik Leviathan;Spor Bulutu,Uzaylı Larva,Gaz Denizanası,Ksenomorf Sürüngen,Boşluk Örümceği,Biyo Hidra,Kovan Kraliçesi,Yutan;Foton,Güneş Patlaması,Pulsar,Kuasar,Plazma Kuşu,Süpernova Ejderi,Yıldız Titanı,Galaksi Kalbi'],
   en: ['Plankton,Shrimp,Crab,Squid,Octopus,Orca,Kraken,Leviathan;Algae,Jellyfish,Sea Urchin,Pufferfish,Stonefish,Blue-Ringed Octopus,Venom Drake,Abyss Serpent;Glimmer,Anglerfish,Torpedo Ray,Electric Eel,Light Crab,Storm Ray,Lightning Shark,Tesla Leviathan',
        'Seed,Sprout,Moss,Fern,Bush,Oak,Tree Spirit,Mother Forest;Spore,Mold,Mushroom,Toadstool,Creeper,Pitcher Plant,Mushroom King,Rot Mother;Firefly,Spark Moth,Ladybug,Thunder Beetle,Violet Moth,Horned Beetle,Sky Eagle,Lightning Drake',
-       'Snowflake,Ice Shard,Arctic Fox,Penguin,Seal,Mammoth,Ice Giant,Frozen Titan;Crystal Dust,Frost Bloom,Icicle,Cold Spider,Ice Serpent,Crystal Scorpion,Frost Drake,Eternal Winter;Spark,Blizzard,Thunder Cloud,Aurora,Storm Bird,Lightning Wolf,Aurora Drake,Storm God'],
+       'Snowflake,Ice Shard,Arctic Fox,Penguin,Seal,Mammoth,Ice Giant,Frozen Titan;Crystal Dust,Frost Bloom,Icicle,Cold Spider,Ice Serpent,Crystal Scorpion,Frost Drake,Eternal Winter;Spark,Blizzard,Thunder Cloud,Aurora,Storm Bird,Lightning Wolf,Aurora Drake,Storm God',
+       'Dew Drop,Oasis Frog,Gecko,Fennec Fox,Camel,Sand Serpent,Sphinx,Desert Titan;Thorn Seed,Cactus Sprout,Sand Viper,Scorpion,Cobra,Cactus Brute,Venom Pharaoh,Dune Hydra;Sunspark,Sun Beetle,Mirage Sprite,Sun Hawk,Golden Scarab,Solar Cobra,Sun Pharaoh,Ra Titan',
+       'Bit,Pixel,Nano Drone,Cyber Fish,Circuit Crab,Hover Bot,Mech Kraken,Data Leviathan;Glitch,Worm,Spam Bug,Virus,Trojan,Malware Beast,Rootkit Drake,Black ICE;Spark Chip,Capacitor,Tesla Coil,Plasma Orb,Laser Drone,Arc Mech,Storm Core,AI Overlord',
+       'Stardust,Comet,Moon Rock,Asteroid,Space Whale,Void Manta,Nebula Titan,Cosmic Leviathan;Spore Cloud,Alien Larva,Gas Jelly,Xeno Crawler,Void Spider,Bio Hydra,Hive Queen,The Devourer;Photon,Solar Flare,Pulsar,Quasar,Plasma Bird,Supernova Drake,Star Titan,Galaxy Heart'],
   de: ['Plankton,Garnele,Krabbe,Tintenfisch,Oktopus,Orca,Kraken,Leviathan;Alge,Qualle,Seeigel,Kugelfisch,Steinfisch,Blauringkrake,Giftdrache,Abgrundschlange;Schimmer,Anglerfisch,Zitterrochen,Zitteraal,Lichtkrabbe,Sturmrochen,Blitzhai,Tesla-Leviathan',
        'Samen,Spross,Moos,Farn,Busch,Eiche,Baumgeist,Urwaldmutter;Spore,Schimmel,Pilz,Fliegenpilz,Kriechranke,Kannenpflanze,Pilzkönig,Fäulnismutter;Glühwürmchen,Funkenfalter,Marienkäfer,Donnerkäfer,Violetter Falter,Hirschkäfer,Himmelsadler,Blitzdrache',
-       'Schneeflocke,Eisscherbe,Polarfuchs,Pinguin,Robbe,Mammut,Eisriese,Gefrorener Titan;Kristallstaub,Frostblume,Eiszapfen,Kältespinne,Eisschlange,Kristallskorpion,Frostdrache,Ewiger Winter;Funke,Schneesturm,Gewitterwolke,Polarlicht,Sturmvogel,Blitzwolf,Polarlichtdrache,Sturmgott'],
+       'Schneeflocke,Eisscherbe,Polarfuchs,Pinguin,Robbe,Mammut,Eisriese,Gefrorener Titan;Kristallstaub,Frostblume,Eiszapfen,Kältespinne,Eisschlange,Kristallskorpion,Frostdrache,Ewiger Winter;Funke,Schneesturm,Gewitterwolke,Polarlicht,Sturmvogel,Blitzwolf,Polarlichtdrache,Sturmgott',
+       'Tautropfen,Oasenfrosch,Gecko,Wüstenfuchs,Kamel,Sandschlange,Sphinx,Wüstentitan;Dornensamen,Kaktussprössling,Sandviper,Skorpion,Kobra,Kaktusbrocken,Giftpharao,Dünenhydra;Sonnenfunke,Sonnenkäfer,Fata-Morgana-Geist,Sonnenfalke,Goldskarabäus,Solarkobra,Sonnenpharao,Ra-Titan',
+       'Bit,Pixel,Nanodrohne,Cyberfisch,Platinenkrabbe,Schwebe-Bot,Mech-Kraken,Daten-Leviathan;Glitch,Wurm,Spam-Käfer,Virus,Trojaner,Malware-Bestie,Rootkit-Drache,Schwarzes ICE;Funkenchip,Kondensator,Teslaspule,Plasmakugel,Laserdrohne,Lichtbogen-Mech,Sturmkern,KI-Overlord',
+       'Sternenstaub,Komet,Mondgestein,Asteroid,Weltraumwal,Leeremanta,Nebel-Titan,Kosmischer Leviathan;Sporenwolke,Alien-Larve,Gasqualle,Xeno-Krabbler,Leerenspinne,Bio-Hydra,Brutkönigin,Der Verschlinger;Photon,Sonneneruption,Pulsar,Quasar,Plasmavogel,Supernova-Drache,Sterntitan,Galaxienherz'],
   es: ['Plancton,Camarón,Cangrejo,Calamar,Pulpo,Orca,Kraken,Leviatán;Alga,Medusa,Erizo de mar,Pez globo,Pez piedra,Pulpo de anillos azules,Dragón venenoso,Serpiente abisal;Destello,Rape,Raya torpedo,Anguila eléctrica,Cangrejo luminoso,Raya tormenta,Tiburón rayo,Leviatán Tesla',
        'Semilla,Brote,Musgo,Helecho,Arbusto,Roble,Espíritu del árbol,Madre bosque;Espora,Moho,Hongo,Amanita,Enredadera,Planta carnívora,Rey hongo,Madre podrida;Luciérnaga,Polilla chispa,Mariquita,Escarabajo trueno,Polilla violeta,Escarabajo cornudo,Águila celeste,Dragón relámpago',
-       'Copo de nieve,Fragmento de hielo,Zorro ártico,Pingüino,Foca,Mamut,Gigante de hielo,Titán helado;Polvo de cristal,Flor de escarcha,Carámbano,Araña fría,Serpiente de hielo,Escorpión de cristal,Dragón de escarcha,Invierno eterno;Chispa,Ventisca,Nube de trueno,Aurora,Ave tormenta,Lobo relámpago,Dragón aurora,Dios tormenta'],
+       'Copo de nieve,Fragmento de hielo,Zorro ártico,Pingüino,Foca,Mamut,Gigante de hielo,Titán helado;Polvo de cristal,Flor de escarcha,Carámbano,Araña fría,Serpiente de hielo,Escorpión de cristal,Dragón de escarcha,Invierno eterno;Chispa,Ventisca,Nube de trueno,Aurora,Ave tormenta,Lobo relámpago,Dragón aurora,Dios tormenta',
+       'Gota de rocío,Rana del oasis,Gecko,Zorro del desierto,Camello,Serpiente de arena,Esfinge,Titán del desierto;Semilla espinosa,Brote de cactus,Víbora de arena,Escorpión,Cobra,Cactus bruto,Faraón venenoso,Hidra de dunas;Chispa solar,Escarabajo solar,Espíritu del espejismo,Halcón solar,Escarabajo dorado,Cobra solar,Faraón solar,Titán Ra',
+       'Bit,Píxel,Nanodron,Pez cibernético,Cangrejo de circuito,Robot flotante,Kraken mecánico,Leviatán de datos;Glitch,Gusano,Bicho spam,Virus,Troyano,Bestia malware,Dragón rootkit,Hielo negro;Chip de chispa,Condensador,Bobina Tesla,Orbe de plasma,Dron láser,Mecha de arco,Núcleo de tormenta,Señor de la IA',
+       'Polvo estelar,Cometa,Roca lunar,Asteroide,Ballena espacial,Manta del vacío,Titán de nebulosa,Leviatán cósmico;Nube de esporas,Larva alienígena,Medusa de gas,Reptante xeno,Araña del vacío,Hidra bio,Reina de la colmena,El Devorador;Fotón,Llamarada solar,Púlsar,Cuásar,Ave de plasma,Dragón supernova,Titán estelar,Corazón galáctico'],
   pt: ['Plâncton,Camarão,Caranguejo,Lula,Polvo,Orca,Kraken,Leviatã;Alga,Água-viva,Ouriço-do-mar,Baiacu,Peixe-pedra,Polvo-de-anéis-azuis,Dragão venenoso,Serpente abissal;Brilho,Peixe-pescador,Raia torpedo,Enguia elétrica,Caranguejo de luz,Raia tempestade,Tubarão relâmpago,Leviatã Tesla',
        'Semente,Broto,Musgo,Samambaia,Arbusto,Carvalho,Espírito da árvore,Mãe floresta;Esporo,Mofo,Cogumelo,Amanita,Trepadeira,Planta carnívora,Rei cogumelo,Mãe podre;Vaga-lume,Mariposa faísca,Joaninha,Besouro trovão,Mariposa violeta,Besouro chifrudo,Águia do céu,Dragão relâmpago',
-       'Floco de neve,Estilhaço de gelo,Raposa do ártico,Pinguim,Foca,Mamute,Gigante de gelo,Titã congelado;Pó de cristal,Flor de geada,Pingente de gelo,Aranha fria,Serpente de gelo,Escorpião de cristal,Dragão de geada,Inverno eterno;Faísca,Nevasca,Nuvem de trovão,Aurora,Ave tempestade,Lobo relâmpago,Dragão aurora,Deus da tempestade'],
+       'Floco de neve,Estilhaço de gelo,Raposa do ártico,Pinguim,Foca,Mamute,Gigante de gelo,Titã congelado;Pó de cristal,Flor de geada,Pingente de gelo,Aranha fria,Serpente de gelo,Escorpião de cristal,Dragão de geada,Inverno eterno;Faísca,Nevasca,Nuvem de trovão,Aurora,Ave tempestade,Lobo relâmpago,Dragão aurora,Deus da tempestade',
+       'Gota de orvalho,Rã do oásis,Lagartixa,Raposa do deserto,Camelo,Serpente de areia,Esfinge,Titã do deserto;Semente espinhosa,Broto de cacto,Víbora de areia,Escorpião,Naja,Cacto bruto,Faraó venenoso,Hidra das dunas;Faísca solar,Besouro solar,Espírito da miragem,Falcão solar,Escaravelho dourado,Naja solar,Faraó solar,Titã Rá',
+       'Bit,Pixel,Nanodrone,Peixe ciber,Caranguejo de circuito,Robô flutuante,Kraken mecânico,Leviatã de dados;Glitch,Verme,Inseto spam,Vírus,Trojan,Fera malware,Dragão rootkit,Gelo negro;Chip de faísca,Capacitor,Bobina Tesla,Orbe de plasma,Drone laser,Mecha de arco,Núcleo de tempestade,Senhor da IA',
+       'Poeira estelar,Cometa,Rocha lunar,Asteroide,Baleia espacial,Manta do vazio,Titã da nebulosa,Leviatã cósmico;Nuvem de esporos,Larva alienígena,Água-viva de gás,Rastejante xeno,Aranha do vazio,Hidra bio,Rainha da colmeia,O Devorador;Fóton,Erupção solar,Pulsar,Quasar,Ave de plasma,Dragão supernova,Titã estelar,Coração galáctico'],
 };
 const SPECIES = {};
 for (const l in SPECIES_RAW) SPECIES[l] = SPECIES_RAW[l].map(era => era.split(';').map(el => el.split(',')));
@@ -339,21 +359,25 @@ const ERAS = [
   { bg: ['#12294a', '#0c1a2e'], en: ['#d9475c', '#8e2438'], boss: ['#a02a6b', '#5a1040'], hpBase: 16, hpGrow: 1.36, dnaMul: 1, tile: ['#1d3a62', '#112642'], mote: '#9fe3ff' },
   { bg: ['#12331f', '#0b2014'], en: ['#c9702f', '#7a3d12'], boss: ['#7a2e1a', '#3d140a'], hpBase: 24, hpGrow: 1.38, dnaMul: 1.6, tile: ['#21432f', '#12281b'], mote: '#d6ff9a' },
   { bg: ['#23405e', '#16283d'], en: ['#8e6bd9', '#4a3590'], boss: ['#4b5bd6', '#222a7a'], hpBase: 36, hpGrow: 1.4, dnaMul: 2.4, tile: ['#2d5073', '#1b3350'], mote: '#e8f6ff' },
+  { bg: ['#5b3b2a', '#2e1c14'], en: ['#b9553a', '#6e2a18'], boss: ['#d9a521', '#7a5200'], hpBase: 46, hpGrow: 1.40, dnaMul: 3.4, tile: ['#5a4129', '#352414'], mote: '#ffd9a0' },
+  { bg: ['#1a1038', '#0a0720'], en: ['#26c7a8', '#0e6b5a'], boss: ['#ff3b8a', '#7a0f44'], hpBase: 52, hpGrow: 1.41, dnaMul: 4.6, tile: ['#2a1f5a', '#150f35'], mote: '#ff7ae8' },
+  { bg: ['#0e1030', '#04050f'], en: ['#58d68d', '#1d6b3e'], boss: ['#e8e8ff', '#5a5aa0'], hpBase: 66, hpGrow: 1.42, dnaMul: 6.2, tile: ['#242a5e', '#10143a'], mote: '#c5d4ff' },
 ];
 const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
 const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0], stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
+let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0, 0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0, 0, 0, 0], bossBest: [0, 0, 0, 0, 0, 0], bossTime: [0, 0, 0, 0, 0, 0], dailyDone: '', stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
 try {
   const s = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0 }, s.up || {}); }
 } catch (e) {}
+['clears', 'best', 'bossBest', 'bossTime'].forEach(k => { while (save[k].length < ERAS.length) save[k].push(0); });
 if (!save.lang || !LANGS[save.lang]) save.lang = detectLang();
 LANG = save.lang; try { document.documentElement.lang = LANG; } catch (e) {}
 if (!save.idleT) save.idleT = Date.now();
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
-const APP_VER = '1.3.0';
+const APP_VER = '1.4.0';
 const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -388,7 +412,7 @@ function sfx(k, n) {
 function toggleMute() { save.muted = !save.muted; persist(); }
 /* Çok kısık, üretken fon müziği: çağa göre pentatonik ölçü. Ayarlardan kapatılır. */
 let musicTimer = null, mStep = 0;
-const SCALES = [[0, 3, 5, 7, 10, 12, 15], [0, 2, 4, 7, 9, 12, 14], [0, 2, 3, 7, 8, 12, 14]], ROOTS = [110, 98, 123.47];
+const SCALES = [[0, 3, 5, 7, 10, 12, 15], [0, 2, 4, 7, 9, 12, 14], [0, 2, 3, 7, 8, 12, 14], [0, 1, 4, 5, 7, 8, 12], [0, 3, 5, 6, 7, 10, 12], [0, 2, 4, 6, 7, 9, 11]], ROOTS = [110, 98, 123.47, 103.83, 130.81, 87.31];
 function musicTick() {
   if (!AC || save.muted || save.music === false || document.hidden) return;
   const era = G ? G.era : save.era, sc = SCALES[era], f = n => ROOTS[era] * Math.pow(2, n / 12);
@@ -431,34 +455,48 @@ function checkGoals() {
   }
 }
 
+const DAILY_MODS = ['swarm', 'glass', 'rush', 'poor', 'titan', 'mono'];
+const dayNo = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5);
+const dailyMod = () => DAILY_MODS[dayNo() % DAILY_MODS.length];
+const monoEl = () => dayNo() % 3;
+const cap = x => x[0].toUpperCase() + x.slice(1);
+function resolveKind() {
+  let k = save.mode; const cl = (save.clears[save.era] || 0) > 0;
+  if ((k === 'endless' || k === 'boss') && !cl) k = 'normal';
+  return k;
+}
+const BOSS_COUNT = 5, BOSS_WAVE_LEN = 14;
+
 function newGame() {
   const up = save.up;
-  const maxhp = BASE_HP + up.hp;
+  const kind = resolveKind(), dm = kind === 'daily' ? dailyMod() : null;
+  const maxhp = dm === 'glass' ? 3 : BASE_HP + up.hp;
   G = {
     mode: 'play', t: 0, waveStarted: 0, hp: maxhp, maxhp, gold: 30, bought: 0,
     board: new Array(ROWS * COLS).fill(null),
     enemies: [], proj: [], fx: [], texts: [], queue: [], muts: {},
     spawnT: 1.8, kills: 0, merges: 0, maxTier: 1, firstMerge: null,
-    endless: save.mode === 'endless' && (save.clears[save.era] || 0) > 0, newAch: [], anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
+    kind, endless: kind === 'endless', bossRush: kind === 'boss', daily: kind === 'daily', mod: dm, bossKills: 0, newAch: [], anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
   };
   // İlk birleştirmeyi ilk saniyelerde yaptırmak için iki hazır çift.
-  G.board[idx(4, 0)] = mkUnit(0, 1); G.board[idx(4, 1)] = mkUnit(0, 1);
-  G.board[idx(4, 3)] = mkUnit(2, 1); G.board[idx(4, 4)] = mkUnit(2, 1);
+  const e0 = dm === 'mono' ? monoEl() : 0, e2 = dm === 'mono' ? monoEl() : 2;
+  G.board[idx(4, 0)] = mkUnit(e0, 1); G.board[idx(4, 1)] = mkUnit(e0, 1);
+  G.board[idx(4, 3)] = mkUnit(e2, 1); G.board[idx(4, 4)] = mkUnit(e2, 1);
   [idx(4, 0), idx(4, 1), idx(4, 3), idx(4, 4)].forEach((k, j) => { G.board[k].born = T + 0.12 * j; });
-  discover(0, 1); discover(2, 1);
+  discover(e0, 1); discover(e2, 1);
   hideOv();
 }
 
 const spawnCost = () => 10 + Math.floor(G.bought * 1.5);
-const autoInterval = () => 3.0 * Math.pow(0.8, mutLv('fast')) * (1 - 0.05 * save.up.spawn);
-const synBonus = () => 0.15 + 0.12 * mutLv('syn');
+const autoInterval = () => 3.0 * Math.pow(0.8, mutLv('fast')) * (1 - 0.05 * save.up.spawn) * (G.mod === 'rush' ? 0.65 : G.mod === 'poor' ? 0.6 : 1);
+const synBonus = () => (0.15 + 0.12 * mutLv('syn')) * (G && G.mod === 'mono' ? 2 : 1);
 
 function spawnUnit() {
   const empty = [];
   for (let i = 0; i < G.board.length; i++) if (!G.board[i]) empty.push(i);
   if (!empty.length) return false;
   const i = empty[Math.floor(Math.random() * empty.length)];
-  const u = mkUnit(Math.floor(Math.random() * 3), 1);
+  const u = mkUnit(G.mod === 'mono' ? monoEl() : Math.floor(Math.random() * 3), 1);
   G.board[i] = u; discover(u.el, 1); sfx('spawn');
   const [hx, hy] = cellXY(Math.floor(i / COLS), i % COLS);
   G.fx.push({ type: 'ripple', x: hx, y: hy, c: EL[u.el].l, s0: 14, s1: 22, life: 0.5, max: 0.5 }); burst(hx, hy, '#ffffff', 5);
@@ -538,9 +576,17 @@ function mergeFx(x, y, el, tier) {
 
 /* ---------- Dalgalar ve düşmanlar ---------- */
 const waveHp = w => { const E = ERAS[G.era]; return Math.round(E.hpBase * Math.pow(E.hpGrow, w - 1)); };
+function startBossWave(w) {
+  const lane = () => Math.floor(Math.random() * COLS);
+  G.queue.push({ t: G.t + 2.5, lane: lane(), boss: true, w, hw: 2 + 2 * w });
+  for (let i = 0; i < 3; i++) G.queue.push({ t: G.t + 4 + i * 2.5, lane: lane(), boss: false, type: 'r', w: w + 2 });
+  G.banner = { s: t('bannerBoss'), boss: true, life: 1.8, max: 1.8 };
+  if (w >= 2) offerPick();
+}
 function startWave(w) {
   G.waveReached = w;
-  const n = Math.min(34, 3 + Math.round(w * 1.3));
+  if (G.bossRush) { startBossWave(w); return; }
+  const n = Math.min(34, Math.round((3 + w * 1.3) * (G.mod === 'swarm' ? 1.6 : G.mod === 'titan' ? 0.6 : 1)));
   const span = WAVE_LEN - 2.5;
   for (let i = 0; i < n; i++) {
     const rv = Math.random(), type = w >= 4 && rv < 0.18 ? 't' : (w >= 2 && rv > 0.78 ? 'r' : 'n');
@@ -567,10 +613,13 @@ function pickMut(id) {
   hideOv();
 }
 function spawnEnemy(q) {
-  const boss = q.boss, ty = boss ? 'b' : (q.type || 'n');
-  let hp = boss ? waveHp(q.w) * 14 : waveHp(q.w), spd = boss ? 13 : Math.min(52, 20 + q.w * 1.2) + rand(-2, 2), r = boss ? 30 : 15, dmg = boss ? 6 : 1;
+  const boss = q.boss, ty = boss ? 'b' : (G.mod === 'titan' ? 't' : (q.type || 'n'));
+  let hp = boss ? waveHp(q.hw || q.w) * 14 : waveHp(q.w), spd = boss ? 13 : Math.min(52, 20 + q.w * 1.2) + rand(-2, 2), r = boss ? 30 : 15, dmg = boss ? 6 : 1;
   if (ty === 'r') { hp *= 0.55; spd *= 1.75; r = 11; }
   if (ty === 't') { hp *= 2.3; spd *= 0.62; r = 19; dmg = 2; }
+  if (G.mod === 'swarm') hp *= 0.65;
+  if (G.mod === 'titan') hp *= 1.2;
+  if (G.mod === 'rush') spd *= 1.45;
   hp = Math.round(hp);
   G.fx.push({ type: 'ring', x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, c: '#c47bff', r0: 6, r1: boss ? 44 : 26, life: 0.5, max: 0.5 });
   G.enemies.push({ lane: q.lane, x: q.lane * CELL + CELL / 2, y: FIELD_Y + 6, hp, maxhp: hp, spd, r, dmg, type: ty, boss, born: T, ph: rand(0, 6.28), kb: 0, slow: 0, tox: null, flash: 0, dead: false });
@@ -595,17 +644,21 @@ function hurt(e, d) {
     if (!e.p2 && f <= 0.33) { e.p2 = true; bossAdds(e); }
   }
   if (e.hp <= 0) {
-    e.dead = true; G.kills++; const gv = e.boss ? 40 : (e.type === 't' ? 5 : 3); G.gold += gv; G.goldPop = 1; sfx('kill');
+    e.dead = true; G.kills++; const gv0 = e.boss ? 40 : (e.type === 't' ? 5 : 3), gv = G.mod === 'poor' ? Math.max(1, Math.floor(gv0 / 2)) : gv0; G.gold += gv; G.goldPop = 1; sfx('kill');
     burst(e.x, e.y, e.boss ? '#ffb347' : '#ff7a88', e.boss ? 26 : 8);
     for (let i = 0; i < (e.boss ? 8 : 1); i++) G.fx.push({ type: 'coin', x: e.x + rand(-8, 8), y: e.y, x1: 238, y1: 22, life: 0.7 + i * 0.05, max: 0.7 + i * 0.05 });
     for (let i = 0; i < (e.boss ? 6 : 1); i++) G.fx.push({ type: 'dna', x: e.x, y: e.y, x1: W - 60, y1: FIELD_Y + 38, life: 0.85 + i * 0.06, max: 0.85 + i * 0.06 });
     checkGoals();
     G.fx.push({ type: 'pop', x: e.x, y: e.y, r: e.r, boss: e.boss, life: 0.35, max: 0.35 });
-    if (e.boss) { if (G.endless) G.gold += 60; else { G.bossKilled = true; endRun(true); } }
+    if (e.boss) {
+      if (G.endless) G.gold += 60;
+      else if (G.bossRush) { G.bossKills++; if (G.bossKills >= BOSS_COUNT) { G.bossKilled = true; endRun(true); } else G.gold += 40; }
+      else { G.bossKilled = true; endRun(true); }
+    }
   }
 }
 function fire(u, r, c, t) {
-  let dmg = BASE_DMG * Math.pow(TIERMUL, u.tier - 1) * (1 + 0.08 * save.up.atk) * eraBonus();
+  let dmg = BASE_DMG * Math.pow(TIERMUL, u.tier - 1) * (1 + 0.08 * save.up.atk) * eraBonus() * (G.mod === 'glass' ? 2.2 : 1);
   dmg *= 1 + neighbors(r, c, u.el) * synBonus();
   let crit = false;
   const cl = mutLv('crit');
@@ -650,7 +703,7 @@ function step(dt) {
   const g = G; if (!g) return;
   if (g.mode === 'play') {
     g.t += dt; g.idle += dt;
-    const wn = g.endless ? Math.floor(g.t / WAVE_LEN) + 1 : Math.min(WAVES, Math.floor(g.t / WAVE_LEN) + 1);
+    const wn = g.endless ? Math.floor(g.t / WAVE_LEN) + 1 : g.bossRush ? Math.min(BOSS_COUNT, Math.floor(g.t / BOSS_WAVE_LEN) + 1) : Math.min(WAVES, Math.floor(g.t / WAVE_LEN) + 1);
     while (g.waveStarted < wn && g.mode === 'play') startWave(++g.waveStarted);
   }
   if (g.mode === 'play' || g.mode === 'ending') {
@@ -701,20 +754,26 @@ function step(dt) {
 /* Başarımlar */
 const ACH = [];
 [['achMerge', 'merges', [50, 500, 2500]], ['achKill', 'kills', [100, 1000, 5000]], ['achTier', 'maxTier', [5, 7, 8]], ['achWin', 'wins', [1, 5, 20]],
- ['achCombo', 'maxCombo', [4, 7, 10]], ['achCodex', 'codex', [12, 36, 72]], ['achEra', 'era', [2, 3]], ['achRuns', 'runs', [10, 50]]]
+ ['achCombo', 'maxCombo', [4, 7, 10]], ['achCodex', 'codex', [20, 70, 144]], ['achEra', 'era', [2, 4, 6]], ['achRuns', 'runs', [10, 50]]]
   .forEach(([k, stat, ns]) => ns.forEach((n, i) => ACH.push({ id: stat + n, k, stat, n, r: [20, 50, 120][i] })));
 const statVal = a => a.stat === 'wins' ? save.wins : a.stat === 'runs' ? save.runs : a.stat === 'codex' ? Object.keys(save.codex).length : a.stat === 'era' ? save.unlocked + 1 : save.stats[a.stat];
 function checkAch(g) { for (const a of ACH) if (!save.ach[a.id] && statVal(a) >= a.n) { save.ach[a.id] = 1; save.dna += a.r; g.newAch.push(a); } }
 
 function finishRun() {
   const g = G;
-  const gain = Math.round((g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0)) * ERAS[g.era].dnaMul);
+  const base = g.bossRush ? g.bossKills * 30 + g.kills * 0.6 + (g.win ? 90 : 0) : g.waveReached * 8 + g.kills * 0.6 + (g.win ? 60 : 0);
+  const gain = Math.round(base * ERAS[g.era].dnaMul);
   g.gain = gain + g.goalDna;
   save.dna += gain + g.goalDna; save.runs++;
   if (g.win) {
-    save.wins++; save.clears[g.era] = (save.clears[g.era] || 0) + 1;
-    if (g.era === save.unlocked && save.unlocked < ERAS.length - 1) { save.unlocked++; g.newEra = true; }
+    save.wins++;
+    if (g.kind === 'normal') {
+      save.clears[g.era] = (save.clears[g.era] || 0) + 1;
+      if (g.era === save.unlocked && save.unlocked < ERAS.length - 1) { save.unlocked++; g.newEra = true; }
+    }
+    if (g.daily && save.dailyDone !== today()) { save.dailyDone = today(); g.dailyBonus = Math.round(60 * ERAS[g.era].dnaMul); save.dna += g.dailyBonus; g.gain += g.dailyBonus; }
   }
+  if (g.bossRush) { save.bossBest[g.era] = Math.max(save.bossBest[g.era] || 0, g.bossKills); if (g.win && (!save.bossTime[g.era] || g.t < save.bossTime[g.era])) save.bossTime[g.era] = Math.round(g.t); }
   save.bestWave = Math.max(save.bestWave, g.waveReached);
   if (g.endless) { g.newBest = g.waveReached > (save.best[g.era] || 0); save.best[g.era] = Math.max(save.best[g.era] || 0, g.waveReached); }
   const st = save.stats; st.merges += g.merges; st.kills += g.kills; st.maxTier = Math.max(st.maxTier, g.maxTier); st.maxCombo = Math.max(st.maxCombo, g.maxCombo);
@@ -905,6 +964,9 @@ function drawEnemy(e) {
   if (e.boss) { ctx.fillStyle = '#ffc247'; ctx.strokeStyle = '#8a5a00'; ctx.lineWidth = 2; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(i * 15 - 7, -r + 4); ctx.lineTo(i * 15, -r - 13); ctx.lineTo(i * 15 + 7, -r + 4); ctx.closePath(); ctx.fill(); ctx.stroke(); } }
   if (G.era === 1 && t !== 'b') { ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.ellipse(r * .5, -r * 1.0, r * .35, r * .16, -.6, 0, TAU); ctx.fill(); }
   if (G.era === 2 && t !== 'b') { ctx.fillStyle = 'rgba(200,235,255,.85)'; for (const k of [-.45, .1, .55]) { ctx.beginPath(); ctx.moveTo(k * r - 3, r * .85); ctx.lineTo(k * r, r * 1.3); ctx.lineTo(k * r + 3, r * .85); ctx.fill(); } }
+  if (G.era === 3 && t !== 'b') { ctx.fillStyle = '#e9c27a'; for (const sx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sx * r * .45, -r * .8); ctx.lineTo(sx * r * .8, -r * 1.35); ctx.lineTo(sx * r * .15, -r * .95); ctx.fill(); } }
+  if (G.era === 4 && t !== 'b') { ctx.strokeStyle = '#5fe3ff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(0, -r * 1.5); ctx.stroke(); ctx.fillStyle = Math.sin(T * 6 + e.ph) > 0 ? '#ff5ce1' : '#6b1f5e'; ctx.beginPath(); ctx.arc(0, -r * 1.55, 2.6, 0, TAU); ctx.fill(); }
+  if (G.era === 5 && t !== 'b') { ctx.fillStyle = 'rgba(190,230,255,.9)'; ctx.beginPath(); ctx.arc(0, -r * .55, r * .16, 0, TAU); ctx.fill(); ctx.fillStyle = '#10243f'; ctx.beginPath(); ctx.arc(0, -r * .55, r * .07, 0, TAU); ctx.fill(); }
   if (e.flash > 0) { ctx.globalAlpha = .75; ctx.fillStyle = '#fff'; if (t === 't') rr(-r, -r * .92, r * 2, r * 1.84, r * .5); else { ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); } ctx.fill(); ctx.globalAlpha = 1; }
   if (e.slow > 0) { ctx.strokeStyle = '#8fd3ff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(0, 0, r + 4, 0, TAU); ctx.stroke(); }
   if (e.tox) { ctx.strokeStyle = '#9be35a'; ctx.setLineDash([4, 4]); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, r + 7, T * 2, T * 2 + TAU); ctx.stroke(); ctx.setLineDash([]); }
@@ -948,10 +1010,27 @@ function bgLayer(era) {
     for (const y of [140, 250]) { const f = g.createLinearGradient(0, y - 40, 0, y + 40); f.addColorStop(0, 'rgba(200,255,220,0)'); f.addColorStop(.5, 'rgba(200,255,220,.07)'); f.addColorStop(1, 'rgba(200,255,220,0)'); g.fillStyle = f; g.fillRect(0, y - 40, W, 80); }
     g.fillStyle = 'rgba(2,12,6,.6)'; g.beginPath(); g.moveTo(0, BOARD_Y);
     for (let x = 0; x <= W; x += 14) g.lineTo(x, BASE_Y - 8 - r() * 22); g.lineTo(W, BOARD_Y); g.fill();
-  } else {
+  } else if (era === 2) {
     g.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < 40; i++) { g.globalAlpha = .2 + r() * .5; g.fillRect(r() * W, r() * 120, 1.4, 1.4); } g.globalAlpha = 1;
     for (const [y, col] of [[60, '80,255,200'], [95, '150,120,255']]) { const a = g.createLinearGradient(0, y - 40, 0, y + 50); a.addColorStop(0, `rgba(${col},0)`); a.addColorStop(.5, `rgba(${col},.16)`); a.addColorStop(1, `rgba(${col},0)`); g.fillStyle = a; g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(100, y - 50, 220, y + 50, W, y - 20); g.lineTo(W, y + 70); g.bezierCurveTo(220, y + 100, 100, y + 20, 0, y + 70); g.fill(); }
     for (const [h, a] of [[110, '.25'], [70, '.5']]) { g.fillStyle = `rgba(8,20,36,${a})`; g.beginPath(); g.moveTo(0, BOARD_Y); for (let x = 0; x <= W; x += 26) g.lineTo(x, BASE_Y - 4 - r() * h * .6 - (x % 52 ? 0 : h * .4)); g.lineTo(W, BOARD_Y); g.fill(); }
+  } else if (era === 3) {
+    const sg = g.createRadialGradient(W * .7, 70, 6, W * .7, 70, 160); sg.addColorStop(0, 'rgba(255,214,140,.6)'); sg.addColorStop(1, 'rgba(255,160,80,0)'); g.fillStyle = sg; g.fillRect(0, 0, W, BOARD_Y);
+    g.fillStyle = 'rgba(255,236,190,.92)'; g.beginPath(); g.arc(W * .7, 70, 17, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(30,12,6,.5)'; for (const [x, h] of [[70, 62], [262, 44]]) { g.beginPath(); g.moveTo(x - h * .95, BASE_Y - 92); g.lineTo(x, BASE_Y - 92 - h); g.lineTo(x + h * .95, BASE_Y - 92); g.fill(); }
+    for (const [base, amp, a] of [[BASE_Y - 100, 24, '.32'], [BASE_Y - 62, 20, '.46'], [BASE_Y - 26, 14, '.62']]) { g.fillStyle = `rgba(40,18,8,${a})`; g.beginPath(); g.moveTo(0, BOARD_Y); for (let x = 0; x <= W; x += 10) g.lineTo(x, base + Math.sin(x * .02 + base) * amp + Math.sin(x * .05) * 6); g.lineTo(W, BOARD_Y); g.fill(); }
+    g.strokeStyle = 'rgba(18,40,24,.6)'; g.lineCap = 'round'; for (const [x, h] of [[40, 54], [300, 46], [170, 38]]) { g.lineWidth = 7; g.beginPath(); g.moveTo(x, BASE_Y - 10); g.lineTo(x, BASE_Y - 10 - h); g.stroke(); g.lineWidth = 5; g.beginPath(); g.moveTo(x, BASE_Y - 24); g.lineTo(x - 11, BASE_Y - 24); g.lineTo(x - 11, BASE_Y - 38); g.moveTo(x, BASE_Y - 30); g.lineTo(x + 11, BASE_Y - 30); g.lineTo(x + 11, BASE_Y - 44); g.stroke(); }
+  } else if (era === 4) {
+    const hz = g.createLinearGradient(0, BASE_Y - 160, 0, BASE_Y); hz.addColorStop(0, 'rgba(255,60,200,0)'); hz.addColorStop(1, 'rgba(255,60,200,.22)'); g.fillStyle = hz; g.fillRect(0, BASE_Y - 160, W, 160);
+    for (let x = -6, k = 0; x < W; x += 24, k++) { const h = 50 + r() * 190; g.fillStyle = `rgba(8,6,26,${k % 2 ? .92 : .8})`; g.fillRect(x, BASE_Y - h, 22, h + 20); for (let wy = BASE_Y - h + 8; wy < BASE_Y - 6; wy += 11) for (let wx = x + 3; wx < x + 19; wx += 6) if (r() < .32) { g.fillStyle = r() < .5 ? 'rgba(95,227,255,.55)' : 'rgba(255,92,225,.5)'; g.fillRect(wx, wy, 3, 4); } }
+    g.strokeStyle = 'rgba(255,92,225,.4)'; g.lineWidth = 2; for (const y of [60, 110]) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y + 20); g.stroke(); }
+    g.strokeStyle = 'rgba(95,227,255,.3)'; g.beginPath(); g.moveTo(0, 150); g.lineTo(W, 130); g.stroke();
+  } else {
+    for (const [x, y, c] of [[80, 90, '120,80,255'], [270, 170, '60,140,255'], [190, 40, '255,90,200']]) { const n = g.createRadialGradient(x, y, 4, x, y, 130); n.addColorStop(0, `rgba(${c},.28)`); n.addColorStop(1, `rgba(${c},0)`); g.fillStyle = n; g.fillRect(0, 0, W, BOARD_Y); }
+    g.fillStyle = '#fff'; for (let i = 0; i < 130; i++) { g.globalAlpha = .15 + r() * .6; const sz = r() < .1 ? 2 : 1.2; g.fillRect(r() * W, r() * BASE_Y, sz, sz); } g.globalAlpha = 1;
+    const pl = g.createRadialGradient(W * .25 - 8, 100 - 8, 4, W * .25, 100, 38); pl.addColorStop(0, '#9ec7ff'); pl.addColorStop(1, '#1d2f6b'); g.fillStyle = pl; g.beginPath(); g.arc(W * .25, 100, 36, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(190,210,255,.5)'; g.lineWidth = 4; g.beginPath(); g.ellipse(W * .25, 100, 62, 14, -.35, 0, TAU); g.stroke();
+    g.fillStyle = 'rgba(6,8,22,.7)'; for (let i = 0; i < 7; i++) { g.beginPath(); g.ellipse(r() * W, BASE_Y - 8 - r() * 26, 10 + r() * 22, 5 + r() * 9, r(), 0, TAU); g.fill(); }
   }
   const v = g.createRadialGradient(W / 2, BOARD_Y / 2, 90, W / 2, BOARD_Y / 2, 430); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.38)'); g.fillStyle = v; g.fillRect(0, 0, W, BOARD_Y);
   g.fillStyle = 'rgba(255,255,255,.035)'; for (let i = 0; i < 500; i++) g.fillRect(r() * W, r() * BOARD_Y, 1.2, 1.2);
@@ -984,9 +1063,17 @@ function tileSprite(era) {
     g.strokeStyle = hexA('#9be35a', .22); g.lineWidth = 1.2; g.lineCap = 'round';
     for (const [x, y] of [[13, 61], [61, 61], [13, 13]]) { const d = x < 37 ? 1 : -1; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 4 * d, y - 8, x + 2 * d, y - 14); g.stroke(); }
     g.fillStyle = hexA('#7bd34a', .12); for (let i = 0; i < 6; i++) { g.beginPath(); g.arc(12 + r() * 50, 50 + r() * 14, 1.6 + r() * 2.2, 0, TAU); g.fill(); }
-  } else {
+  } else if (era === 2) {
     g.strokeStyle = hexA('#ffffff', .3); g.lineWidth = 1; g.lineCap = 'round';
     for (const [x, y, sx, sy] of [[11, 11, 1, 1], [63, 11, -1, 1], [11, 63, 1, -1], [63, 63, -1, -1]]) for (const a of [0, .6, 1.2]) { g.beginPath(); g.moveTo(x, y); g.lineTo(x + sx * Math.cos(a) * 11, y + sy * Math.sin(a) * 11); g.stroke(); }
+  } else if (era === 3) {
+    g.strokeStyle = hexA('#ffe3b0', .13); g.lineWidth = 1; for (let i = 0; i < 5; i++) { g.beginPath(); for (let x = 10; x <= 64; x += 4) { const y = 15 + i * 11 + Math.sin(x * .3 + i) * 2; x === 10 ? g.moveTo(x, y) : g.lineTo(x, y); } g.stroke(); }
+  } else if (era === 4) {
+    g.strokeStyle = hexA('#5fe3ff', .24); g.lineWidth = 1; g.lineJoin = 'round';
+    for (const pts of [[[12, 52], [24, 52], [24, 42], [40, 42]], [[62, 18], [50, 18], [50, 30], [36, 30]], [[14, 20], [22, 20], [22, 28]]]) { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.fillStyle = hexA('#ff7ae8', .45); g.beginPath(); g.arc(pts[0][0], pts[0][1], 1.8, 0, TAU); g.fill(); }
+  } else {
+    g.strokeStyle = hexA('#c5d4ff', .12); g.lineWidth = .9; for (const rad of [14, 23]) { g.beginPath(); g.arc(cx, cy, rad, 0, TAU); g.stroke(); }
+    g.fillStyle = '#ffffff'; for (let i = 0; i < 14; i++) { g.globalAlpha = .12 + r() * .35; g.fillRect(12 + r() * 50, 12 + r() * 50, 1.2, 1.2); } g.globalAlpha = 1;
   }
   g.restore();
   g.save(); g.beginPath(); g.roundRect(9, 9, 56, 56, 14); g.clip();
@@ -1009,11 +1096,21 @@ function drawAmbient(era) {
       const x = p.x + Math.sin(T * .6 + p.p) * 22, y = FIELD_Y + 30 + ((p.y + Math.cos(T * .5 + p.p) * 16 + rangeY) % (rangeY - 40)), a = .35 + .4 * Math.sin(T * 2 + p.p);
       ctx.globalCompositeOperation = 'lighter'; const gr = ctx.createRadialGradient(x, y, 0, x, y, 8); gr.addColorStop(0, `rgba(220,255,120,${Math.max(0, a)})`); gr.addColorStop(1, 'rgba(220,255,120,0)');
       ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, 8, 0, TAU); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
+    } else if (era === 3) {
+      const x = (p.x + T * p.s * 1.6) % W, y = FIELD_Y + 10 + ((p.y * 1.7) % (rangeY - 20)) + Math.sin(T + p.p) * 4;
+      ctx.fillStyle = 'rgba(255,220,160,.38)'; ctx.fillRect(x, y, p.r * 1.8, 1.4);
+    } else if (era === 4) {
+      const y = FIELD_Y + ((p.y + T * p.s * 6) % rangeY);
+      ctx.strokeStyle = p.p > 3 ? 'rgba(95,227,255,.42)' : 'rgba(255,92,225,.36)'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(p.x, y); ctx.lineTo(p.x, y + 10 + p.r * 4); ctx.stroke();
+    } else if (era === 5) {
+      const a = .3 + .5 * Math.abs(Math.sin(T * (.6 + p.s / 30) + p.p));
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.beginPath(); ctx.arc(p.x, FIELD_Y + p.y, p.r * .7, 0, TAU); ctx.fill();
     } else {
       const y = FIELD_Y + ((p.y + T * p.s * .8) % rangeY), x = p.x + Math.sin(T * .7 + p.p) * 12;
       ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.beginPath(); ctx.arc(x, y, p.r, 0, TAU); ctx.fill();
     }
   }
+  if (era === 5) { const ss = (T * .22) % 1; if (ss < .18) { const u = ss / .18, x = W * .85 - u * 220, y = FIELD_Y + 30 + u * 90; ctx.strokeStyle = `rgba(255,255,255,${1 - u})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 26, y - 11); ctx.stroke(); } }
   if (era === 2) {
     ctx.globalCompositeOperation = 'lighter'; const o = Math.sin(T * .5) * 40;
     const a = ctx.createLinearGradient(0, 40, 0, 150); a.addColorStop(0, 'rgba(90,255,200,0)'); a.addColorStop(.5, 'rgba(90,255,200,.05)'); a.addColorStop(1, 'rgba(90,255,200,0)');
@@ -1175,7 +1272,7 @@ function drawHud(g) {
   const bar = ctx.createLinearGradient(0, 0, 0, FIELD_Y); bar.addColorStop(0, '#0f2038'); bar.addColorStop(1, '#091323');
   ctx.fillStyle = bar; ctx.fillRect(0, 0, W, FIELD_Y - 2);
   ctx.fillStyle = '#16294a'; rr(8, 8, 98, 28, 14); ctx.fill();
-  txt(t('wave') + ' ' + (g.endless ? '∞ ' + Math.max(1, g.waveStarted) : Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES), 57, 22.5, 13, '#e9f2ff', 'center');
+  txt(g.bossRush ? t('bossLbl', g.bossKills) : t('wave') + ' ' + (g.endless ? '∞ ' + Math.max(1, g.waveStarted) : Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES), 57, 22.5, 13, '#e9f2ff', 'center');
   heart(122, 21, 7, '#ff5d6c');
   const bx = 134, bw = 82, pct = Math.max(0, g.hp / g.maxhp);
   ctx.fillStyle = '#1c3050'; rr(bx, 14, bw, 16, 8); ctx.fill();
@@ -1190,7 +1287,7 @@ function drawHud(g) {
   coin(238, 22, 8 * gs); txt(String(g.gold), 250, 22.5, 16 * gs, '#ffd23f', 'left', 700, 2);
   ctx.fillStyle = '#16294a'; rr(326, 8, 28, 28, 9); ctx.fill();
   ctx.fillStyle = '#e9f2ff'; rr(334, 14, 4.5, 16, 2); ctx.fill(); rr(343, 14, 4.5, 16, 2); ctx.fill();
-  const prog = g.endless ? (g.t % (WAVES * WAVE_LEN)) / (WAVES * WAVE_LEN) : Math.min(1, g.t / (WAVES * WAVE_LEN));
+  const prog = g.bossRush ? g.bossKills / BOSS_COUNT : g.endless ? (g.t % (WAVES * WAVE_LEN)) / (WAVES * WAVE_LEN) : Math.min(1, g.t / (WAVES * WAVE_LEN));
   ctx.fillStyle = '#1c3050'; ctx.fillRect(0, FIELD_Y - 5, W, 3);
   ctx.fillStyle = '#ff8a3d'; ctx.fillRect(0, FIELD_Y - 5, W * prog, 3);
   ctx.fillStyle = 'rgba(255,190,120,.9)'; ctx.beginPath(); ctx.arc(W * prog, FIELD_Y - 3.5, 3.6, 0, TAU); ctx.fill();
@@ -1207,6 +1304,7 @@ function drawHud(g) {
     ctx.beginPath(); ctx.arc(gx, cy, 6, 0, TAU); ctx.fillStyle = gl.done ? '#7bd34a' : 'rgba(10,20,36,.85)'; ctx.fill(); ctx.strokeStyle = gl.done ? '#c4f08f' : '#4d6a92'; ctx.lineWidth = 1.6; ctx.stroke();
     if (gl.done) { ctx.strokeStyle = '#0e2a06'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(gx - 3, cy); ctx.lineTo(gx - 1, cy + 2.5); ctx.lineTo(gx + 3, cy - 2.5); ctx.stroke(); }
   }
+  if (g.mod) txt(t('mod' + cap(g.mod)), W / 2, FIELD_Y + 14, 11, '#9fb6d6', 'center', 700, 2.5);
   const boss = g.enemies.find(e => e.boss);
   if (boss) {
     const w = 210, x = (W - w) / 2, y = FIELD_Y + 8, p = Math.max(0, boss.hp / boss.maxhp);
@@ -1334,20 +1432,27 @@ function eraRow() {
     `<div><span class="tag">${t('era')} ${save.era + 1}/${ERAS.length}</span><b>${eraName(save.era)}</b><small>${next}</small><div class="dots">${dots}</div></div>` +
     `<button class="mini" data-era="1" aria-label="›" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>` + modesHTML();
 }
+const MODES = [['normal', 'modeN', false], ['endless', 'modeE', true], ['boss', 'modeB', true], ['daily', 'modeD', false]];
 function modesHTML() {
-  const canE = (save.clears[save.era] || 0) > 0, isE = save.mode === 'endless' && canE;
-  const note = canE ? (save.best[save.era] ? `<small class="bestl">${t('best', save.best[save.era])}</small>` : '') : `<small class="bestl">${t('modeLock')}</small>`;
-  return `<div class="modes"><button class="ghost ${!isE ? 'sel' : ''}" data-mode="normal">${t('modeN')}</button><button class="ghost ${isE ? 'sel' : ''}" data-mode="endless" ${canE ? '' : 'disabled'}>∞ ${t('modeE')}</button></div>${note}`;
+  const cl = (save.clears[save.era] || 0) > 0, cur = resolveKind();
+  const chips = MODES.map(([id, k, lock]) => `<button class="ghost ${cur === id ? 'sel' : ''}" data-mode="${id}" ${lock && !cl ? 'disabled' : ''}>${id === 'endless' ? '∞ ' : ''}${t(k)}</button>`).join('');
+  let info;
+  if (cur === 'normal') info = t('modeSD');
+  else if (cur === 'endless') info = t('modeED') + (save.best[save.era] ? ' · ' + t('best', save.best[save.era]) : '');
+  else if (cur === 'boss') info = t('modeBD') + (save.bossBest[save.era] ? ' · ' + t('bestBoss', save.bossBest[save.era]) : '') + (save.bossTime[save.era] ? ' · ' + t('bestTime', save.bossTime[save.era]) : '');
+  else { const m = dailyMod(); info = t('modeDD', '<b>' + t('mod' + cap(m)) + '</b>') + ' — ' + t('mod' + cap(m) + 'D') + (save.dailyDone === today() ? ' · ' + t('dailyDone') : ''); }
+  return `<div class="modes">${chips}</div><small class="bestl">${info}</small>${cl ? '' : `<small class="bestl">${t('modeLockG')}</small>`}`;
 }
 function showMenu() {
   screen = 'menu';
   const dr = dailyReady(), acc = idleAcc();
-  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}${bankHTML()}
+  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
+    <button class="btn" data-act="start">${t('play')}</button>
+    ${bankHTML()}
     <div class="cards2">
       <div class="mini-card"><b>${t('dailyT')}</b><small>${dr ? '+' + dailyReward(nextStreak()) + DNA_SVG + ' · ' + t('streak', nextStreak()) : t('claimed')}</small><button class="mini" data-act="daily" ${dr ? '' : 'disabled'}>${t('claim')}</button></div>
       <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
     </div>
-    <button class="btn" data-act="start">${t('play')}</button>
     <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
 }
 function showLab() {
@@ -1360,13 +1465,13 @@ function showResult() {
   const nxt = g.newEra ? `<div class="bank"><b>${t('newEra', eraName(save.unlocked))}</b></div>` : '';
   const done = g.goals.filter(x => x.done).length;
   const stars = [0, 1, 2].map(i => `<span class="star ${i < done ? 'on' : ''}" style="animation-delay:${.35 + i * .18}s">★</span>`).join('');
-  const tag = g.endless ? '∞ ' + t('modeE') : (g.win ? t('winTag') : t('loseTag'));
+  const tag = g.endless ? '∞ ' + t('modeE') : g.bossRush ? t('modeB') : g.daily ? t('modeD') + ' · ' + t('mod' + cap(g.mod)) : (g.win ? t('winTag') : t('loseTag'));
   const head = g.endless ? t('sWave') + ' ' + g.waveReached : (g.win ? t('win') : t('lose'));
-  const nb = g.newBest ? `<div class="bank"><b>${t('newBest')}</b></div>` : '';
+  const nb = (g.newBest ? `<div class="bank"><b>${t('newBest')}</b></div>` : '') + (g.dailyBonus ? `<div class="bank"><b>${t('dailyBonus', g.dailyBonus)}</b></div>` : '');
   setOv(`<span class="tag">${tag}</span><h2>${head}</h2>${nb}
     <div class="stars">${stars}</div>
     <div class="gain">+<span id="gainnum">0</span>${DNA_SVG}</div>
-    <div class="stats"><span>${t('sWave')} <b>${g.waveReached}${g.endless ? '' : '/' + WAVES}</b></span><span>${t('sTier')} <b>${g.maxTier}</b></span>
+    <div class="stats"><span>${g.bossRush ? t('bossLbl', g.bossKills) : `${t('sWave')} <b>${g.waveReached}${g.endless ? '' : '/' + WAVES}</b>`}</span><span>${t('sTier')} <b>${g.maxTier}</b></span>
     <span>${t('sMerge')} <b>${g.merges}</b></span><span>${t('sKill')} <b>${g.kills}</b></span>
     <span>${t('sFirst')} <b>${fm}</b></span><span>${t('sTime')} <b>${Math.round(g.t)} ${t('sec')}</b></span></div>
     ${nxt}<div class="bank">${g.disc ? t('gainCodex', g.disc) + ' · ' : ''}${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>
@@ -1459,7 +1564,7 @@ ov.addEventListener('click', ev => {
   if (d.act === 'resetno') { confirmReset = false; showSettings(); return; }
   if (d.act === 'resetyes') {
     const keep = save.lang; try { localStorage.removeItem(KEY); } catch (e) {}
-    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: [0, 0, 0], stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
+    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
     persist(); confirmReset = false; G = null; backTo = 'menu'; showSettings(); return;
   }
   if (d.act === 'resume') { if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); } return; }
@@ -1511,6 +1616,6 @@ LOW = save.gfx === 'low'; fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+window.__evolute = { DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 })();
 </script>

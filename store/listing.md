@@ -5,7 +5,7 @@ Sınırlar: başlık 30, kısa açıklama 80, uzun açıklama 4000 karakter. Her
 ## English (en-US) — varsayılan dil
 
 **Title:** Evolute: Merge & Evolve
-**Short description:** Merge creatures, hold every lane, beat bosses and evolve through 3 eras.
+**Short description:** Merge creatures, hold every lane, beat bosses and evolve through 6 eras.
 
 **Full description:**
 Merge. Evolve. Conquer.
@@ -16,8 +16,9 @@ Drag matching creatures together and watch them grow. Every creature fires at th
 • Lane strategy: move your strongest creature under the column that is in danger.
 • Synergy: neighbors of the same element boost each other.
 • Roguelite mutations: pick 1 of 3 each few waves. No two runs play the same.
-• 3 eras, 3 bosses: Primordial Sea, Misty Forest, Ice Age. Each is harder and pays more DNA.
-• 72 species to discover in the Codex, with bonus DNA for every new find.
+• 6 eras, 6 bosses: Primordial Sea, Misty Forest, Ice Age, Desert Dunes, Cyber City and Star Void. Each has its own world and is harder than the last.
+• 4 game modes: Story, Endless, Boss Rush (5 bosses back to back) and a Daily Challenge with a new rule every day.
+• 144 species to discover in the Codex, with bonus DNA for every new find.
 • Endless mode, 22 achievements and a 3-star rating for every run.
 • Lab upgrades, daily rewards and an incubator that collects DNA while you are away.
 • Short runs, perfect for a few minutes. Works offline.
@@ -26,7 +27,7 @@ Drag matching creatures together and watch them grow. Every creature fires at th
 ## Türkçe (tr-TR)
 
 **Başlık:** Evolute: Birleştir ve Evrimleş
-**Kısa açıklama:** Canlıları birleştir, şeritleri savun, boss'ları devir, 3 çağda evrimleş.
+**Kısa açıklama:** Canlıları birleştir, şeritleri savun, boss'ları devir, 6 çağda evrimleş.
 
 **Uzun açıklama:**
 Birleştir. Evrimleştir. Hükmet.
@@ -37,8 +38,9 @@ Aynı canlıları sürükleyip birleştir ve büyümelerini izle. Her canlı ken
 • Şerit stratejisi: en güçlü canlıyı tehlike altındaki sütuna taşı.
 • Sinerji: aynı elementten komşular birbirini güçlendirir.
 • Roguelite mutasyonlar: birkaç dalgada bir 3 mutasyondan 1'ini seç. İki oyun asla aynı geçmez.
-• 3 çağ, 3 boss: İlkel Deniz, Sisli Orman, Buzul Çağı. Her biri daha zor ve daha çok DNA verir.
-• Katalogda keşfedilecek 72 tür, her yeni tür için bonus DNA.
+• 6 çağ, 6 boss: İlkel Deniz, Sisli Orman, Buzul Çağı, Çöl Kumulları, Siber Şehir ve Yıldız Boşluğu. Her birinin kendi dünyası var ve her biri öncekinden zor.
+• 4 oyun modu: Hikaye, Sonsuz, Boss Akını (art arda 5 boss) ve her gün yeni kuralı olan Günlük Meydan Okuma.
+• Katalogda keşfedilecek 144 tür, her yeni tür için bonus DNA.
 • Sonsuz mod, 22 başarım ve her tur için 3 yıldız değerlendirmesi.
 • Laboratuvar yükseltmeleri, günlük ödül ve sen yokken DNA biriktiren kuluçka makinesi.
 • Kısa turlar, birkaç dakikalık oyun için ideal. Çevrimdışı çalışır.
@@ -46,15 +48,15 @@ Aynı canlıları sürükleyip birleştir ve büyümelerini izle. Her canlı ken
 
 ## Deutsch (de-DE)
 **Titel:** Evolute: Verschmelzen & Entwickeln
-**Kurzbeschreibung:** Wesen verschmelzen, jede Spur halten, Bosse besiegen und durch 3 Zeitalter entwickeln.
+**Kurzbeschreibung:** Wesen verschmelzen, jede Spur halten, Bosse besiegen und durch 6 Zeitalter entwickeln.
 
 ## Español (es-419 / es-ES)
 **Título:** Evolute: Fusiona y Evoluciona
-**Descripción corta:** Fusiona criaturas, defiende cada carril, vence jefes y evoluciona por 3 eras.
+**Descripción corta:** Fusiona criaturas, defiende cada carril, vence jefes y evoluciona por 6 eras.
 
 ## Português (pt-BR)
 **Título:** Evolute: Funda e Evolua
-**Descrição curta:** Funda criaturas, defenda cada pista, derrote chefes e evolua por 3 eras.
+**Descrição curta:** Funda criaturas, defenda cada pista, derrote chefes e evolua por 6 eras.
 
 (Alman, İspanyol ve Portekizce uzun açıklamayı İngilizce metnin çevirisiyle yaz, ya da yalnızca kısa açıklamayı çevirip uzun açıklamayı İngilizce bırak.)
 

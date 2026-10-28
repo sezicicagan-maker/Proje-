@@ -59,8 +59,8 @@ const bg = `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offse
     <div style="position:absolute;left:60px;top:150px;color:#e9f2ff;font-weight:700;font-size:96px;letter-spacing:8px">EVOLUTE</div>
     <div style="position:absolute;left:64px;top:270px;color:#ff8a3d;font-weight:700;font-size:42px">${title}</div>
     <div style="position:absolute;left:64px;top:330px;color:#92a9c8;font-size:28px">${sub}</div></div>`;
-  await shot(feat('Merge. Evolve.', 'Lane-based merge roguelite · 3 eras · 72 species'), 1024, 500, S('feature-1024x500-en.png'));
-  await shot(feat('Birleştir. Evrimleştir.', 'Şeritli merge roguelite · 3 çağ · 72 tür'), 1024, 500, S('feature-1024x500-tr.png'));
+  await shot(feat('Merge. Evolve.', 'Lane-based merge roguelite · 6 eras · 144 species'), 1024, 500, S('feature-1024x500-en.png'));
+  await shot(feat('Birleştir. Evrimleştir.', 'Şeritli merge roguelite · 6 çağ · 144 tür'), 1024, 500, S('feature-1024x500-tr.png'));
 
   // Oyun içi ekran görüntüleri (1080x1920), her dil için
   const cap = {
