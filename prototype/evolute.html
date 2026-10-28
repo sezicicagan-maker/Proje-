@@ -500,7 +500,7 @@ function nowT() {
   return save.maxT;
 }
 function persist() { try { nowT(); const p = JSON.stringify(save), w = JSON.stringify({ v: 2, p, h: sig(p) }); localStorage.setItem(KEY, w); localStorage.setItem(KEY_B, w); } catch (e) {} }
-const APP_VER = '1.8.1';
+const APP_VER = '1.8.2';
 const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -1001,7 +1001,7 @@ function fit() {
   const w = wrap.clientWidth, h = wrap.clientHeight;
   SC = Math.max(0.3, Math.min(w / W, h / H));
   stage.style.width = W * SC + 'px'; stage.style.height = H * SC + 'px'; stage.style.setProperty('--u', SC + 'px');
-  DPR = LOW ? 1 : Math.min(2, window.devicePixelRatio || 1);
+  DPR = Math.min(LOW ? 1.5 : 2, window.devicePixelRatio || 1);
   cv.width = Math.round(W * SC * DPR); cv.height = Math.round(H * SC * DPR);
 }
 const FONT = "'Fredoka','Trebuchet MS',system-ui,sans-serif";
@@ -1967,7 +1967,7 @@ function frame(now) {
   const raw = (now - last) / 1000 || 0, dt = Math.min(0.05, raw); last = now;
   if (G && G.mode === 'play' && !document.hidden && raw > 0 && raw < 0.5) {
     lowT += raw; lowN++;
-    if (lowN >= 150) { if (save.gfx !== 'low' && !LOW && lowT / lowN > 0.03) { LOW = true; fit(); } lowT = 0; lowN = 0; }
+    if (lowN >= 300) { if (save.gfx !== 'low' && !LOW && lowT / lowN > 0.045) { LOW = true; fit(); } lowT = 0; lowN = 0; }
   }
   try { for (let i = 0, n = save.speed === 2 ? 2 : 1; i < n; i++) step(dt); draw(now); if (++okN > 180) { errN = 0; okN = 0; } }
   catch (e) { errN++; okN = 0; try { console.error(e); } catch (_) {} if (errN >= 6) { errN = 0; G = null; drag = null; try { showCrash(); } catch (_) {} } }
