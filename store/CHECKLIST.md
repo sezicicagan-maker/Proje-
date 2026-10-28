@@ -2,6 +2,10 @@
 
 Kod, görsel ve metinler hazır. Aşağıdakiler hesap, ödeme ve kimlik gerektirdiği için sende.
 
+## 0. Güvenlik (önce bunu yap)
+- [ ] Depoyu **private** yap (GitHub > Settings > Danger Zone > Change visibility). Neden ve sınırlar: `docs/GUVENLIK.md`.
+- [ ] Oyunu yalnızca Play Store'dan dağıt.
+
 ## 1. Hesap ve ödeme
 - [ ] Google Play Console geliştirici hesabı (tek seferlik 25 $).
 - [ ] Ödeme profili ve vergi bilgileri (Türkiye'den satış/ödeme için mali müşavirle teyit et).

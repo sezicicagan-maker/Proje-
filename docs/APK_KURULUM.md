@@ -6,37 +6,36 @@
 
 ## A) GitHub'ın sunucusunda derlenmiş APK'yı indir (önerilen, kurulumsuz)
 
-### 1. Derlemeyi başlat
-Şu an derlemeyi ben başlatıyorum (sohbette "derleme başlattım" dediğimde hazırdır, 2-3 dakika sürer).
-Kendin başlatmak istersen bir kerelik ayar gerekir (aşağıdaki "Kendim başlatmak istiyorum" kısmına bak).
+### 1. APK'yı indir (en kolay yol: Releases)
+Her derleme otomatik olarak bir **Release** olarak yayınlanır. Zip açmana gerek yok, doğrudan `.apk` iner.
 
-### 2. APK'yı indir
-1. Tarayıcıda depoyu aç: `github.com/sezicicagan-maker/Proje-` (GitHub hesabınla giriş yapmış olmalısın).
-2. Üstteki **Actions** sekmesine gir.
-3. Listenin en üstündeki **Android build** çalışmasına tıkla (yeşil tik varsa hazırdır).
-4. Sayfayı en alta kaydır, **Artifacts** bölümündeki **evolute-android** dosyasına tıkla. Bir `.zip` iner.
-5. Zip'i aç. İçinde iki dosya var:
-   - `app-debug.apk`: telefona kurup denemek için
-   - `app-release.aab`: Google Play'e yüklemek için (şimdilik gerekmez)
+1. Telefonun tarayıcısında şu sayfayı aç: `github.com/sezicicagan-maker/Proje-/releases`
+2. En üstteki sürümü seç (örn. "Evolute 1.6.0 (build 7)").
+3. **Assets** altındaki `Evolute-x.y.z.apk` dosyasına dokun, iner.
+4. Aşağıdaki "Telefona kur" adımlarına geç.
 
-> Telefondan da yapabilirsin: aynı sayfayı telefonun tarayıcısında aç, zip'i indir, "Dosyalarım" uygulamasında zip'e dokunup çıkar.
-> Bilgisayardan indirdiysen APK'yı telefona USB, Drive veya WhatsApp ile at.
+> Depo özelse (private) önce tarayıcıda GitHub hesabınla giriş yapmış olmalısın.
 
-### 3. Telefona kur
-1. `app-debug.apk` dosyasına dokun.
-2. Android "güvenlik nedeniyle yüklenemiyor" derse: açılan pencerede **Ayarlar**'a dokun ve o dosyayı açan uygulama (Dosyalarım, Chrome, WhatsApp...) için **Bu kaynaktan izin ver**'i aç. Geri dönüp tekrar dokun.
+Alternatif: **Actions** sekmesi > en üstteki "Android build" çalışması (yeşil tik) > en alttaki **Artifacts** > `evolute-android` (zip, içinde `app-debug.apk` ve `app-release.aab` var).
+
+### 2. Telefona kur
+1. İndirdiğin `.apk` dosyasına dokun (bildirimden veya "Dosyalarım > İndirilenler").
+2. Android "güvenlik nedeniyle yüklenemiyor" derse: açılan pencerede **Ayarlar**'a dokun ve o dosyayı açan uygulama (Chrome, Dosyalarım...) için **Bu kaynaktan izin ver**'i aç. Geri dönüp tekrar dokun.
 3. "Play Protect bu uygulamayı taramadı" uyarısı çıkarsa **Yine de yükle**'ye dokun. Bu normal: uygulama Play Store'dan gelmiyor.
 4. **Yükle** ve **Aç**.
 
-### 4. Yeni sürümü eskisinin üstüne kurmak
-Bu projeden sonraki tüm APK'lar aynı sabit anahtarla imzalanıyor, yani yeni sürüm eskisinin **üstüne** kurulur ve ilerlemen (DNA, yükseltmeler) korunur.
-İstisna: bu rehberden önce kurduğun eski bir APK varsa Android "uygulama yüklenemedi / paket çakışıyor" der. Bir kereye mahsus eski Evolute'u kaldırıp yenisini kur (ilerleme silinir).
+### 3. Yeni sürümü eskisinin üstüne kurmak
+Tüm APK'lar aynı sabit anahtarla imzalanıyor: yeni sürüm eskisinin **üstüne** kurulur ve ilerlemen korunur.
+İstisna: bu özellikten önce kurduğun çok eski bir APK varsa Android "paket çakışıyor" der. Bir kereye mahsus eski Evolute'u kaldırıp yenisini kur.
+Not: 1.6.0 ile kayıt formatı değişti (güvenlik için imzalı kayıt). Eski sürümlerdeki ilerleme bir kere sıfırlanır.
 
-### Kendim başlatmak istiyorum
-Derleme düğmesi GitHub'da yalnızca **varsayılan dalda** görünür. Şu an kod `claude/oyun-fikri` dalında. Tek seferlik ayar:
-1. Depoda **Settings > Branches** bölümüne gir.
-2. **Default branch** yanındaki kalem/ok düğmesine bas, `claude/oyun-fikri` dalını seç ve onayla.
-3. Artık **Actions > Android build > Run workflow** düğmesi çıkar. `versionCode` kutusuna her seferinde bir öncekinden büyük sayı yaz (örn. 6, 7, 8), `versionName`'e `1.3.1` gibi bir şey yaz.
+### Kendim derletmek istiyorum
+Varsayılan dal artık `claude/oyun-fikri`, yani düğme çıkıyor:
+1. Depoda **Actions** sekmesi > soldan **Android build** > sağdaki **Run workflow**.
+2. `versionCode` kutusuna her seferinde bir öncekinden büyük sayı yaz (örn. 8, 9, 10), `versionName`'e `1.6.1` gibi bir şey yaz. **Run workflow**.
+3. 2-3 dakika sonra yeşil tik çıkar ve Releases sayfasında yeni APK belirir.
+
+---
 
 ---
 

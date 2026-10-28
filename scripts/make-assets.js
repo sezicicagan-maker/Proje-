@@ -73,6 +73,7 @@ const bg = `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offse
   const tmp = path.join(root, 'www-shot.html'); fs.writeFileSync(tmp, wrapped);
   for (const lang of ['en', 'tr']) {
     const ctx = await browser.newContext({ viewport: { width: 360, height: 640 }, deviceScaleFactor: 2.4, locale: lang === 'tr' ? 'tr-TR' : 'en-US', hasTouch: true, isMobile: true });
+    await ctx.addInitScript(() => { window.__EVO_TEST__ = true; });
     const page = await ctx.newPage();
     await page.goto('file://' + tmp, { waitUntil: 'domcontentloaded' });
     await page.evaluate(BOT); await page.waitForTimeout(400);

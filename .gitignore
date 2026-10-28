@@ -5,3 +5,5 @@ android/
 *.jks
 keystore.properties
 !app/debug.keystore
+tests/out/*
+!tests/out/.gitkeep

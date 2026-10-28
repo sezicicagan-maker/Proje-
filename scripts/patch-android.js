@@ -6,6 +6,10 @@ const android = path.join(__dirname, '..', 'android');
 
 const manifestPath = path.join(android, 'app/src/main/AndroidManifest.xml');
 let m = fs.readFileSync(manifestPath, 'utf8');
+// Güvenlik: yedekleme kapalı (adb/bulut yedeğiyle kayıt çıkarılıp değiştirilemez), düz HTTP trafiği kapalı.
+m = m.replace('android:allowBackup="true"', 'android:allowBackup="false"');
+if (!m.includes('android:usesCleartextTraffic')) m = m.replace('<application', '<application\n        android:usesCleartextTraffic="false"');
+if (!m.includes('android:allowBackup="false"')) throw new Error('allowBackup kapatılamadı');
 if (!m.includes('android:screenOrientation')) m = m.replace('<activity', '<activity\n            android:screenOrientation="portrait"');
 fs.writeFileSync(manifestPath, m);
 

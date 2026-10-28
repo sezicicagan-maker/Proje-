@@ -11,6 +11,8 @@ Mobil merge + roguelite + idle oyunu. Google Play için hazırlanıyor. Bu proje
 | `prototype/README.md` | Oynanış, denge, test sonuçları |
 | `store/` | Mağaza metinleri, ikon, öne çıkan görsel, ekran görüntüleri, **`CHECKLIST.md` (senin yapacakların)** |
 | `docs/privacy-policy.html` | Gizlilik politikası (TR + EN) |
+| `docs/GUVENLIK.md` | Hile koruması: neler yapıldı, bilinen sınırlar, para kazanırken asıl koruma |
+| `docs/REKLAM_PLANI.md` | Reklam nasıl eklenecek (türler, AdMob, kurallar, sıra) |
 | `docs/APK_KURULUM.md` | **APK nasıl indirilir ve telefona kurulur (adım adım, Türkçe)** |
 | `capacitor.config.json`, `package.json`, `scripts/`, `.github/workflows/android.yml` | Android paketleme (Capacitor 8, API 36) |
 | `assets/`, `app/fonts/` | Uygulama ikonu, açılış ekranı, gömülü yazı tipi (Fredoka, SIL OFL) |

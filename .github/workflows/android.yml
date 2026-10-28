@@ -16,6 +16,9 @@ on:
   push:
     tags: ['v*']
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -58,6 +61,19 @@ jobs:
       - name: Build
         working-directory: android
         run: ./gradlew assembleDebug bundleRelease --no-daemon
+      - name: Publish APK as a GitHub Release (direct download, no zip)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_CODE: ${{ github.event.inputs.version_code }}
+          VERSION_NAME: ${{ github.event.inputs.version_name }}
+        run: |
+          TAG="build-${VERSION_CODE}"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "Evolute-${VERSION_NAME}.apk"
+          gh release view "$TAG" >/dev/null 2>&1 && gh release delete "$TAG" --yes --cleanup-tag || true
+          gh release create "$TAG" "Evolute-${VERSION_NAME}.apk" --target "$GITHUB_SHA" --prerelease \
+            --title "Evolute ${VERSION_NAME} (build ${VERSION_CODE})" \
+            --notes "Test APK (debug-signed). Install on Android: open this page on your phone, tap the .apk, allow installs from this source. See docs/APK_KURULUM.md."
       - uses: actions/upload-artifact@v4
         with:
           name: evolute-android

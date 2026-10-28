@@ -1,0 +1,36 @@
+const path = require('path');
+const { chromium } = require('playwright');
+let fails = 0; const ok = (c, m) => { console.log((c ? 'OK   ' : 'FAIL ') + m); if (!c) fails++; };
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true, locale: 'tr-TR' });
+  const page = await ctx.newPage(); const msgs = [];
+  page.on('pageerror', e => msgs.push('pageerror: ' + e.message)); page.on('console', m => { if (['error', 'warning'].includes(m.type())) msgs.push(m.type() + ': ' + m.text()); });
+  page.on('requestfailed', r => msgs.push('requestfailed: ' + r.url()));
+  const reqs = []; page.on('request', r => { if (!r.url().startsWith('file://') && !r.url().startsWith('data:')) reqs.push(r.url()); });
+  await page.goto('file://' + path.join(__dirname, '..', 'www', 'index.html') + '', { waitUntil: 'load' }); await page.waitForTimeout(900);
+  ok(await page.evaluate(() => typeof window.__evolute === 'undefined' && typeof window.__bot === 'undefined'), 'üretim derlemesinde test kancası yok');
+  ok(await page.evaluate(() => !!document.querySelector('meta[http-equiv="Content-Security-Policy"]')), 'CSP etiketi var');
+  ok(/EVOLUTE/.test(await page.textContent('.ov')) && /Hikaye/.test(await page.textContent('.ov')), 'menü açıldı, cihaz diliyle (Türkçe)');
+  ok(await page.evaluate(() => document.fonts.check('700 16px Fredoka')), 'gömülü yazı tipi yüklendi (çevrimdışı)');
+  await page.screenshot({ path: SCR + '/w-prod-menu.png' });
+  await page.click('[data-act="start"]'); for (let i = 0; i < 3; i++) await page.click('[data-act="tnext"]');
+  const box = await page.evaluate(() => { const r = document.getElementById('c').getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; });
+  const pt = (x, y) => [box[0] + x / 360 * box[2], box[1] + y / 720 * box[3]];
+  await page.waitForTimeout(1200);
+  // gerçek zamanlı oyun: birleştir, üret, 4 sn oyna
+  let a = pt(36, 312 + 4 * 72 + 36), b = pt(108, 312 + 4 * 72 + 36);
+  await page.mouse.move(...a); await page.mouse.down(); await page.mouse.move(...b, { steps: 4 }); await page.mouse.up();
+  await page.mouse.click(...pt(180, 696)); await page.waitForTimeout(4000);
+  const px = await page.evaluate(() => { const c = document.getElementById('c'), x = c.getContext('2d'); const d = x.getImageData(c.width / 2, c.height * .75, 1, 1).data; return d[3] > 0; });
+  ok(px, 'tuval çiziliyor');
+  await page.mouse.click(...pt(336, 17)); await page.waitForTimeout(300);
+  ok(/Duraklatıldı/.test(await page.textContent('.ov')), 'duraklat çalışıyor');
+  await page.click('[data-act="resume"]'); await page.waitForTimeout(600);
+  await page.screenshot({ path: SCR + '/w-prod-play.png' });
+  const saved = await page.evaluate(() => !!localStorage.getItem('evolute_v2'));
+  ok(saved, 'üretim derlemesinde kayıt yazılıyor');
+  ok(!msgs.length, 'hata, uyarı veya CSP ihlali yok ' + JSON.stringify(msgs.slice(0, 4)));
+  ok(!reqs.length, 'dış ağ isteği yok ' + JSON.stringify(reqs.slice(0, 3)));
+  console.log(fails ? `\n${fails} BAŞARISIZ` : '\nHEPSİ GEÇTİ'); await browser.close();
+})();

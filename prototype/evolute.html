@@ -131,6 +131,7 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 .habtop{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--u)*10);width:100%;padding:calc(var(--u)*8) calc(var(--u)*10);border-radius:calc(var(--u)*14);background:linear-gradient(180deg,rgba(14,28,50,.82),rgba(14,28,50,.55));border:1px solid rgba(160,200,255,.12)}
 .habtop>div{display:flex;flex-direction:column;align-items:center;gap:calc(var(--u)*2);text-align:center}
 .habtop b{font-size:calc(var(--u)*18)} .habhint{color:var(--muted);font-size:calc(var(--u)*11);max-width:calc(var(--u)*190);line-height:1.25}
+.bestl.warn{color:#ffb347;font-size:calc(var(--u)*12);background:rgba(255,138,61,.12);border:1px solid rgba(255,138,61,.35);border-radius:calc(var(--u)*8);padding:calc(var(--u)*6) calc(var(--u)*9)}
 </style>
 
 <div id="wrap">
@@ -154,6 +155,7 @@ const BASE_HP = 10, UPMAX = 20;
 const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', pt: 'Português' };
 const STR = {
   tr: {
+    saveReset:'Kayıt verisi bozuk veya değiştirilmiş olduğu için sıfırlandı.',crashT:'Bir şeyler ters gitti',crashMsg:'Oyun toparlandı. İlerlemen kayıtlı.',crashBtn:'Menüye dön',
     gold:'Hazine',goldD:'Başlangıç altını +{0}',dnaB:'Genetik',dnaBD:'DNA kazancı +%{0}',bossNames:['Kraken Kral','Kadim Ağaç','Buz Titanı','Firavun Devi','Üst Zihin','Boşluk Yutan'],
     rich:'Altın Akını',richD:'Her öldürme +1 ek altın verir.',heal:'Yenilenme',healD:'Taban her 16 sn 1 can iyileşir.',shield:'Kalkan',shieldD:'Sıradaki 2 sızmayı emer.',frenzy:'Çılgınlık',frenzyD:'Canlılar %15 daha hızlı saldırır.',pierce:'Delici Atış',pierceD:'Atışlar arkadaki düşmana da vurur (%45).',luck:'Şanslı Üretim',luckD:'Üretilen canlı %15 ihtimalle 2 numara başlar.',bomb:'Ölüm Patlaması',bombD:'Ölen düşman yakındakilere hasar verir (canının %20\'si).',giant:'Dev Avcısı',giantD:'Boss ve tanklara +%35 hasar.',leap:'Evrim Sıçraması',leapD:'Birleşme %10 ihtimalle iki sayı atlar.',mutsT:'Mutasyonlar',habT:'Teraryum',habHint:'Bir yaratığa dokun, sev (günde bir kez +1 DNA).',abInk:'MÜREKKEP BULUTU!',abRoots:'KÖKLER!',abFreeze:'DONDURMA!',abSwarm:'SKARAB SÜRÜSÜ!',abGlitch:'ARIZA!',abMeteor:'METEORLAR!',achFull:'{0} çağın kataloğunu tamamla',
     modeB:'Boss Akını',modeD:'Günlük',modeSD:'Çağları sırayla bitir. 10. dalgada boss.',modeED:'Dalgalar bitmez. En iyi dalgayı geç.',modeBD:'Art arda 5 boss ile savaş.',modeDD:'Bugünün kuralı: {0}',dailyDone:'Bugünkü ödül alındı',dailyBonus:'Günlük bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'En iyi: {0}/5 boss',bestTime:'En iyi süre: {0} sn',modeLockG:'Bu modu açmak için çağı tamamla',modSwarm:'Sürü',modSwarmD:'Daha çok ama daha zayıf düşman.',modGlass:'Cam Top',modGlassD:'Taban canı 3, ama hasarın 2,2 kat.',modRush:'Acele',modRushD:'Düşmanlar hızlı, senin üretimin de hızlı.',modPoor:'Kıtlık',modPoorD:'Altın yarı yarıya, ücretsiz üretim hızlı.',modTitan:'Devler',modTitanD:'Yalnızca yavaş ve dayanıklı tanklar.',modMono:'Tek Tür',modMonoD:'Tek element, sinerji iki kat.',
@@ -185,6 +187,7 @@ const STR = {
     elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı', 'Çöl Kumulları', 'Siber Şehir', 'Yıldız Boşluğu'],
   },
   en: {
+    saveReset:'Save data was damaged or modified and has been reset.',crashT:'Something went wrong',crashMsg:'The game recovered. Your progress is saved.',crashBtn:'Back to menu',
     gold:'Treasury',goldD:'Starting gold +{0}',dnaB:'Genetics',dnaBD:'DNA gain +{0}%',bossNames:['Kraken King','Ancient Treant','Frost Titan','Pharaoh Colossus','The Overmind','Void Devourer'],
     rich:'Gold Rush',richD:'Each kill gives +1 extra gold.',heal:'Regeneration',healD:'The base heals 1 HP every 16 s.',shield:'Barrier',shieldD:'Absorbs the next 2 leaks.',frenzy:'Frenzy',frenzyD:'Units attack 15% faster.',pierce:'Piercing Shots',pierceD:'Shots also hit the enemy behind (45%).',luck:'Lucky Spawn',luckD:'15% chance a spawn starts as number 2.',bomb:'Death Blast',bombD:'Dying enemies hurt nearby ones (20% of their health).',giant:'Giant Slayer',giantD:'+35% damage to bosses and tanks.',leap:'Evolution Leap',leapD:'10% chance a merge jumps two numbers.',mutsT:'Mutations',habT:'Terrarium',habHint:'Tap a creature to pet it (+1 DNA each, once a day).',abInk:'INK CLOUD!',abRoots:'ROOTS!',abFreeze:'FREEZE!',abSwarm:'SCARAB SWARM!',abGlitch:'GLITCH!',abMeteor:'METEORS!',achFull:'Complete {0} era codex(es)',
     modeB:'Boss Rush',modeD:'Daily',modeSD:'Clear the eras in order. Boss at wave 10.',modeED:'Waves never end. Beat your best wave.',modeBD:'Face 5 bosses back to back.',modeDD:'Today\'s rule: {0}',dailyDone:'Today\'s reward claimed',dailyBonus:'Daily bonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Best: {0}/5 bosses',bestTime:'Best time: {0} s',modeLockG:'Clear this era to unlock this mode',modSwarm:'Swarm',modSwarmD:'More, weaker enemies.',modGlass:'Glass Cannon',modGlassD:'Base HP 3, but your damage is x2.2.',modRush:'Rush Hour',modRushD:'Enemies are faster, and so are your spawns.',modPoor:'Scarcity',modPoorD:'Half the gold, faster free spawns.',modTitan:'Titans',modTitanD:'Only slow, tough tanks.',modMono:'Monoculture',modMonoD:'One element only, double synergy.',
@@ -216,6 +219,7 @@ const STR = {
     elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age', 'Desert Dunes', 'Cyber City', 'Star Void'],
   },
   de: {
+    saveReset:'Die Speicherdaten waren beschädigt oder verändert und wurden zurückgesetzt.',crashT:'Etwas ist schiefgelaufen',crashMsg:'Das Spiel hat sich erholt. Dein Fortschritt ist gespeichert.',crashBtn:'Zurück zum Menü',
     gold:'Schatzkammer',goldD:'Startgold +{0}',dnaB:'Genetik',dnaBD:'DNA-Gewinn +{0} %',bossNames:['Krakenkönig','Uralter Baumhirte','Frosttitan','Pharaonen-Koloss','Der Übergeist','Leerenverschlinger'],
     rich:'Goldrausch',richD:'Jeder Kill gibt +1 Gold extra.',heal:'Regeneration',healD:'Die Basis heilt alle 16 s 1 LP.',shield:'Barriere',shieldD:'Absorbiert die nächsten 2 Durchbrüche.',frenzy:'Raserei',frenzyD:'Wesen greifen 15 % schneller an.',pierce:'Durchschlag',pierceD:'Schüsse treffen auch den Gegner dahinter (45 %).',luck:'Glücksgeburt',luckD:'15 % Chance, dass ein neues Wesen mit Zahl 2 startet.',bomb:'Todesknall',bombD:'Sterbende Gegner verletzen Nahe (20 % ihrer Leben).',giant:'Riesentöter',giantD:'+35 % Schaden gegen Bosse und Tanks.',leap:'Evolutionssprung',leapD:'10 % Chance, dass eine Fusion zwei Zahlen springt.',mutsT:'Mutationen',habT:'Terrarium',habHint:'Tippe ein Wesen an, um es zu streicheln (+1 DNA, einmal täglich).',abInk:'TINTENWOLKE!',abRoots:'WURZELN!',abFreeze:'EINFRIEREN!',abSwarm:'SKARABÄEN-SCHWARM!',abGlitch:'FEHLER!',abMeteor:'METEORE!',achFull:'Schließe den Kodex von {0} Zeitalter(n) ab',
     modeB:'Boss-Ansturm',modeD:'Täglich',modeSD:'Schließe die Zeitalter der Reihe nach ab. Boss in Welle 10.',modeED:'Die Wellen enden nie. Übertriff deine beste Welle.',modeBD:'Stelle dich 5 Bossen hintereinander.',modeDD:'Heutige Regel: {0}',dailyDone:'Heutige Belohnung erhalten',dailyBonus:'Tagesbonus +{0} DNA',bossLbl:'BOSS {0}/5',bestBoss:'Bestwert: {0}/5 Bosse',bestTime:'Bestzeit: {0} s',modeLockG:'Schließe dieses Zeitalter ab, um den Modus freizuschalten',modSwarm:'Schwarm',modSwarmD:'Mehr, aber schwächere Gegner.',modGlass:'Glaskanone',modGlassD:'Basis-LP 3, aber 2,2-facher Schaden.',modRush:'Stoßzeit',modRushD:'Gegner sind schneller, deine Erzeugung auch.',modPoor:'Knappheit',modPoorD:'Halbes Gold, schnellere kostenlose Erzeugung.',modTitan:'Titanen',modTitanD:'Nur langsame, zähe Tanks.',modMono:'Monokultur',modMonoD:'Nur ein Element, doppelte Synergie.',
@@ -247,6 +251,7 @@ const STR = {
     elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit', 'Wüstendünen', 'Cyberstadt', 'Sternenleere'],
   },
   es: {
+    saveReset:'Los datos guardados estaban dañados o modificados y se han restablecido.',crashT:'Algo salió mal',crashMsg:'El juego se recuperó. Tu progreso está guardado.',crashBtn:'Volver al menú',
     gold:'Tesoro',goldD:'Oro inicial +{0}',dnaB:'Genética',dnaBD:'Ganancia de ADN +{0} %',bossNames:['Rey Kraken','Ent Ancestral','Titán de Escarcha','Coloso Faraón','La Supermente','Devorador del Vacío'],
     rich:'Fiebre del oro',richD:'Cada derrota da +1 oro extra.',heal:'Regeneración',healD:'La base cura 1 de vida cada 16 s.',shield:'Barrera',shieldD:'Absorbe las próximas 2 filtraciones.',frenzy:'Frenesí',frenzyD:'Las criaturas atacan un 15 % más rápido.',pierce:'Disparo perforante',pierceD:'Los disparos también golpean al enemigo de atrás (45 %).',luck:'Creación afortunada',luckD:'15 % de que una criatura nazca con el número 2.',bomb:'Explosión mortal',bombD:'Los enemigos al morir dañan a los cercanos (20 % de su vida).',giant:'Cazagigantes',giantD:'+35 % de daño a jefes y tanques.',leap:'Salto evolutivo',leapD:'10 % de que una fusión salte dos números.',mutsT:'Mutaciones',habT:'Terrario',habHint:'Toca una criatura para acariciarla (+1 ADN, una vez al día).',abInk:'¡NUBE DE TINTA!',abRoots:'¡RAÍCES!',abFreeze:'¡CONGELACIÓN!',abSwarm:'¡ENJAMBRE DE ESCARABAJOS!',abGlitch:'¡FALLO!',abMeteor:'¡METEORITOS!',achFull:'Completa el códice de {0} era(s)',
     modeB:'Asalto de jefes',modeD:'Diario',modeSD:'Completa las eras en orden. Jefe en la oleada 10.',modeED:'Las oleadas no terminan. Supera tu mejor oleada.',modeBD:'Enfréntate a 5 jefes seguidos.',modeDD:'Regla de hoy: {0}',dailyDone:'Premio de hoy reclamado',dailyBonus:'Bono diario +{0} ADN',bossLbl:'JEFE {0}/5',bestBoss:'Mejor: {0}/5 jefes',bestTime:'Mejor tiempo: {0} s',modeLockG:'Completa esta era para desbloquear este modo',modSwarm:'Enjambre',modSwarmD:'Más enemigos, pero más débiles.',modGlass:'Cañón de cristal',modGlassD:'Vida de la base 3, pero tu daño x2,2.',modRush:'Hora punta',modRushD:'Los enemigos son más rápidos, y tu generación también.',modPoor:'Escasez',modPoorD:'Mitad de oro, generación gratis más rápida.',modTitan:'Titanes',modTitanD:'Solo tanques lentos y duros.',modMono:'Monocultivo',modMonoD:'Un solo elemento, sinergia doble.',
@@ -278,6 +283,7 @@ const STR = {
     elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo', 'Dunas del desierto', 'Ciudad cibernética', 'Vacío estelar'],
   },
   pt: {
+    saveReset:'Os dados salvos estavam danificados ou modificados e foram redefinidos.',crashT:'Algo deu errado',crashMsg:'O jogo se recuperou. Seu progresso está salvo.',crashBtn:'Voltar ao menu',
     gold:'Tesouro',goldD:'Ouro inicial +{0}',dnaB:'Genética',dnaBD:'Ganho de DNA +{0}%',bossNames:['Rei Kraken','Ent Ancestral','Titã de Gelo','Colosso Faraó','A Supermente','Devorador do Vazio'],
     rich:'Corrida do ouro',richD:'Cada abate dá +1 ouro extra.',heal:'Regeneração',healD:'A base cura 1 de vida a cada 16 s.',shield:'Barreira',shieldD:'Absorve os próximos 2 vazamentos.',frenzy:'Frenesi',frenzyD:'As criaturas atacam 15% mais rápido.',pierce:'Tiro perfurante',pierceD:'Os tiros também atingem o inimigo atrás (45%).',luck:'Criação da sorte',luckD:'15% de chance de a criatura nascer com o número 2.',bomb:'Explosão mortal',bombD:'Inimigos ao morrer ferem os próximos (20% da vida).',giant:'Caçador de gigantes',giantD:'+35% de dano em chefes e tanques.',leap:'Salto evolutivo',leapD:'10% de chance de a fusão pular dois números.',mutsT:'Mutações',habT:'Terrário',habHint:'Toque numa criatura para acariciá-la (+1 DNA, uma vez por dia).',abInk:'NUVEM DE TINTA!',abRoots:'RAÍZES!',abFreeze:'CONGELAR!',abSwarm:'ENXAME DE ESCARAVELHOS!',abGlitch:'FALHA!',abMeteor:'METEOROS!',achFull:'Complete o códice de {0} era(s)',
     modeB:'Ataque de chefes',modeD:'Diário',modeSD:'Conclua as eras em ordem. Chefe na onda 10.',modeED:'As ondas nunca terminam. Supere sua melhor onda.',modeBD:'Enfrente 5 chefes seguidos.',modeDD:'Regra de hoje: {0}',dailyDone:'Prêmio de hoje resgatado',dailyBonus:'Bônus diário +{0} DNA',bossLbl:'CHEFE {0}/5',bestBoss:'Melhor: {0}/5 chefes',bestTime:'Melhor tempo: {0} s',modeLockG:'Conclua esta era para liberar este modo',modSwarm:'Enxame',modSwarmD:'Mais inimigos, porém mais fracos.',modGlass:'Canhão de vidro',modGlassD:'Vida da base 3, mas seu dano x2,2.',modRush:'Hora do rush',modRushD:'Inimigos mais rápidos, e sua geração também.',modPoor:'Escassez',modPoorD:'Metade do ouro, geração grátis mais rápida.',modTitan:'Titãs',modTitanD:'Apenas tanques lentos e resistentes.',modMono:'Monocultura',modMonoD:'Um só elemento, sinergia dupla.',
@@ -387,18 +393,64 @@ const ERAS = [
 const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
-const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0, 0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0, 0, 0, 0], bossBest: [0, 0, 0, 0, 0, 0], bossTime: [0, 0, 0, 0, 0, 0], dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
-try {
-  const s = JSON.parse(localStorage.getItem(KEY) || 'null');
-  if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, s.up || {}); }
-} catch (e) {}
-['clears', 'best', 'bossBest', 'bossTime'].forEach(k => { while (save[k].length < ERAS.length) save[k].push(0); });
+const KEY = 'evolute_v2', KEY_B = 'evolute_v2b', SALT = 'ev0|k7Qm9#xT2vLw|f31';
+/* Kayıt: imzalı (checksum) ve iki kopya. Elle düzenlenen veya bozulan kayıt reddedilir, ardından doğrulanır (sanitize). */
+function cyrb53(str, seed) {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+}
+const sig = p => cyrb53(SALT + p, 1).toString(36) + '.' + cyrb53(p + SALT, 7).toString(36);
+const defaultSave = () => ({ dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, maxT: 0, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
+let loadNotice = null;
+function loadRaw() {
+  let seen = false;
+  for (const k of [KEY, KEY_B]) {
+    let txt = null; try { txt = localStorage.getItem(k); } catch (e) {}
+    if (!txt) continue; seen = true;
+    try { const w = JSON.parse(txt); if (w && w.v === 2 && typeof w.p === 'string' && w.h === sig(w.p)) return JSON.parse(w.p); } catch (e) {}
+  }
+  if (seen) loadNotice = 'saveReset';
+  return null;
+}
+/* Her alanı tür, aralık ve tutarlılık açısından doğrular; imza geçse bile mantıksız değerler kabul edilmez. */
+function sanitize(o) {
+  const s = defaultSave(), now = Date.now();
+  if (!o || typeof o !== 'object') { s.idleT = now; return s; }
+  const num = (v, lo, hi, d) => { v = Number(v); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+  const int = (v, lo, hi, d) => Math.floor(num(v, lo, hi, d));
+  const arr = (a, hi) => ERAS.map((_, i) => int(a && a[i], 0, hi, 0));
+  const dateOk = v => typeof v === 'string' && /^\d{4}-\d{1,2}-\d{1,2}$/.test(v) ? v : '';
+  s.dna = int(o.dna, 0, 1e9, 0); s.runs = int(o.runs, 0, 1e6, 0); s.wins = Math.min(s.runs, int(o.wins, 0, 1e6, 0)); s.bestWave = int(o.bestWave, 0, 999, 0);
+  for (const k of Object.keys(s.up)) s.up[k] = int(o.up && o.up[k], 0, UPMAX, 0);
+  s.clears = arr(o.clears, 99999); s.best = arr(o.best, 9999); s.bossBest = arr(o.bossBest, 5); s.bossTime = arr(o.bossTime, 99999);
+  const fu = s.clears.findIndex(c => c <= 0);
+  s.unlocked = Math.min(int(o.unlocked, 0, ERAS.length - 1, 0), fu === -1 ? ERAS.length - 1 : fu);
+  s.era = Math.min(int(o.era, 0, ERAS.length - 1, 0), s.unlocked);
+  if (o.codex && typeof o.codex === 'object') for (const k of Object.keys(o.codex).slice(0, 400)) if (/^\d:[0-2]:[1-8]$/.test(k) && Number(k[0]) <= s.unlocked) s.codex[k] = 1;
+  if (o.ach && typeof o.ach === 'object') for (const k of Object.keys(o.ach).slice(0, 100)) if (/^[A-Za-z]+\d{1,5}$/.test(k)) s.ach[k] = 1;
+  const st = o.stats || {}; s.stats = { merges: int(st.merges, 0, 1e9, 0), kills: int(st.kills, 0, 1e9, 0), maxTier: int(st.maxTier, 0, MAXT, 0), maxCombo: int(st.maxCombo, 0, 999, 0) };
+  s.daily = { last: dateOk(o.daily && o.daily.last), streak: int(o.daily && o.daily.streak, 0, 9999, 0) }; s.dailyDone = dateOk(o.dailyDone);
+  if (o.pet && dateOk(o.pet.d) && o.pet.k && typeof o.pet.k === 'object') { s.pet = { d: o.pet.d, k: {} }; for (const k of Object.keys(o.pet.k).slice(0, 200)) if (/^\d:[0-2]:[1-8]$/.test(k)) s.pet.k[k] = 1; }
+  s.idleT = Math.min(now, int(o.idleT, 0, 4e12, now)) || now; s.maxT = int(o.maxT, 0, 4e12, 0);
+  s.lang = LANGS[o.lang] ? o.lang : null; s.mode = ['normal', 'endless', 'boss', 'daily'].includes(o.mode) ? o.mode : 'normal'; s.gfx = o.gfx === 'low' ? 'low' : 'auto';
+  s.muted = o.muted === true; s.vib = o.vib !== false; s.music = o.music !== false; s.speed = o.speed === 2 ? 2 : 1; s.tut = o.tut ? 1 : 0;
+  return s;
+}
+let save = sanitize(loadRaw());
 if (!save.lang || !LANGS[save.lang]) save.lang = detectLang();
 LANG = save.lang; try { document.documentElement.lang = LANG; } catch (e) {}
-if (!save.idleT) save.idleT = Date.now();
-function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
-const APP_VER = '1.5.0';
+/* Monoton saat: cihaz saati geri alınsa bile süre geri gitmez (bekleme ve günlük ödül sömürüsünü engeller). */
+function nowT() {
+  const n = Date.now();
+  if (save.maxT - n > 30 * 864e5) { save.maxT = n; save.idleT = n; }
+  if (n > save.maxT) save.maxT = n;
+  return save.maxT;
+}
+function persist() { try { nowT(); const p = JSON.stringify(save), w = JSON.stringify({ v: 2, p, h: sig(p) }); localStorage.setItem(KEY, w); localStorage.setItem(KEY_B, w); } catch (e) {} }
+const APP_VER = '1.6.0';
 const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
@@ -480,7 +532,7 @@ function checkGoals() {
 }
 
 const DAILY_MODS = ['swarm', 'glass', 'rush', 'poor', 'titan', 'mono'];
-const dayNo = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5);
+const dayNo = () => Math.floor((nowT() - new Date().getTimezoneOffset() * 6e4) / 864e5);
 const dailyMod = () => DAILY_MODS[dayNo() % DAILY_MODS.length];
 const monoEl = () => dayNo() % 3;
 const cap = x => x[0].toUpperCase() + x.slice(1);
@@ -1530,15 +1582,15 @@ function render() {
 
 /* Günlük ödül ve kuluçka (çevrimdışı DNA) */
 const dstr = d => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-const today = () => dstr(new Date()), yesterday = () => dstr(new Date(Date.now() - 864e5));
+const today = () => dstr(new Date(nowT())), yesterday = () => dstr(new Date(nowT() - 864e5));
 const dailyReady = () => save.daily.last !== today();
 const nextStreak = () => save.daily.last === yesterday() ? save.daily.streak + 1 : 1;
 const dailyReward = s => 20 + 10 * Math.min(s, 7);
 function claimDaily() { if (!dailyReady()) return; const s = nextStreak(); save.dna += dailyReward(s); save.daily = { last: today(), streak: s }; persist(); }
 const IDLE_CAP = 4 * 3600 * 1000;
 const idleRate = () => Math.round((8 + save.wins * 2 + save.bestWave) * (1 + save.unlocked * 0.5));
-const idleAcc = () => Math.floor(Math.min(IDLE_CAP, Math.max(0, Date.now() - save.idleT)) / 3600000 * idleRate());
-function collectIdle() { const a = idleAcc(); if (a > 0) { save.dna += a; save.idleT = Date.now(); persist(); } }
+const idleAcc = () => Math.floor(Math.min(IDLE_CAP, Math.max(0, nowT() - save.idleT)) / 3600000 * idleRate());
+function collectIdle() { const a = idleAcc(); if (a > 0) { save.dna += a; save.idleT = nowT(); persist(); } }
 
 const goalsHTML = () => '<div class="goals"><b>' + t('goalsT') + '</b>' + G.goals.map(x => `<div class="${x.done ? 'ok' : ''}"><span>${x.done ? '✓' : '○'}</span>${t(GOAL_KEY[x.id], x.n)} <i>${Math.min(goalVal(x.id), x.n)}/${x.n}</i></div>`).join('') + '</div>';
 function nextUpInfo() {
@@ -1578,9 +1630,9 @@ function modesHTML() {
   return `<div class="modes">${chips}</div><small class="bestl">${info}</small>${cl ? '' : `<small class="bestl">${t('modeLockG')}</small>`}`;
 }
 function showMenu() {
-  screen = 'menu';
+  screen = 'menu'; const note = loadNotice; loadNotice = null;
   const dr = dailyReady(), acc = idleAcc();
-  setOv(`<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
+  setOv(`${note ? `<small class="bestl warn">${t(note)}</small>` : ''}<span class="tag">${t('tagline')}</span><h1>EVOLUTE</h1>${eraRow()}
     <button class="btn" data-act="start">${t('play')}</button>
     ${bankHTML()}
     <div class="cards2">
@@ -1714,7 +1766,7 @@ ov.addEventListener('click', ev => {
   if (d.act === 'resetno') { confirmReset = false; showSettings(); return; }
   if (d.act === 'resetyes') {
     const keep = save.lang; try { localStorage.removeItem(KEY); } catch (e) {}
-    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0, gold: 0, dnaB: 0 }, era: 0, unlocked: 0, clears: ERAS.map(() => 0), codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: ERAS.map(() => 0), bossBest: ERAS.map(() => 0), bossTime: ERAS.map(() => 0), dailyDone: '', pet: null, stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
+    Object.assign(save, defaultSave(), { lang: keep, idleT: Date.now() });
     persist(); confirmReset = false; G = null; backTo = 'menu'; showSettings(); return;
   }
   if (d.act === 'resume') { if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); } return; }
@@ -1750,15 +1802,16 @@ try {
 
 /* ---------- Döngü ---------- */
 let last = 0;
-let lowT = 0, lowN = 0;
+let lowT = 0, lowN = 0, errN = 0, okN = 0;
+function showCrash() { screen = 'crash'; setOv(`<h2>${t('crashT')}</h2><p>${t('crashMsg')}</p><button class="btn" data-act="menu">${t('crashBtn')}</button>`); }
 function frame(now) {
   const raw = (now - last) / 1000 || 0, dt = Math.min(0.05, raw); last = now;
   if (G && G.mode === 'play' && !document.hidden && raw > 0 && raw < 0.5) {
     lowT += raw; lowN++;
     if (lowN >= 150) { if (save.gfx !== 'low' && !LOW && lowT / lowN > 0.03) { LOW = true; fit(); } lowT = 0; lowN = 0; }
   }
-  for (let i = 0, n = save.speed === 2 ? 2 : 1; i < n; i++) step(dt);
-  draw(now);
+  try { for (let i = 0, n = save.speed === 2 ? 2 : 1; i < n; i++) step(dt); draw(now); if (++okN > 180) { errN = 0; okN = 0; } }
+  catch (e) { errN++; okN = 0; try { console.error(e); } catch (_) {} if (errN >= 6) { errN = 0; G = null; drag = null; try { showCrash(); } catch (_) {} } }
   requestAnimationFrame(frame);
 }
 window.addEventListener('resize', fit);
@@ -1766,6 +1819,8 @@ LOW = save.gfx === 'low'; fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { habTap, showHabitat, get habList() { return habList; }, bossAbility, BOSS_AB, DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+/*TEST_HOOKS_BEGIN*/
+if (window.__EVO_TEST__) window.__evolute = { persist, sanitize, nowT, defaultSave, sig, get loadNotice() { return loadNotice; }, habTap, showHabitat, get habList() { return habList; }, bossAbility, BOSS_AB, DAILY_MODS, resolveKind, ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+/*TEST_HOOKS_END*/
 })();
 </script>
