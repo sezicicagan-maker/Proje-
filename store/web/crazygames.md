@@ -5,7 +5,7 @@ Yüklenecek dosya: **`store/web/index.html`** (TEK dosya, yazı tipleri gömül�
 Yeniden üretmek için: `npm run build:www` ve `www/` klasörünü zip'le.
 
 ## Oyun bilgileri (portala yapıştır, İngilizce)
-**Title:** Evolute: Merge & Evolve
+**Title (oyun adı alanı, oyundaki başlıkla aynı olmalı):** Evolute
 **Description:**
 Merge matching creatures to evolve them into stronger forms. Each creature attacks the enemies in its own lane, so where you merge matters. Survive 10 waves per era, pick one of 16 roguelite mutations every few waves and beat a unique boss in each of 6 worlds. Includes Story, Endless, Boss Rush and a Daily Challenge, plus a Terrarium for the species you discover. Short runs, no login needed.
 **Controls:** Mouse or touch: drag a creature onto another one with the same element and number to merge. Click the Spawn button to bring a new creature. Tap the buttons at the bottom to change speed or sound, top right to pause.

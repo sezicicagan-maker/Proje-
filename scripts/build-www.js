@@ -36,6 +36,7 @@ const { minify } = require('terser');
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#0b1626">
+<title>Evolute</title>
 <style>${fontCss}
 :root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{height:100%}body{margin:0}[hidden]{display:none!important}</style>
