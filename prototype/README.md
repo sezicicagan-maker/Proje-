@@ -21,6 +21,11 @@
 - **5 dil:** Türkçe, English, Deutsch, Español, Português. Cihaz diline göre seçilir, Ayarlar'dan değişir. Bilinmeyen dilde İngilizce.
 - **Duraklatma** (sağ üst), ilk açılışta 3 adımlık **eğitim**, titreşim ayarı, ilerlemeyi silme (onaylı).
 - **Günlük ödül:** 20 DNA + seri başına 10 (en çok 7 seri). **Kuluçka:** sen yokken DNA biriktirir (en fazla 4 saat; hız kazanılan galibiyet, en iyi dalga ve açık çağlarla artar).
+- **Görsel yenileme:** Dokulu yaratıklar (her element kendi deseniyle), evrim aşamaları (boynuz, altın hale, kanat, aura, yıldız parıltısı), göz kırpma ve nefes animasyonu, her çağa özel katmanlı arka plan ve ortam parçacıkları (balon, ateş böceği, kar), kabartmalı tahta.
+- **Oynanış çeşitliliği:** 3 düşman tipi (normal, hızlı koşucu, yavaş tank), boss %66 ve %33 canda takviye çağırır, şeritte tehlike uyarısı.
+- **His (juice):** Birleştirme şok dalgası ve yıldızlar, kombo (ardışık birleştirmede ek altın), uçan altınlar, vuruş kıvılcımları, ekran sarsıntısı, yeni tür keşfinde tam ekran kutlama.
+- **Kısa vadeli hedefler:** Her turda 3 hedef (sayı, öldürme, kombo, birleştirme), tamamlanınca DNA. 2× hız düğmesi. Sonuç ekranında sonraki yükseltmeye ilerleme çubuğu.
+- **Müzik:** Çok kısık üretken fon müziği (çağa göre ölçü), Ayarlar'dan kapatılır. Gerçek kulakla denenmedi.
 - **Android geri tuşu:** oyunda duraklatır, alt ekranlarda geri gider, ana menüde çıkar (Capacitor App eklentisiyle).
 
 ## G0 için ne ölçülmeli
