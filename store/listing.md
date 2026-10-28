@@ -18,6 +18,7 @@ Drag matching creatures together and watch them grow. Every creature fires at th
 • Roguelite mutations: pick 1 of 3 each few waves. No two runs play the same.
 • 3 eras, 3 bosses: Primordial Sea, Misty Forest, Ice Age. Each is harder and pays more DNA.
 • 72 species to discover in the Codex, with bonus DNA for every new find.
+• Endless mode, 22 achievements and a 3-star rating for every run.
 • Lab upgrades, daily rewards and an incubator that collects DNA while you are away.
 • Short runs, perfect for a few minutes. Works offline.
 • Available in English, Türkçe, Deutsch, Español and Português.
@@ -38,6 +39,7 @@ Aynı canlıları sürükleyip birleştir ve büyümelerini izle. Her canlı ken
 • Roguelite mutasyonlar: birkaç dalgada bir 3 mutasyondan 1'ini seç. İki oyun asla aynı geçmez.
 • 3 çağ, 3 boss: İlkel Deniz, Sisli Orman, Buzul Çağı. Her biri daha zor ve daha çok DNA verir.
 • Katalogda keşfedilecek 72 tür, her yeni tür için bonus DNA.
+• Sonsuz mod, 22 başarım ve her tur için 3 yıldız değerlendirmesi.
 • Laboratuvar yükseltmeleri, günlük ödül ve sen yokken DNA biriktiren kuluçka makinesi.
 • Kısa turlar, birkaç dakikalık oyun için ideal. Çevrimdışı çalışır.
 • English, Türkçe, Deutsch, Español ve Português dilleri.

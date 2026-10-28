@@ -114,6 +114,16 @@ p.big{font-size:calc(var(--u)*18);color:var(--ink);max-width:calc(var(--u)*300)}
 @keyframes tb{0%,15%{transform:none;opacity:1}45%,100%{transform:translateX(calc(var(--u)*-50));opacity:0}}
 @keyframes tc{0%,40%{opacity:0;transform:scale(.3)}55%{opacity:1;transform:scale(1.2)}70%,92%{opacity:1;transform:scale(1)}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.in>*,.ov,.dna,.star{animation:none!important}.star{opacity:1;transform:none}.tutdemo i{animation:none!important}.tutdemo .c{opacity:1}}
+
+.ov h1{background:linear-gradient(100deg,#8fd0ff 0%,#ffffff 30%,#8fd0ff 50%,#ffffff 70%,#8fd0ff 100%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;animation:shine 5s linear infinite}
+@keyframes shine{to{background-position:200% 0}}
+.modes{display:flex;gap:calc(var(--u)*8);justify-content:center}
+.bestl{color:var(--muted);font-size:calc(var(--u)*12);margin-top:calc(var(--u)*-4)}
+.ghost:disabled{opacity:.4;cursor:default}
+.trophy{font-size:calc(var(--u)*26);color:#4d6a92;line-height:1}.trophy.on{color:#ffd23f;filter:drop-shadow(0 0 calc(var(--u)*6) rgba(255,210,63,.55))}
+.goals.ach{border-color:rgba(255,210,63,.35)} .goals.ach b{color:#ffd23f}
+.ver{color:#5f789c;font-size:calc(var(--u)*11)}
+@media (prefers-reduced-motion:reduce){.ov h1{animation:none!important}}
 </style>
 
 <div id="wrap">
@@ -137,6 +147,7 @@ const BASE_HP = 10, UPMAX = 20;
 const LANGS = { tr: 'Türkçe', en: 'English', de: 'Deutsch', es: 'Español', pt: 'Português' };
 const STR = {
   tr: {
+    modeN:'Normal',modeE:'Sonsuz',modeLock:'Sonsuz mod için bu çağı tamamla',best:'En iyi: dalga {0}',newBest:'YENİ REKOR!',achT:'Başarımlar',achMerge:'Toplam {0} birleştirme yap',achKill:'Toplam {0} düşman yen',achTier:'{0} sayısına ulaş',achWin:'{0} kez kazan',achCombo:'{0}x kombo yap',achCodex:'{0} tür keşfet',achEra:'{0}. çağı aç',achRuns:'{0} tur oyna',achNew:'Başarım açıldı!',gfx:'Grafik',gfxAuto:'Otomatik',gfxLow:'Düşük',
     music:'Müzik',goalsT:'Hedefler',goalTier:'{0} sayısına ulaş',goalKills:'{0} düşman yen',goalCombo:'{0}x kombo yap',goalMerges:'{0} kez birleştir',goalDone:'Hedef tamam! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'YENİ TÜR',bossAdds:'TAKVİYE GELİYOR!',nextUp:'Sonraki yükseltme',upReady:'Yükseltme hazır!',
     tagline: 'Birleştir. Evrimleştir.', how: 'Aynı renk ve sayıdaki canlıları sürükleyip birleştir. Ordun kendi şeridindeki düşmana saldırır.',
     play: 'Başla', again: 'Tekrar Oyna', next: 'Bir Tur Daha', codex: 'Katalog', settings: 'Ayarlar', lab: 'Laboratuvar', era: 'Çağ',
@@ -164,6 +175,7 @@ const STR = {
     elWater: 'Su', elPoison: 'Zehir', elVolt: 'Elektrik', eraNames: ['İlkel Deniz', 'Sisli Orman', 'Buzul Çağı'],
   },
   en: {
+    modeN:'Normal',modeE:'Endless',modeLock:'Clear this era to unlock Endless',best:'Best: wave {0}',newBest:'NEW BEST!',achT:'Achievements',achMerge:'Merge {0} times in total',achKill:'Defeat {0} enemies in total',achTier:'Reach number {0}',achWin:'Win {0} time(s)',achCombo:'Reach a x{0} combo',achCodex:'Discover {0} species',achEra:'Unlock era {0}',achRuns:'Play {0} runs',achNew:'Achievement unlocked!',gfx:'Graphics',gfxAuto:'Auto',gfxLow:'Low',
     music:'Music',goalsT:'Goals',goalTier:'Reach number {0}',goalKills:'Defeat {0} enemies',goalCombo:'Chain a x{0} combo',goalMerges:'Merge {0} times',goalDone:'Goal complete! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NEW SPECIES',bossAdds:'REINFORCEMENTS!',nextUp:'Next upgrade',upReady:'Upgrade ready!',
     tagline: 'Merge. Evolve.', how: 'Drag matching creatures together to merge them. Your army fires at enemies in its own lane.',
     play: 'Play', again: 'Play Again', next: 'One More Run', codex: 'Codex', settings: 'Settings', lab: 'Lab', era: 'Era',
@@ -191,6 +203,7 @@ const STR = {
     elWater: 'Water', elPoison: 'Poison', elVolt: 'Electric', eraNames: ['Primordial Sea', 'Misty Forest', 'Ice Age'],
   },
   de: {
+    modeN:'Normal',modeE:'Endlos',modeLock:'Schließe dieses Zeitalter ab, um Endlos freizuschalten',best:'Bestwert: Welle {0}',newBest:'NEUER REKORD!',achT:'Erfolge',achMerge:'Verschmelze insgesamt {0}-mal',achKill:'Besiege insgesamt {0} Gegner',achTier:'Erreiche Zahl {0}',achWin:'Gewinne {0}-mal',achCombo:'Erreiche eine {0}x-Kombo',achCodex:'Entdecke {0} Arten',achEra:'Schalte Zeitalter {0} frei',achRuns:'Spiele {0} Runden',achNew:'Erfolg freigeschaltet!',gfx:'Grafik',gfxAuto:'Auto',gfxLow:'Niedrig',
     music:'Musik',goalsT:'Ziele',goalTier:'Erreiche Zahl {0}',goalKills:'Besiege {0} Gegner',goalCombo:'Schaffe eine {0}x-Kombo',goalMerges:'Verschmelze {0}-mal',goalDone:'Ziel erreicht! +{0} DNA',combo:'KOMBO x{0}',newSpecies:'NEUE ART',bossAdds:'VERSTÄRKUNG!',nextUp:'Nächstes Upgrade',upReady:'Upgrade bereit!',
     tagline: 'Verschmelzen. Entwickeln.', how: 'Ziehe gleiche Wesen zusammen, um sie zu verschmelzen. Deine Armee schießt auf Gegner in der eigenen Spur.',
     play: 'Spielen', again: 'Nochmal', next: 'Noch eine Runde', codex: 'Kodex', settings: 'Einstellungen', lab: 'Labor', era: 'Zeitalter',
@@ -218,6 +231,7 @@ const STR = {
     elWater: 'Wasser', elPoison: 'Gift', elVolt: 'Blitz', eraNames: ['Urmeer', 'Nebelwald', 'Eiszeit'],
   },
   es: {
+    modeN:'Normal',modeE:'Infinito',modeLock:'Completa esta era para desbloquear Infinito',best:'Mejor: oleada {0}',newBest:'¡NUEVO RÉCORD!',achT:'Logros',achMerge:'Fusiona {0} veces en total',achKill:'Derrota a {0} enemigos en total',achTier:'Llega al número {0}',achWin:'Gana {0} vez/veces',achCombo:'Logra un combo x{0}',achCodex:'Descubre {0} especies',achEra:'Desbloquea la era {0}',achRuns:'Juega {0} partidas',achNew:'¡Logro desbloqueado!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Bajo',
     music:'Música',goalsT:'Objetivos',goalTier:'Llega al número {0}',goalKills:'Derrota a {0} enemigos',goalCombo:'Logra un combo x{0}',goalMerges:'Fusiona {0} veces',goalDone:'¡Objetivo cumplido! +{0} ADN',combo:'COMBO x{0}',newSpecies:'NUEVA ESPECIE',bossAdds:'¡REFUERZOS!',nextUp:'Próxima mejora',upReady:'¡Mejora lista!',
     tagline: 'Fusiona. Evoluciona.', how: 'Arrastra criaturas iguales para fusionarlas. Tu ejército dispara a los enemigos de su propio carril.',
     play: 'Jugar', again: 'Jugar otra vez', next: 'Una partida más', codex: 'Códice', settings: 'Ajustes', lab: 'Laboratorio', era: 'Era',
@@ -245,6 +259,7 @@ const STR = {
     elWater: 'Agua', elPoison: 'Veneno', elVolt: 'Rayo', eraNames: ['Mar primordial', 'Bosque brumoso', 'Edad de hielo'],
   },
   pt: {
+    modeN:'Normal',modeE:'Infinito',modeLock:'Conclua esta era para liberar o Infinito',best:'Melhor: onda {0}',newBest:'NOVO RECORDE!',achT:'Conquistas',achMerge:'Funda {0} vezes no total',achKill:'Derrote {0} inimigos no total',achTier:'Chegue ao número {0}',achWin:'Vença {0} vez(es)',achCombo:'Faça um combo x{0}',achCodex:'Descubra {0} espécies',achEra:'Libere a era {0}',achRuns:'Jogue {0} partidas',achNew:'Conquista desbloqueada!',gfx:'Gráficos',gfxAuto:'Auto',gfxLow:'Baixo',
     music:'Música',goalsT:'Metas',goalTier:'Chegue ao número {0}',goalKills:'Derrote {0} inimigos',goalCombo:'Faça um combo x{0}',goalMerges:'Funda {0} vezes',goalDone:'Meta cumprida! +{0} DNA',combo:'COMBO x{0}',newSpecies:'NOVA ESPÉCIE',bossAdds:'REFORÇOS!',nextUp:'Próximo upgrade',upReady:'Upgrade pronto!',
     tagline: 'Funda. Evolua.', how: 'Arraste criaturas iguais para fundi-las. Seu exército atira nos inimigos da própria pista.',
     play: 'Jogar', again: 'Jogar de novo', next: 'Mais uma partida', codex: 'Códice', settings: 'Configurações', lab: 'Laboratório', era: 'Era',
@@ -329,7 +344,7 @@ const CODEX_TOTAL = ERAS.length * 3 * MAXT;
 
 /* ---------- Kayıt (yalnızca bu tarayıcıda) ---------- */
 const KEY = 'evolute_g0';
-let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1 };
+let save = { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, muted: false, lang: null, vib: true, tut: 0, daily: { last: '', streak: 0 }, idleT: 0, music: true, speed: 1, mode: 'normal', best: [0, 0, 0], stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' };
 try {
   const s = JSON.parse(localStorage.getItem(KEY) || 'null');
   if (s) { save = Object.assign(save, s); save.up = Object.assign({ atk: 0, hp: 0, spawn: 0 }, s.up || {}); }
@@ -338,6 +353,8 @@ if (!save.lang || !LANGS[save.lang]) save.lang = detectLang();
 LANG = save.lang; try { document.documentElement.lang = LANG; } catch (e) {}
 if (!save.idleT) save.idleT = Date.now();
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} }
+const APP_VER = '1.3.0';
+const fmtNum = n => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(Math.round(n));
 const eraBonus = () => 1 + 0.1 * save.clears.filter(c => c > 0).length;
 
 /* ---------- Ses (WebAudio, dosyasız) ---------- */
@@ -422,7 +439,7 @@ function newGame() {
     board: new Array(ROWS * COLS).fill(null),
     enemies: [], proj: [], fx: [], texts: [], queue: [], muts: {},
     spawnT: 1.8, kills: 0, merges: 0, maxTier: 1, firstMerge: null,
-    anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
+    endless: save.mode === 'endless' && (save.clears[save.era] || 0) > 0, newAch: [], anims: [], hpShow: undefined, hitFlash: 0, dnaPop: 0, era: save.era, combo: 0, comboT: 0, maxCombo: 0, goals: pickGoals(), goalDna: 0, goldPop: 0, toast: null, disc: 0, newEra: false, shake: 0, idle: 0, banner: null, win: false, endT: 0, bossKilled: false, waveReached: 0, pickOffer: null,
   };
   // İlk birleştirmeyi ilk saniyelerde yaptırmak için iki hazır çift.
   G.board[idx(4, 0)] = mkUnit(0, 1); G.board[idx(4, 1)] = mkUnit(0, 1);
@@ -503,6 +520,7 @@ function drop(from, to, px, py) {
 }
 
 function burst(x, y, color, n, delay) {
+  if (LOW) n = Math.ceil(n / 2);
   for (let i = 0; i < n; i++) {
     const a = rand(0, 6.28), s = rand(40, 130);
     G.fx.push({ type: 'p', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, c: color, life: 0.45, max: 0.45, delay: delay || 0 });
@@ -515,26 +533,26 @@ function mergeFx(x, y, el, tier) {
   G.fx.push({ type: 'ring', x, y, c: '#ffffff', r0: 8, r1: 30 + tier * 5, life: 0.4, max: 0.4, delay: d });
   G.fx.push({ type: 'ring', x, y, c, r0: 4, r1: 20 + tier * 3, life: 0.55, max: 0.55, delay: d });
   G.fx.push({ type: 'ripple', x, y, c: '#ffffff', s0: 20, s1: 18 + tier * 2, life: 0.5, max: 0.5, delay: d });
-  for (let i = 0; i < 3 + tier; i++) { const a = rand(0, 6.28), s = rand(50, 150); G.fx.push({ type: 'star', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 30, c: i % 2 ? EL[el].l : '#fff6b0', sz: rand(3, 6), life: 0.7, max: 0.7, delay: d }); }
+  for (let i = 0; i < (LOW ? 2 : 3 + tier); i++) { const a = rand(0, 6.28), s = rand(50, 150); G.fx.push({ type: 'star', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 30, c: i % 2 ? EL[el].l : '#fff6b0', sz: rand(3, 6), life: 0.7, max: 0.7, delay: d }); }
 }
 
 /* ---------- Dalgalar ve düşmanlar ---------- */
 const waveHp = w => { const E = ERAS[G.era]; return Math.round(E.hpBase * Math.pow(E.hpGrow, w - 1)); };
 function startWave(w) {
   G.waveReached = w;
-  const n = 3 + Math.round(w * 1.3);
+  const n = Math.min(34, 3 + Math.round(w * 1.3));
   const span = WAVE_LEN - 2.5;
   for (let i = 0; i < n; i++) {
     const rv = Math.random(), type = w >= 4 && rv < 0.18 ? 't' : (w >= 2 && rv > 0.78 ? 'r' : 'n');
     G.queue.push({ t: G.t + 0.4 + (i * span) / n + rand(0, 0.3), lane: Math.floor(Math.random() * COLS), boss: false, type, w });
   }
-  if (w === WAVES) {
+  if (G.endless ? w % 10 === 0 : w === WAVES) {
     G.queue.push({ t: G.t + 1.2, lane: 2, boss: true, w });
     G.banner = { s: t('bannerBoss'), boss: true, life: 1.8, max: 1.8 };
   } else {
     G.banner = { s: t('bannerWave', w), boss: false, life: 1.1, max: 1.1 };
   }
-  if (w % 2 === 0 && w < WAVES) offerPick();
+  if (w % 2 === 0 && (G.endless || w < WAVES)) offerPick();
 }
 function offerPick() {
   const pool = MUTS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
@@ -550,7 +568,7 @@ function pickMut(id) {
 }
 function spawnEnemy(q) {
   const boss = q.boss, ty = boss ? 'b' : (q.type || 'n');
-  let hp = boss ? waveHp(WAVES) * 14 : waveHp(q.w), spd = boss ? 13 : 20 + q.w * 1.2 + rand(-2, 2), r = boss ? 30 : 15, dmg = boss ? 6 : 1;
+  let hp = boss ? waveHp(q.w) * 14 : waveHp(q.w), spd = boss ? 13 : Math.min(52, 20 + q.w * 1.2) + rand(-2, 2), r = boss ? 30 : 15, dmg = boss ? 6 : 1;
   if (ty === 'r') { hp *= 0.55; spd *= 1.75; r = 11; }
   if (ty === 't') { hp *= 2.3; spd *= 0.62; r = 19; dmg = 2; }
   hp = Math.round(hp);
@@ -582,7 +600,8 @@ function hurt(e, d) {
     for (let i = 0; i < (e.boss ? 8 : 1); i++) G.fx.push({ type: 'coin', x: e.x + rand(-8, 8), y: e.y, x1: 238, y1: 22, life: 0.7 + i * 0.05, max: 0.7 + i * 0.05 });
     for (let i = 0; i < (e.boss ? 6 : 1); i++) G.fx.push({ type: 'dna', x: e.x, y: e.y, x1: W - 60, y1: FIELD_Y + 38, life: 0.85 + i * 0.06, max: 0.85 + i * 0.06 });
     checkGoals();
-    if (e.boss) { G.bossKilled = true; endRun(true); }
+    G.fx.push({ type: 'pop', x: e.x, y: e.y, r: e.r, boss: e.boss, life: 0.35, max: 0.35 });
+    if (e.boss) { if (G.endless) G.gold += 60; else { G.bossKilled = true; endRun(true); } }
   }
 }
 function fire(u, r, c, t) {
@@ -599,7 +618,8 @@ function impact(p) {
   const t = p.t;
   hurt(t, p.dmg); sfx('hit');
   G.fx.push({ type: 'spark', x: t.x, y: t.y + t.r * 0.4, c: EL[p.el].l, a: rand(0, 6.28), life: 0.2, max: 0.2 });
-  if (p.crit) G.texts.push({ x: t.x, y: t.y - 20, s: Math.round(p.dmg), life: 0.5, max: 0.5, c: '#ffe27a' });
+  if (p.crit) G.texts.push({ x: t.x, y: t.y - 20, s: fmtNum(p.dmg), life: 0.55, max: 0.55, c: '#ffe27a', big: true });
+  else if (!LOW && Math.random() < 0.25) G.texts.push({ x: t.x + rand(-8, 8), y: t.y - 14, s: fmtNum(p.dmg), life: 0.5, max: 0.5, c: '#ffffff', sm: true });
   if (p.el === 0 && mutLv('slow')) t.slow = 1.2 + 0.4 * mutLv('slow');
   if (p.el === 1 && mutLv('tox')) {
     const add = p.dmg * 0.5 * mutLv('tox');
@@ -616,16 +636,21 @@ function impact(p) {
 }
 
 /* ---------- Ana güncelleme ---------- */
+function confetti() {
+  const cols = ['#ffd23f', '#5fe3ff', '#ff8ae2', '#7bd34a', '#ff8a3d', '#ffffff'];
+  for (let i = 0; i < 60; i++) G.fx.push({ type: 'conf', x: rand(0, W), y: rand(FIELD_Y - 30, FIELD_Y + 60), vx: rand(-30, 30), vy: rand(60, 160), rot: rand(0, 6), vr: rand(-8, 8), c: cols[i % cols.length], sz: rand(4, 8), life: 2.2, max: 2.2 });
+}
 function endRun(win) {
   if (!G || G.mode === 'ending' || G.mode === 'over') return;
-  G.mode = 'ending'; G.win = win; G.endT = 0.9; sfx(win ? 'win' : 'lose');
+  G.mode = 'ending'; G.win = win; G.endT = win ? 1.7 : 0.9; sfx(win ? 'win' : 'lose');
+  if (win) confetti();
   if (!win) G.shake = 0.4;
 }
 function step(dt) {
   const g = G; if (!g) return;
   if (g.mode === 'play') {
     g.t += dt; g.idle += dt;
-    const wn = Math.min(WAVES, Math.floor(g.t / WAVE_LEN) + 1);
+    const wn = g.endless ? Math.floor(g.t / WAVE_LEN) + 1 : Math.min(WAVES, Math.floor(g.t / WAVE_LEN) + 1);
     while (g.waveStarted < wn && g.mode === 'play') startWave(++g.waveStarted);
   }
   if (g.mode === 'play' || g.mode === 'ending') {
@@ -662,6 +687,7 @@ function step(dt) {
     const f = g.fx[i]; if (f.delay > 0) { f.delay -= dt; continue; } f.life -= dt;
     if (f.type === 'p') { f.x += f.vx * dt; f.y += f.vy * dt; }
     else if (f.type === 'star') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 160 * dt; }
+    else if (f.type === 'conf') { f.x += f.vx * dt; f.y += f.vy * dt; f.rot += f.vr * dt; f.vx += Math.sin(f.rot * 2) * 30 * dt; }
     if (f.life <= 0) { if (f.type === 'dna') g.dnaPop = 1; g.fx.splice(i, 1); }
   }
   for (let i = g.texts.length - 1; i >= 0; i--) { const t = g.texts[i]; t.life -= dt; t.y -= 28 * dt; if (t.life <= 0) g.texts.splice(i, 1); }
@@ -671,6 +697,14 @@ function step(dt) {
   if (g.comboT > 0) { g.comboT -= dt; if (g.comboT <= 0) g.combo = 0; }
   if (g.mode === 'ending') { g.endT -= dt; if (g.endT <= 0) { g.mode = 'over'; finishRun(); } }
 }
+
+/* Başarımlar */
+const ACH = [];
+[['achMerge', 'merges', [50, 500, 2500]], ['achKill', 'kills', [100, 1000, 5000]], ['achTier', 'maxTier', [5, 7, 8]], ['achWin', 'wins', [1, 5, 20]],
+ ['achCombo', 'maxCombo', [4, 7, 10]], ['achCodex', 'codex', [12, 36, 72]], ['achEra', 'era', [2, 3]], ['achRuns', 'runs', [10, 50]]]
+  .forEach(([k, stat, ns]) => ns.forEach((n, i) => ACH.push({ id: stat + n, k, stat, n, r: [20, 50, 120][i] })));
+const statVal = a => a.stat === 'wins' ? save.wins : a.stat === 'runs' ? save.runs : a.stat === 'codex' ? Object.keys(save.codex).length : a.stat === 'era' ? save.unlocked + 1 : save.stats[a.stat];
+function checkAch(g) { for (const a of ACH) if (!save.ach[a.id] && statVal(a) >= a.n) { save.ach[a.id] = 1; save.dna += a.r; g.newAch.push(a); } }
 
 function finishRun() {
   const g = G;
@@ -682,6 +716,9 @@ function finishRun() {
     if (g.era === save.unlocked && save.unlocked < ERAS.length - 1) { save.unlocked++; g.newEra = true; }
   }
   save.bestWave = Math.max(save.bestWave, g.waveReached);
+  if (g.endless) { g.newBest = g.waveReached > (save.best[g.era] || 0); save.best[g.era] = Math.max(save.best[g.era] || 0, g.waveReached); }
+  const st = save.stats; st.merges += g.merges; st.kills += g.kills; st.maxTier = Math.max(st.maxTier, g.maxTier); st.maxCombo = Math.max(st.maxCombo, g.maxCombo);
+  checkAch(g);
   screen = 'result'; persist(); showResult();
 }
 
@@ -689,13 +726,13 @@ function finishRun() {
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const stage = document.getElementById('stage'), ov = document.getElementById('ov');
 const wrap = document.getElementById('wrap');
-let SC = 1, DPR = 1, T = 0;
+let SC = 1, DPR = 1, T = 0, LOW = false;
 const TAU = 6.2832;
 function fit() {
   const w = wrap.clientWidth, h = wrap.clientHeight;
   SC = Math.max(0.3, Math.min(w / W, h / H));
   stage.style.width = W * SC + 'px'; stage.style.height = H * SC + 'px'; stage.style.setProperty('--u', SC + 'px');
-  DPR = Math.min(2, window.devicePixelRatio || 1);
+  DPR = LOW ? 1 : Math.min(2, window.devicePixelRatio || 1);
   cv.width = Math.round(W * SC * DPR); cv.height = Math.round(H * SC * DPR);
 }
 const FONT = "'Fredoka','Trebuchet MS',system-ui,sans-serif";
@@ -808,7 +845,7 @@ function drawUnit(el, tier, x, y, o) {
   const sx = (1 + br + rec * .08) * sc, sy = (1 - br - rec * .12) * sc, yy = y - rec * 2.5;
   ctx.save(); ctx.globalAlpha = al;
   ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(x, y + R * .92 * sc, R * .85 * sc, R * .24 * sc, 0, 0, TAU); ctx.fill();
-  if (tier >= 4) {
+  if (tier >= 4 && !LOW) {
     const a = .24 + .1 * Math.sin(T * 3 + ph), rad = R * 1.9 * sc;
     ctx.globalCompositeOperation = 'lighter';
     const gr = ctx.createRadialGradient(x, yy, R * .4, x, yy, rad); gr.addColorStop(0, hexA(EL[el].c, a)); gr.addColorStop(1, hexA(EL[el].c, 0));
@@ -961,6 +998,7 @@ function tileSprite(era) {
   return (tileCache[era] = c);
 }
 function drawAmbient(era) {
+  if (LOW) return;
   if (!ambient[era]) { const r = rng(era * 31 + 3); ambient[era] = Array.from({ length: 28 }, () => ({ x: r() * W, y: r() * (BASE_Y - FIELD_Y), s: 8 + r() * 22, p: r() * 6.28, r: .8 + r() * 2.2 })); }
   const rangeY = BASE_Y - FIELD_Y;
   for (const p of ambient[era]) {
@@ -985,7 +1023,7 @@ function drawAmbient(era) {
 
 function drawMenu(era) {
   const E = ERAS[era];
-  ctx.drawImage(bgLayer(era), 0, 0, W, BOARD_Y);
+  drawBg(era);
   const fl = ctx.createLinearGradient(0, BOARD_Y, 0, H); fl.addColorStop(0, E.bg[1]); fl.addColorStop(1, hexMix(E.bg[1], '#000000', .7));
   ctx.fillStyle = fl; ctx.fillRect(0, BOARD_Y, W, H - BOARD_Y);
   drawAmbient(era);
@@ -1005,6 +1043,13 @@ function drawMenu(era) {
   const vg = ctx.createRadialGradient(W / 2, H / 2, 150, W / 2, H / 2, 480); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.45)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
 }
 
+function drawBg(era) {
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, BOARD_Y); ctx.clip();
+  ctx.translate(W / 2, BOARD_Y / 2); ctx.scale(1.04, 1.04); ctx.translate(-W / 2 + Math.sin(T * .12) * 5, -BOARD_Y / 2);
+  ctx.drawImage(bgLayer(era), 0, 0, W, BOARD_Y); ctx.restore();
+}
+const taps = [];
+
 /* ---- Ana çizim ---- */
 let drag = null;
 function draw(now) {
@@ -1015,7 +1060,7 @@ function draw(now) {
   ctx.save();
   if (g && g.shake > 0 && !reduceMotion) ctx.translate(rand(-3, 3) * g.shake * 4, rand(-3, 3) * g.shake * 4);
   if (!g || (screen === 'menu' && !ov.hidden)) { drawMenu(era); ctx.restore(); return; }
-  ctx.drawImage(bgLayer(era), 0, 0, W, BOARD_Y);
+  drawBg(era);
   drawAmbient(era);
   for (let c = 0; c < COLS; c++) { ctx.fillStyle = c % 2 ? 'rgba(255,255,255,.028)' : 'rgba(0,0,0,.05)'; ctx.fillRect(c * CELL, FIELD_Y, CELL, BASE_Y - FIELD_Y); }
   const hpRatio = g ? g.hp / g.maxhp : 1, lineC = hpRatio > .5 ? '255,138,61' : '255,77,94';
@@ -1062,7 +1107,7 @@ function draw(now) {
       const [x, y] = cellXY(r, c);
       const age = T - (u.born || 0); if (age < 0 || T < (u.hide || 0)) continue;
       const hs = age < .45 ? Math.max(.01, eob(age / .45)) : 1, E2 = EL[u.el], ga = (.16 + .06 * Math.sin(T * 2 + u.ph)) * Math.min(1, hs);
-      const gg = ctx.createRadialGradient(x, y, 4, x, y, 34); gg.addColorStop(0, hexA(E2.c, ga)); gg.addColorStop(1, hexA(E2.c, 0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, 34, 0, TAU); ctx.fill();
+      if (!LOW) { const gg = ctx.createRadialGradient(x, y, 4, x, y, 34); gg.addColorStop(0, hexA(E2.c, ga)); gg.addColorStop(1, hexA(E2.c, 0)); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, 34, 0, TAU); ctx.fill(); }
       drawUnit(u.el, u.tier, x, y, { scale: (1 + Math.min(1, u.pop) * 0.3) * hs, alpha: drag && drag.from === i ? 0.25 : 1, ph: u.ph, rec: u.rec, look: !!frontEnemy(c), flash: u.flash || 0 });
     }
     for (let i = g.anims.length - 1; i >= 0; i--) {
@@ -1084,9 +1129,10 @@ function draw(now) {
       const e = EL[p.el];
       p.trail = p.trail || []; p.trail.push([p.x, p.y]); if (p.trail.length > 6) p.trail.shift();
       for (let i = 0; i < p.trail.length; i++) { ctx.globalAlpha = (i + 1) / p.trail.length * .4; ctx.fillStyle = e.c; ctx.beginPath(); ctx.arc(p.trail[i][0], p.trail[i][1], (p.crit ? 5 : 3.4) * (i + 1) / p.trail.length, 0, TAU); ctx.fill(); }
-      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 1; if (!LOW) {
+      ctx.globalCompositeOperation = 'lighter';
       const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.crit ? 12 : 8); gr.addColorStop(0, hexA(e.l, .9)); gr.addColorStop(1, hexA(e.c, 0));
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(p.x, p.y, p.crit ? 12 : 8, 0, TAU); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(p.x, p.y, p.crit ? 12 : 8, 0, TAU); ctx.fill(); ctx.globalCompositeOperation = 'source-over'; }
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x, p.y, p.crit ? 3 : 2, 0, TAU); ctx.fill();
     }
     for (const f of g.fx) {
@@ -1098,15 +1144,18 @@ function draw(now) {
       else if (f.type === 'spark') { ctx.globalAlpha = a; ctx.strokeStyle = f.c; ctx.lineWidth = 2; for (let k = 0; k < 4; k++) { const an = f.a + k * 1.57, d0 = 3 + pr * 5, d1 = 8 + pr * 9; ctx.beginPath(); ctx.moveTo(f.x + Math.cos(an) * d0, f.y + Math.sin(an) * d0); ctx.lineTo(f.x + Math.cos(an) * d1, f.y + Math.sin(an) * d1); ctx.stroke(); } ctx.globalAlpha = 1; }
       else if (f.type === 'beam') { ctx.globalAlpha = a; ctx.strokeStyle = f.c; ctx.lineWidth = 16 * a; ctx.beginPath(); ctx.moveTo(f.x, f.y1); ctx.lineTo(f.x, f.y2); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'zap') { ctx.globalAlpha = a; ctx.strokeStyle = '#fff3a0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(f.x1, f.y1); ctx.lineTo((f.x1 + f.x2) / 2 + rand(-6, 6), (f.y1 + f.y2) / 2); ctx.lineTo(f.x2, f.y2); ctx.stroke(); ctx.globalAlpha = 1; }
+      else if (f.type === 'pop') { const col = (f.boss ? ERAS[G.era].boss : ERAS[G.era].en)[0]; ctx.globalAlpha = a * .8; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1 + pr * .9), 0, TAU); ctx.fill(); ctx.globalAlpha = a; ctx.strokeStyle = '#fff'; ctx.lineWidth = 3 * a + 1; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.2 + pr * 1.6), 0, TAU); ctx.stroke(); ctx.globalAlpha = 1; }
+      else if (f.type === 'conf') { ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.globalAlpha = Math.min(1, a * 2); ctx.fillStyle = f.c; ctx.fillRect(-f.sz / 2, -f.sz / 4, f.sz, f.sz / 2); ctx.restore(); }
       else if (f.type === 'ripple') { ctx.globalAlpha = a * .7; ctx.strokeStyle = f.c; ctx.lineWidth = 3 * a + .8; const sz = f.s0 + pr * f.s1; rr(f.x - sz, f.y - sz, sz * 2, sz * 2, 16 + sz * .25); ctx.stroke(); ctx.globalAlpha = 1; }
       else if (f.type === 'dna') { const x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 50; ctx.globalAlpha = Math.min(1, a * 4); helixGlyph(x, y, 16 * (1 - pr * .3), T * 6 + pr * 10); ctx.globalAlpha = 1; }
       else if (f.type === 'coin') { const k = eob(Math.min(1, pr * 1.2)) * .9 + pr * .1, x = f.x + (f.x1 - f.x) * pr, y = f.y + (f.y1 - f.y) * pr - Math.sin(pr * Math.PI) * 40; ctx.globalAlpha = Math.min(1, a * 3); coin(x, y, 5 * (1 - pr * .3)); ctx.globalAlpha = 1; void k; }
     }
-    for (const tx of g.texts) { ctx.globalAlpha = Math.max(0, tx.life / tx.max); txt(String(tx.s), tx.x, tx.y, tx.big ? 20 : 15, tx.c, 'center', 700, 3); ctx.globalAlpha = 1; }
+    for (const tx of g.texts) { ctx.globalAlpha = Math.max(0, tx.life / tx.max); txt(String(tx.s), tx.x, tx.y, tx.big ? 20 : (tx.sm ? 12 : 15), tx.c, 'center', 700, 3); ctx.globalAlpha = 1; }
     if (drag) { const A = g.board[drag.from]; if (A) drawUnit(A.el, A.tier, drag.x, drag.y - 14, { scale: 1.15, ph: A.ph }); }
     drawHud(g);
     for (const f of g.fx) if (f.type === 'reveal') drawReveal(f);
     if (g.hitFlash > 0) { const v2 = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 470); v2.addColorStop(0, 'rgba(255,40,70,0)'); v2.addColorStop(1, `rgba(255,40,70,${Math.min(.5, g.hitFlash * 1.2)})`); ctx.fillStyle = v2; ctx.fillRect(0, 0, W, H); }
+    for (let i = taps.length - 1; i >= 0; i--) { const tp = taps[i], pp = (T - tp.t0) / .35; if (pp >= 1) { taps.splice(i, 1); continue; } ctx.globalAlpha = (1 - pp) * .6; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(tp.x, tp.y, 6 + pp * 22, 0, TAU); ctx.stroke(); ctx.globalAlpha = 1; }
   }
   ctx.restore();
 }
@@ -1126,7 +1175,7 @@ function drawHud(g) {
   const bar = ctx.createLinearGradient(0, 0, 0, FIELD_Y); bar.addColorStop(0, '#0f2038'); bar.addColorStop(1, '#091323');
   ctx.fillStyle = bar; ctx.fillRect(0, 0, W, FIELD_Y - 2);
   ctx.fillStyle = '#16294a'; rr(8, 8, 98, 28, 14); ctx.fill();
-  txt(t('wave') + ' ' + Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES, 57, 22.5, 13, '#e9f2ff', 'center');
+  txt(t('wave') + ' ' + (g.endless ? '∞ ' + Math.max(1, g.waveStarted) : Math.min(WAVES, Math.max(1, g.waveStarted)) + '/' + WAVES), 57, 22.5, 13, '#e9f2ff', 'center');
   heart(122, 21, 7, '#ff5d6c');
   const bx = 134, bw = 82, pct = Math.max(0, g.hp / g.maxhp);
   ctx.fillStyle = '#1c3050'; rr(bx, 14, bw, 16, 8); ctx.fill();
@@ -1141,7 +1190,7 @@ function drawHud(g) {
   coin(238, 22, 8 * gs); txt(String(g.gold), 250, 22.5, 16 * gs, '#ffd23f', 'left', 700, 2);
   ctx.fillStyle = '#16294a'; rr(326, 8, 28, 28, 9); ctx.fill();
   ctx.fillStyle = '#e9f2ff'; rr(334, 14, 4.5, 16, 2); ctx.fill(); rr(343, 14, 4.5, 16, 2); ctx.fill();
-  const prog = Math.min(1, g.t / (WAVES * WAVE_LEN));
+  const prog = g.endless ? (g.t % (WAVES * WAVE_LEN)) / (WAVES * WAVE_LEN) : Math.min(1, g.t / (WAVES * WAVE_LEN));
   ctx.fillStyle = '#1c3050'; ctx.fillRect(0, FIELD_Y - 5, W, 3);
   ctx.fillStyle = '#ff8a3d'; ctx.fillRect(0, FIELD_Y - 5, W * prog, 3);
   ctx.fillStyle = 'rgba(255,190,120,.9)'; ctx.beginPath(); ctx.arc(W * prog, FIELD_Y - 3.5, 3.6, 0, TAU); ctx.fill();
@@ -1213,6 +1262,7 @@ cv.addEventListener('pointerdown', ev => {
   ensureAudio();
   if (!G || G.mode !== 'play') return;
   const [x, y] = toVirt(ev);
+  taps.push({ x, y, t0: T });
   if (x >= 318 && y <= 40) { pauseGame(); return; }
   if (x >= 290 && x <= 350 && y >= 679 && y <= 713) { toggleMute(); return; }
   if (x >= 12 && x <= 72 && y >= 679 && y <= 713) { save.speed = save.speed === 2 ? 1 : 2; persist(); return; }
@@ -1243,7 +1293,7 @@ function countUp(el, to, ms) {
   requestAnimationFrame(tick);
 }
 function render() {
-  ({ result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
+  ({ ach: showAch, result: showResult, codex: showCodex, lab: showLab, settings: showSettings, pause: showPause, tut: showTutorial }[screen] || showMenu)();
 }
 
 /* Günlük ödül ve kuluçka (çevrimdışı DNA) */
@@ -1282,7 +1332,12 @@ function eraRow() {
   const dots = ERAS.map((_, i) => `<i class="${i === save.era ? 'on' : ''}"></i>`).join('');
   return `<div class="eras"><button class="mini" data-era="-1" aria-label="‹" ${save.era <= 0 ? 'disabled' : ''}>‹</button>` +
     `<div><span class="tag">${t('era')} ${save.era + 1}/${ERAS.length}</span><b>${eraName(save.era)}</b><small>${next}</small><div class="dots">${dots}</div></div>` +
-    `<button class="mini" data-era="1" aria-label="›" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>`;
+    `<button class="mini" data-era="1" aria-label="›" ${save.era >= save.unlocked ? 'disabled' : ''}>›</button></div>` + modesHTML();
+}
+function modesHTML() {
+  const canE = (save.clears[save.era] || 0) > 0, isE = save.mode === 'endless' && canE;
+  const note = canE ? (save.best[save.era] ? `<small class="bestl">${t('best', save.best[save.era])}</small>` : '') : `<small class="bestl">${t('modeLock')}</small>`;
+  return `<div class="modes"><button class="ghost ${!isE ? 'sel' : ''}" data-mode="normal">${t('modeN')}</button><button class="ghost ${isE ? 'sel' : ''}" data-mode="endless" ${canE ? '' : 'disabled'}>∞ ${t('modeE')}</button></div>${note}`;
 }
 function showMenu() {
   screen = 'menu';
@@ -1293,7 +1348,7 @@ function showMenu() {
       <div class="mini-card"><b>${t('idleT')}</b><small>${t('idleAcc', acc)}</small><button class="mini" data-act="idle" ${acc >= 1 ? '' : 'disabled'}>${t('collect')}</button></div>
     </div>
     <button class="btn" data-act="start">${t('play')}</button>
-    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
+    <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="codex">${t('codex')} ${codexCount()}/${CODEX_TOTAL}</button><button class="ghost" data-act="ach">${t('achT')} ${ACH.filter(a => save.ach[a.id]).length}/${ACH.length}</button><button class="ghost" data-act="settings">${t('settings')}</button></div>`, 'menu');
 }
 function showLab() {
   screen = 'lab';
@@ -1305,14 +1360,17 @@ function showResult() {
   const nxt = g.newEra ? `<div class="bank"><b>${t('newEra', eraName(save.unlocked))}</b></div>` : '';
   const done = g.goals.filter(x => x.done).length;
   const stars = [0, 1, 2].map(i => `<span class="star ${i < done ? 'on' : ''}" style="animation-delay:${.35 + i * .18}s">★</span>`).join('');
-  setOv(`<span class="tag">${g.win ? t('winTag') : t('loseTag')}</span><h2>${g.win ? t('win') : t('lose')}</h2>
+  const tag = g.endless ? '∞ ' + t('modeE') : (g.win ? t('winTag') : t('loseTag'));
+  const head = g.endless ? t('sWave') + ' ' + g.waveReached : (g.win ? t('win') : t('lose'));
+  const nb = g.newBest ? `<div class="bank"><b>${t('newBest')}</b></div>` : '';
+  setOv(`<span class="tag">${tag}</span><h2>${head}</h2>${nb}
     <div class="stars">${stars}</div>
     <div class="gain">+<span id="gainnum">0</span>${DNA_SVG}</div>
-    <div class="stats"><span>${t('sWave')} <b>${g.waveReached}/${WAVES}</b></span><span>${t('sTier')} <b>${g.maxTier}</b></span>
+    <div class="stats"><span>${t('sWave')} <b>${g.waveReached}${g.endless ? '' : '/' + WAVES}</b></span><span>${t('sTier')} <b>${g.maxTier}</b></span>
     <span>${t('sMerge')} <b>${g.merges}</b></span><span>${t('sKill')} <b>${g.kills}</b></span>
     <span>${t('sFirst')} <b>${fm}</b></span><span>${t('sTime')} <b>${Math.round(g.t)} ${t('sec')}</b></span></div>
     ${nxt}<div class="bank">${g.disc ? t('gainCodex', g.disc) + ' · ' : ''}${t('bank')} <b>${save.dna}</b>${DNA_SVG}</div>
-    ${goalsHTML()}${nextUpHTML()}
+    ${goalsHTML()}${achHTML(g)}${nextUpHTML()}
     <button class="btn" data-act="again">${t('next')}</button>
     <div class="pair"><button class="ghost ${nextUpInfo() && nextUpInfo().ready ? 'pulse' : ''}" data-act="lab">${t('lab')}</button><button class="ghost" data-act="menu">${t('pickEra')}</button><button class="ghost" data-act="codex">${t('codex')}</button></div>`);
   countUp(document.getElementById('gainnum'), g.gain, 900);
@@ -1337,7 +1395,8 @@ function showSettings() {
     <div class="row"><b>${t('sound')}</b><button class="mini" data-act="mute">${save.muted ? t('off') : t('on')}</button></div>
     <div class="row"><b>${t('music')}</b><button class="mini" data-act="music">${save.music === false ? t('off') : t('on')}</button></div>
     <div class="row"><b>${t('vib')}</b><button class="mini" data-act="vib">${save.vib ? t('on') : t('off')}</button></div>
-    <div class="row"><b>${t('howTo')}</b><button class="mini" data-act="tut">?</button></div>${rst}</div>
+    <div class="row"><b>${t('gfx')}</b><button class="mini" data-act="gfx">${save.gfx === 'low' ? t('gfxLow') : t('gfxAuto')}</button></div>
+    <div class="row"><b>${t('howTo')}</b><button class="mini" data-act="tut">?</button></div>${rst}</div><small class="ver">Evolute v${APP_VER}</small>
     <button class="btn" data-act="back">${t('back')}</button>`);
 }
 function showTutorial() {
@@ -1363,6 +1422,14 @@ function showPick() {
     G.pickOffer.map(id => { const l = G.muts[id] || 0, m = MUTS.find(x => x.id === id);
       return `<button class="card" style="--c:${MUT_COL[id]}" data-pick="${id}"><i class="chip">${m.ch}</i><div><b>${t(id)}${l ? ' · ' + (l + 1) : ''}</b><span>${t(id + 'D')}</span></div></button>`; }).join('') + '</div>');
 }
+function showAch() {
+  screen = 'ach';
+  const done = ACH.filter(a => save.ach[a.id]).length;
+  const rows = ACH.map(a => { const v = Math.min(statVal(a), a.n), ok = !!save.ach[a.id];
+    return `<div class="row" style="--c:${ok ? '#ffd23f' : '#4d6a92'}"><div class="rt"><b>${t(a.k, a.n)}</b><small>${v}/${a.n} · +${a.r}${DNA_SVG}</small><div class="lvbar"><i style="width:${v / a.n * 100}%"></i></div></div><span class="trophy ${ok ? 'on' : ''}">${ok ? '★' : '☆'}</span></div>`; }).join('');
+  setOv(`<span class="tag">${t('achT')} ${done}/${ACH.length}</span><div class="lab">${rows}</div><button class="btn" data-act="back">${t('back')}</button>`);
+}
+const achHTML = g => g.newAch && g.newAch.length ? '<div class="goals ach"><b>' + t('achNew') + '</b>' + g.newAch.map(a => `<div class="ok"><span>★</span>${t(a.k, a.n)} <i>+${a.r}</i></div>`).join('') + '</div>' : '';
 const goSub = fn => { if (screen === 'menu' || screen === 'result') backTo = screen; fn(); };
 ov.addEventListener('click', ev => {
   ensureAudio();
@@ -1373,6 +1440,9 @@ ov.addEventListener('click', ev => {
   if (d.act === 'daily') { claimDaily(); sfx('discover'); showMenu(); return; }
   if (d.act === 'idle') { collectIdle(); sfx('discover'); showMenu(); return; }
   if (d.act === 'lab') { goSub(showLab); return; }
+  if (d.act === 'ach') { goSub(showAch); return; }
+  if (d.mode) { save.mode = d.mode; persist(); showMenu(); return; }
+  if (d.act === 'gfx') { save.gfx = save.gfx === 'low' ? 'auto' : 'low'; LOW = save.gfx === 'low'; fit(); persist(); render(); return; }
   if (d.act === 'codex') { codexEra = save.era; goSub(showCodex); return; }
   if (d.act === 'settings') { confirmReset = false; goSub(showSettings); return; }
   if (d.act === 'menu') { showMenu(); return; }
@@ -1389,7 +1459,7 @@ ov.addEventListener('click', ev => {
   if (d.act === 'resetno') { confirmReset = false; showSettings(); return; }
   if (d.act === 'resetyes') {
     const keep = save.lang; try { localStorage.removeItem(KEY); } catch (e) {}
-    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1 });
+    Object.assign(save, { dna: 0, runs: 0, wins: 0, bestWave: 0, up: { atk: 0, hp: 0, spawn: 0 }, era: 0, unlocked: 0, clears: [0, 0, 0], codex: {}, tut: 0, daily: { last: '', streak: 0 }, idleT: Date.now(), lang: keep, music: true, speed: 1, mode: 'normal', best: [0, 0, 0], stats: { merges: 0, kills: 0, maxTier: 0, maxCombo: 0 }, ach: {}, gfx: 'auto' });
     persist(); confirmReset = false; G = null; backTo = 'menu'; showSettings(); return;
   }
   if (d.act === 'resume') { if (G && G.mode === 'paused') { G.mode = 'play'; hideOv(); } return; }
@@ -1425,17 +1495,22 @@ try {
 
 /* ---------- Döngü ---------- */
 let last = 0;
+let lowT = 0, lowN = 0;
 function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
+  const raw = (now - last) / 1000 || 0, dt = Math.min(0.05, raw); last = now;
+  if (G && G.mode === 'play' && !document.hidden && raw > 0 && raw < 0.5) {
+    lowT += raw; lowN++;
+    if (lowN >= 150) { if (save.gfx !== 'low' && !LOW && lowT / lowN > 0.03) { LOW = true; fit(); } lowT = 0; lowN = 0; }
+  }
   for (let i = 0, n = save.speed === 2 ? 2 : 1; i < n; i++) step(dt);
   draw(now);
   requestAnimationFrame(frame);
 }
 window.addEventListener('resize', fit);
-fit(); showMenu();
+LOW = save.gfx === 'low'; fit(); showMenu();
 requestAnimationFrame(frame);
 
 // Test ve denge ayarı için dış erişim
-window.__evolute = { handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
+window.__evolute = { ACH, checkAch, statVal, setLow(b) { LOW = b; fit(); }, get LOW() { return LOW; }, showAch, finishRun, handleBack, checkGoals,  ERAS, t, STR, LANGS, SPECIES, setLang(l) { LANG = l; save.lang = l; }, pauseGame, showMenu, showSettings, showTutorial, claimDaily, idleAcc, dailyReady, get g() { return G; }, get save() { return save; }, newGame, step, drop, spawnManual, pickMut, endRun, cellXY, cellAt, MUTS, UPS, EL, idx, COLS, ROWS, MAXT, WAVES, spawnCost, findPair, get mode() { return G ? G.mode : 'menu'; } };
 })();
 </script>

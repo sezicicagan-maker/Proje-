@@ -11,6 +11,7 @@ Mobil merge + roguelite + idle oyunu. Google Play için hazırlanıyor. Bu proje
 | `prototype/README.md` | Oynanış, denge, test sonuçları |
 | `store/` | Mağaza metinleri, ikon, öne çıkan görsel, ekran görüntüleri, **`CHECKLIST.md` (senin yapacakların)** |
 | `docs/privacy-policy.html` | Gizlilik politikası (TR + EN) |
+| `docs/APK_KURULUM.md` | **APK nasıl indirilir ve telefona kurulur (adım adım, Türkçe)** |
 | `capacitor.config.json`, `package.json`, `scripts/`, `.github/workflows/android.yml` | Android paketleme (Capacitor 8, API 36) |
 | `assets/`, `app/fonts/` | Uygulama ikonu, açılış ekranı, gömülü yazı tipi (Fredoka, SIL OFL) |
 
@@ -18,6 +19,7 @@ Mobil merge + roguelite + idle oyunu. Google Play için hazırlanıyor. Bu proje
 
 - 5×5 tahta, 5 şerit. Aynı element ve sayıdaki canlıları sürükleyip birleştir. Canlılar kendi şeridindeki düşmana saldırır.
 - 3 çağ (İlkel Deniz, Sisli Orman, Buzul Çağı), her birinde 10 dalga ve boss.
+- Sonsuz mod (her çağ tamamlanınca açılır, rekor tutulur), 22 başarım, otomatik grafik kalitesi.
 - 7 mutasyon, 72 türlük katalog, laboratuvar yükseltmeleri, günlük ödül, kuluçka (çevrimdışı DNA).
 - 5 dil: Türkçe, English, Deutsch, Español, Português (cihaz diline göre seçilir).
 - Duraklatma, eğitim, ses ve titreşim ayarları, Android geri tuşu desteği.

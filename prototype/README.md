@@ -29,6 +29,10 @@
 - **Hücre görünümü:** Tahta karoları petri kuyucuğu gibi detaylı (metalik çerçeve, çukur derinlik, organeller, çağa özel doku: balon, yosun filizi, kristal) ve içinde süzülen parçacıklar. Dolu hücrede elemente göre ışıma.
 - **Animasyonlar:** Yaratık doğarken yumurtadan çıkar gibi büyür (dalgacık), sürüklenen yaratık hücreler arası uçar, birleşmede iki yaratık buluşup parlayarak yeni evrime geçer, düşman portalden belirir, canı azalınca kırmızı ekran vurgusu, can çubuğunda gecikmeli iz.
 - **Arayüz:** Cam görünümlü paneller, kabartmalı düğmeler (basma animasyonu), kayarak giren öğeler, seviye çubuklu laboratuvar, renk kodlu mutasyon kartları, animasyonlu eğitim.
+- **Sonsuz mod:** Bir çağı bitirince o çağda açılır. Dalgalar bitmez, her 10. dalgada boss gelir, en iyi dalga kaydedilir.
+- **22 başarım:** Toplam birleştirme/öldürme, sayı, galibiyet, kombo, katalog, çağ, tur sayısı. Her biri DNA verir, sonuç ekranında ve Başarımlar ekranında görünür.
+- **Grafik kalitesi:** Oyun yavaşlarsa kendiliğinden düşük efekt moduna geçer (Ayarlar > Grafik ile elle de seçilir).
+- **Ekstra animasyonlar:** Dokunma halkası, arka planda hafif kayma, düşman patlaması, hasar sayıları, zaferde konfeti, parıldayan başlık.
 - **Müzik:** Çok kısık üretken fon müziği (çağa göre ölçü), Ayarlar'dan kapatılır. Gerçek kulakla denenmedi.
 - **Android geri tuşu:** oyunda duraklatır, alt ekranlarda geri gider, ana menüde çıkar (Capacitor App eklentisiyle).
 
