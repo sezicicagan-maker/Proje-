@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070d17">
+<title>RBMK Reactor Simulator</title>
+<style>
+:root{color-scheme:dark;--bg:#070d17;--panel:#101d31;--ink:#e9f2ff;--muted:#8aa0bf;--ok:#46e0a0;--warn:#ffc83d;--bad:#ff5468;--acc:#5fd3ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Trebuchet MS',system-ui,sans-serif;overflow:hidden;touch-action:manipulation;user-select:none}
+#app{position:relative;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column}
+#cw{flex:1 1 0;min-height:0}
+canvas{display:block;width:100%;height:100%;object-fit:contain}
+#ctl{flex:none;display:flex;flex-direction:column;gap:5px;padding:4px 12px calc(8px + env(safe-area-inset-bottom,0px))}
+.row{background:var(--panel);border-radius:12px;padding:4px 12px 6px}
+.row label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.row label b{color:var(--ink)}
+input[type=range]{width:100%;height:28px;background:transparent;-webkit-appearance:none;appearance:none;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:6px;background:linear-gradient(90deg,#1d3556,#2f5a8f)}
+input[type=range]::-moz-range-track{height:8px;border-radius:6px;background:linear-gradient(90deg,#1d3556,#2f5a8f)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-10px;border-radius:50%;background:var(--acc);border:3px solid #0a2338}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--acc);border:3px solid #0a2338}
+input[type=range]:disabled{opacity:.4}
+.btns{display:flex;gap:6px}
+.b{flex:1;font:700 13px/1 inherit;padding:11px 4px;border:0;border-radius:11px;background:#1b3052;color:var(--ink);cursor:pointer}
+.b.on{background:var(--acc);color:#04202f}.b:disabled{opacity:.4}
+#az{position:relative;flex:1.6;font:800 16px/1 inherit;letter-spacing:.1em;color:#fff;background:linear-gradient(180deg,#ff6b7c,#c91f37);box-shadow:0 3px 0 #7d1022;overflow:hidden}
+#az i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.35)}
+#az span{position:relative}
+#ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:rgba(5,9,16,.9);overflow-y:auto}
+#ov[hidden]{display:none}
+#ov h1{margin:0;font-size:30px;letter-spacing:.06em;background:linear-gradient(180deg,#fff,#7fd6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#ov h2{margin:0;font-size:24px}
+#ov p{margin:0;max-width:330px;color:var(--muted);font-size:14px;line-height:1.4}
+#ov p b{color:var(--ink)}
+#ov ul{margin:0;padding-left:18px;text-align:left;max-width:330px;color:var(--muted);font-size:13px;line-height:1.45}
+.btn{font:800 16px/1 inherit;padding:13px 26px;border:0;border-radius:13px;background:linear-gradient(180deg,#7be0ff,#2aa8e0);color:#052033;box-shadow:0 4px 0 #14709b;cursor:pointer;min-width:220px}
+.ghost{font:600 13px/1 inherit;padding:10px 14px;border-radius:11px;border:2px solid #2b4a74;background:transparent;color:var(--ink);cursor:pointer}
+.stars{font-size:32px;letter-spacing:6px;color:#ffd23f}.stars i{font-style:normal;opacity:.25}.stars i.on{opacity:1}
+small.d{color:#6f86a6;font-size:11px;max-width:320px}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="cw"><canvas id="c" width="360" height="430"></canvas></div>
+<div id="ctl">
+ <div class="row"><label><span id="lr"></span><b id="vr"></b></label><input id="rods" type="range" min="0" max="700" value="350"></div>
+ <div class="row"><label><span id="lf"></span><b id="vf"></b></label><input id="flow" type="range" min="30" max="110" value="100"></div>
+ <div class="row" id="autoRow" hidden><label><span id="ls"></span><b id="vs"></b></label><input id="nset" type="range" min="30" max="1600" step="10" value="700"></div>
+ <div class="btns"><button class="b" id="auto"></button><button class="b" id="test"></button><button class="b" id="spd">×1</button><button class="b" id="pause">II</button></div>
+ <div class="btns"><button class="b" id="az"><i></i><span>AZ-5</span></button></div>
+</div>
+<div id="ov"></div>
+</div>
+<script>
+(() => {
+'use strict';
+/*MODEL*/
+/* ---------- Metinler ---------- */
+const L = ((navigator.language || 'en').slice(0, 2) === 'tr') ? 'tr' : 'en';
+const T = {
+ en: { title: 'RBMK REACTOR SIMULATOR', edu: 'Educational simulator with a simplified physics model. Not for engineering use. No real people are depicted.',
+  intro: 'Run a graphite-moderated RBMK-type reactor. Control rods move at only 0.4 m/s, xenon builds up for hours (here compressed), and boiling coolant ADDS reactivity (positive void coefficient). Watch ORM: the number of equivalent rods you keep inserted.',
+  s1: '1 · Training: hold power', s2: '2 · The test (1986-style)', s3: '3 · Sandbox', start: 'Start', again: 'Retry', menu: 'Menu', back: 'Menu',
+  rods: 'Rod bank target (m inserted)', flow: 'Main pump flow', set: 'Auto setpoint', auto: 'AUTO', man: 'MANUAL', test: 'BEGIN TEST',
+  mw: 'MW(th)', orm: 'ORM', rho: 'Reactivity', per: 'Period', void: 'Steam void', fl: 'Flow', rd: 'Rods', xe: 'Xenon worth', pw: 'POWER (log MW)', xc: 'XENON WORTH ($)',
+  aOrm1: 'ORM < 26', aOrm2: 'ORM < 15: SHUT DOWN', aLow: 'POWER < 700 MW', aPer: 'SHORT PERIOD', aAz: 'AZ-5 ACTIVE', aJam: 'RODS STUCK', aTest: 'RUNDOWN TEST',
+  hold: 'Hold the power setpoint within ±5%.', done: 'Scenario complete', destroyed: 'Reactor destroyed', safe: 'Safe shutdown', score: 'Time within ±5%',
+  m_t1: 'Hold the setpoint. Rods move slowly, so plan ahead.', m_t2: 'Setpoint change! Follow it.',
+  m_a0: 'Supervisor: hold about 700 MW. The rundown test is scheduled.', m_a1: 'Regulator error: power is falling fast!', m_a2: 'Supervisor: raise power to 200 MW and run the test NOW.',
+  m_a3: 'Rundown started: pumps are slowing.', m_a4: 'Test finished. Press AZ-5 for a planned shutdown.', m_orm26: 'ORM below 26: procedure says be careful.', m_orm15: 'ORM below 15: procedure REQUIRES shutdown.', m_jam: 'Power surge: channels deformed, rods stuck!',
+  okOrm: 'above the 15-rod limit', peak: 'Peak power after AZ-5', m_xe: 'Xenon is poisoning the core: you must pull rods to hold power.',
+  explain: 'What happened', why1: 'Positive steam void coefficient: more power → more steam → more reactivity.', why2: 'Positive scram effect: graphite tips of the rods first ADD reactivity when entering a low-ORM core.', why3: 'Xenon poisoning forced rods out: ORM was only {0}.', why4: 'Rods need ~18 s to insert, and jammed once channels deformed.', why5: 'The rules said shut down at ORM < 15.',
+  read: 'Based on public analyses (IAEA INSAG-7). Numbers are simplified approximations.', rate: 'Rating' },
+ tr: { title: 'RBMK REAKTÖR SİMÜLATÖRÜ', edu: 'Basitleştirilmiş fizik modeliyle eğitim simülatörü. Mühendislik için kullanılamaz. Gerçek kişiler gösterilmez.',
+  intro: 'Grafit yavaşlatıcılı RBMK tipi bir reaktörü işlet. Kontrol çubukları sadece 0,4 m/sn hızla hareket eder, ksenon saatlerce birikir (burada sıkıştırıldı) ve kaynayan soğutucu reaktiviteyi ARTIRIR (pozitif buhar boşluğu katsayısı). ORM\'ye dikkat: içeride tuttuğun eşdeğer çubuk sayısı.',
+  s1: '1 · Eğitim: gücü tut', s2: '2 · Test (1986 tarzı)', s3: '3 · Serbest mod', start: 'Başla', again: 'Tekrar', menu: 'Menü', back: 'Menü',
+  rods: 'Çubuk grubu hedefi (m içeride)', flow: 'Ana pompa debisi', set: 'Otomatik hedef', auto: 'OTOMATİK', man: 'MANUEL', test: 'TESTİ BAŞLAT',
+  mw: 'MW(ısıl)', orm: 'ORM', rho: 'Reaktivite', per: 'Periyot', void: 'Buhar boşluğu', fl: 'Debi', rd: 'Çubuk', xe: 'Ksenon değeri', pw: 'GÜÇ (log MW)', xc: 'KSENON DEĞERİ ($)',
+  aOrm1: 'ORM < 26', aOrm2: 'ORM < 15: DURDUR', aLow: 'GÜÇ < 700 MW', aPer: 'KISA PERİYOT', aAz: 'AZ-5 AKTİF', aJam: 'ÇUBUKLAR SIKIŞTI', aTest: 'KOŞMA TESTİ',
+  hold: 'Güç hedefini ±%5 içinde tut.', done: 'Senaryo bitti', destroyed: 'Reaktör tahrip oldu', safe: 'Güvenli kapatma', score: '±%5 içinde süre',
+  m_t1: 'Hedefi tut. Çubuklar yavaş, önceden planla.', m_t2: 'Hedef değişti! Takip et.',
+  m_a0: 'Vardiya amiri: yaklaşık 700 MW\'ta kal. Koşma testi planlandı.', m_a1: 'Regülatör hatası: güç hızla düşüyor!', m_a2: 'Amir: gücü 200 MW\'a çıkar ve testi HEMEN yap.',
+  m_a3: 'Koşma başladı: pompalar yavaşlıyor.', m_a4: 'Test bitti. Planlı kapatma için AZ-5\'e bas.', m_orm26: 'ORM 26 altında: prosedür dikkat der.', m_orm15: 'ORM 15 altında: prosedür kapatmayı ŞART koşar.', m_jam: 'Güç sıçraması: kanallar deforme oldu, çubuklar sıkıştı!',
+  okOrm: '15 çubuk sınırının üstünde', peak: 'AZ-5 sonrası tepe güç', m_xe: 'Ksenon çekirdeği zehirliyor: gücü tutmak için çubukları çekmelisin.',
+  explain: 'Ne oldu', why1: 'Pozitif buhar boşluğu katsayısı: güç artar → buhar artar → reaktivite artar.', why2: 'Pozitif scram etkisi: çubukların grafit uçları, düşük ORM\'li çekirdeğe girerken önce reaktiviteyi ARTIRIR.', why3: 'Ksenon zehirlenmesi çubukları dışarı çektirdi: ORM sadece {0}.', why4: 'Çubuklar ~18 sn\'de iner ve kanallar deforme olunca sıkıştı.', why5: 'Kurallar ORM < 15\'te kapatmayı söylüyordu.',
+  read: 'Kamuya açık analizlere dayanır (IAEA INSAG-7). Sayılar basitleştirilmiş yaklaşıklardır.', rate: 'Puan' }
+};
+const t = (k, a) => { let s = (T[L][k] !== undefined ? T[L][k] : T.en[k]) || k; if (a !== undefined) s = s.replace('{0}', a); return s; };
+
+/* ---------- Durum ---------- */
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'), ov = document.getElementById('ov');
+const el = id => document.getElementById(id), rodsEl = el('rods'), flowEl = el('flow'), nsetEl = el('nset');
+let S = null, scen = 0, playing = false, speed = 1, msgs = [], msgT = 0, msg = '', hist = [], xh = [], histT = 0, scenT = 0, ended = false, score = { ok: 0, tot: 0 }, setpt = 0, azHold = 0, flags = {};
+const W = 360, H = 430, TAU = Math.PI * 2, PN = 3200, lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+el('lr').textContent = t('rods'); el('lf').textContent = t('flow'); el('ls').textContent = t('set'); el('auto').textContent = t('man'); el('test').textContent = t('test');
+
+function say(k) { msg = t(k); msgT = 7; }
+function initScenario(n) {
+  scen = n; ended = false; flags = {}; hist = []; xh = []; histT = 0; scenT = 0; score = { ok: 0, tot: 0 }; msgs = [];
+  if (n === 1) { S = M.create({ n: 0.5, p: 4.3, flow: 1, nHist: 0.5 }); setpt = 0.5; S.auto = true; S.nSet = 0.5; msgs = [[0, 'm_t1'], [30, 'm_t2'], [75, 'm_t2'], [110, 'm_t2']]; }
+  else if (n === 2) { S = M.create({ n: 0.22, p: 5.6, flow: 1, nHist: 1.0, sub: 0.15 }); setpt = 0.22; S.auto = true; S.nSet = 0.22; msgs = [[0, 'm_a0'], [60, 'm_a1'], [100, 'm_a2']]; }
+  else { S = M.create({ n: 1, p: 3.5, flow: 1, nHist: 1 }); setpt = 1; }
+  nsetEl.value = Math.round(setpt * PN); syncUI(); say(n === 1 ? 'm_t1' : n === 2 ? 'm_a0' : 'hold');
+}
+function syncUI() {
+  const auto = S.auto, locked = S.az || S.jammed || (scen === 2 && scenT >= 60 && scenT < 100);
+  rodsEl.disabled = auto || locked; flowEl.disabled = S.test || S.az; el('autoRow').hidden = !auto;
+  el('auto').textContent = auto ? t('auto') : t('man'); el('auto').classList.toggle('on', auto); el('auto').disabled = S.az || locked;
+  el('test').hidden = scen !== 2; el('test').disabled = S.test || S.az || scenT < 100 || S.n < 0.04;
+  if (!rodsEl.matches(':active')) rodsEl.value = Math.round(S.pTarget * 100);
+  if (!flowEl.matches(':active')) flowEl.value = Math.round(S.flowTarget * 100);
+  el('vr').textContent = S.p.toFixed(2) + ' m → ' + S.pTarget.toFixed(1); el('vf').textContent = Math.round(S.flow * 100) + '%'; el('vs').textContent = Math.round(S.nSet * PN) + ' MW';
+}
+rodsEl.addEventListener('input', () => { if (S && !S.auto && !S.az) { S.pTarget = rodsEl.value / 100; syncUI(); } });
+flowEl.addEventListener('input', () => { if (S && !S.test && !S.az) { S.flowTarget = flowEl.value / 100; syncUI(); } });
+nsetEl.addEventListener('input', () => { if (S) { S.nSet = nsetEl.value / PN; syncUI(); } });
+el('auto').addEventListener('click', () => { S.auto = !S.auto; if (S.auto) S.nSet = clamp(S.n, 0.01, 0.5); if (S.auto) nsetEl.value = Math.round(S.nSet * PN); syncUI(); });
+el('test').addEventListener('click', () => { if (scen === 2 && !S.test) { S.test = true; S.testT = 0; S.flowBase = S.flow; flags.testT0 = scenT; flags.ormAtTest = M.ORM(S.p); say('m_a3'); syncUI(); } });
+el('spd').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; el('spd').textContent = '×' + speed; });
+el('pause').addEventListener('click', () => { playing = !playing; el('pause').textContent = playing ? 'II' : '▶'; });
+const azb = el('az'); let azTimer = 0;
+const azDown = e => { e.preventDefault(); if (!playing || S.az) return; azHold = performance.now(); };
+const azUp = () => { azHold = 0; azb.firstChild.style.width = '0'; };
+azb.addEventListener('pointerdown', azDown); azb.addEventListener('pointerup', azUp); azb.addEventListener('pointerleave', azUp); azb.addEventListener('pointercancel', azUp);
+
+/* ---------- Menü / bitiş ---------- */
+function menu() {
+  playing = false; ov.hidden = false;
+  ov.innerHTML = `<h1>${t('title')}</h1><p>${t('intro')}</p><button class="btn" data-s="1">${t('s1')}</button><button class="btn" data-s="2">${t('s2')}</button><button class="ghost" data-s="3">${t('s3')}</button><small class="d">${t('edu')}<br>${t('read')}</small>`;
+}
+ov.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
+  if (d.s) { initScenario(+d.s); ov.hidden = true; playing = true; el('pause').textContent = 'II'; if (AC === null) initAudio(); }
+  else if (d.a === 'menu') menu(); else if (d.a === 'again') { initScenario(scen); ov.hidden = true; playing = true; }
+});
+function finish(kind) {
+  if (ended) return; ended = true; playing = false;
+  const orm = S.azORM !== undefined ? S.azORM : M.ORM(S.p);
+  let stars = 0, title = t('done'), body = '';
+  if (scen === 1) { const p = Math.round(score.ok / Math.max(1, score.tot) * 100); stars = p >= 85 ? 3 : p >= 65 ? 2 : p >= 40 ? 1 : 0; body = `<div class="stars">${[0, 1, 2].map(i => `<i class="${i < stars ? 'on' : ''}">★</i>`).join('')}</div><p>${t('score')}: <b>${p}%</b></p>`; }
+  else if (scen === 2) {
+    const dead = S.destroyed || kind === 'destroyed', pk = Math.round((S.maxAz || S.n) * PN), mo = flags.minORM === undefined ? orm : flags.minORM;
+    if (dead) { title = t('destroyed'); stars = 0; }
+    else if (S.az) { title = t('safe'); stars = orm < 15 ? 1 : (S.test && S.testT >= 55 && (flags.minORMtest === undefined || flags.minORMtest >= 15)) ? 3 : 2; }
+    const li = [];
+    li.push(`ORM: <b>${orm.toFixed(1)}</b>${orm < 15 ? ' · ' + t('why5') : ' · ' + t('okOrm')}`);
+    if (S.az) li.push(`${t('peak')}: <b>${pk.toLocaleString()} MW(th)</b>${pk > 3 * Math.max(1, S.azMW || 1) ? '' : ''}`);
+    if (S.az && (S.maxAz || 0) > 2 * (S.azN || 0.01)) li.push(t('why2') + ` (+${(S.psF * M.ps0).toFixed(1)} β)`);
+    if ((flags.maxV || 0) > 0.05 && ((S.maxAz || 0) > 2 * (S.azN || 0.01) || dead)) li.push(t('why1'));
+    if (mo < 15) li.push(t('why3', mo.toFixed(0)));
+    if (S.jammed) li.push(t('why4'));
+    body = `<div class="stars">${[0, 1, 2].map(i => `<i class="${i < stars ? 'on' : ''}">★</i>`).join('')}</div><p><b>${t('explain')}</b></p><ul>${li.map(x => `<li>${x}</li>`).join('')}</ul>`;
+  }
+  ov.hidden = false;
+  ov.innerHTML = `<h2>${title}</h2>${body}<button class="btn" data-a="again">${t('again')}</button><button class="ghost" data-a="menu">${t('menu')}</button><small class="d">${t('read')}</small>`;
+}
+
+/* ---------- Ses (basit alarm) ---------- */
+let AC = null, lastBeep = 0;
+function initAudio() { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = false; } }
+function beep(f, d, v) { if (!AC) return; try { if (AC.state === 'suspended') AC.resume(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'square'; o.frequency.value = f; g.gain.value = v || 0.04; g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + d); o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + d); } catch (e) {} }
+
+/* ---------- Simülasyon döngüsü ---------- */
+const DT = 0.05;
+function tick() {
+  M.step(S, DT); scenT += DT;
+  const orm = M.ORM(S.p), mw = S.n * PN;
+  if (scen === 1) { for (const [tt, k] of msgs) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; say(k); if (tt === 30) setpt = 0.35; if (tt === 75) setpt = 0.5; if (tt === 110) setpt = 0.42; S.nSet = setpt; nsetEl.value = Math.round(setpt * PN); S.auto = true; } score.tot++; if (Math.abs(S.n - setpt) <= 0.05 * setpt) score.ok++; if (scenT >= 150) finish('done'); }
+  if (scen === 2) {
+    for (const [tt, k] of msgs) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; say(k); }
+    if (scenT >= 60 && !flags.dip) { flags.dip = 1; S.auto = false; S.pTarget = Math.min(7, S.p + 2.8); }
+    if (scenT >= 100 && !flags.free) { flags.free = 1; }
+    if (S.test && S.testT > 55 && !flags.m4) { flags.m4 = 1; say('m_a4'); }
+    if (orm < 26 && !flags.o26) { flags.o26 = 1; say('m_orm26'); }
+    if (orm < 15 && !flags.o15) { flags.o15 = 1; say('m_orm15'); }
+    if (scenT > 600 && !S.az) finish('done');
+  }
+  flags.minORM = Math.min(flags.minORM === undefined ? 99 : flags.minORM, orm); if (S.test) flags.minORMtest = Math.min(flags.minORMtest === undefined ? 99 : flags.minORMtest, orm); flags.maxV = Math.max(flags.maxV || 0, S.v);
+  if (S.jammed && !flags.jam) { flags.jam = 1; say('m_jam'); }
+  histT += DT; if (histT >= 1) { histT = 0; hist.push(mw); xh.push(M.info(S)['xe$']); if (hist.length > 700) { hist.shift(); xh.shift(); } }
+  if (S.az && !flags.azmsg) flags.azmsg = 1;
+  if (S.destroyed && S.destroyT > 2.5) finish('destroyed');
+  else if (S.az && !S.destroyed && S.azT > 30 && S.n < 0.05) finish('done');
+}
+
+/* ---------- Çizim ---------- */
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function txt(s, x, y, size, col, al, w) { ctx.font = `${w || 700} ${size}px 'Trebuchet MS',system-ui,sans-serif`; ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); }
+function glow(n) { const k = clamp((Math.log10(Math.max(n, 1e-4)) + 3) / 4.5, 0, 1); const r = Math.round(lerp(25, 255, Math.min(1, k * 1.6))), g = Math.round(lerp(60, 230, Math.max(0, k * 1.3 - 0.2))), b = Math.round(lerp(120, 200, Math.max(0, k * 1.5 - 0.5))); return `rgb(${r},${g},${b})`; }
+function draw(now) {
+  ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#070d17'; ctx.fillRect(0, 0, W, H);
+  if (!S) return;
+  const info = M.info(S), orm = info.orm, mw = info.mw;
+  // başlık
+  txt([t('s1'), t('s2'), t('s3')][scen - 1] || '', 12, 12, 12, '#8aa0bf'); const mm = Math.floor(scenT / 60), ss = Math.floor(scenT % 60); txt(`${mm}:${String(ss).padStart(2, '0')}  ×${M.Z} Xe`, W - 12, 12, 12, '#8aa0bf', 'right');
+  // çekirdek haritası
+  const cx = 86, cy = 100, R = 72; ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R + 6, 0, TAU); ctx.fillStyle = '#0c1626'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = S.destroyed ? '#ff5468' : '#2b4a74'; ctx.stroke(); ctx.restore();
+  const col = glow(S.n), pulse = 0.5 + 0.5 * Math.sin(now / 120);
+  for (let i = -7; i <= 7; i++) for (let j = -7; j <= 7; j++) {
+    const x = cx + i * 9.2, y = cy + j * 9.2, rr2 = Math.hypot(i, j); if (rr2 > 7.6) continue;
+    const shape = Math.cos(rr2 / 7.8 * 1.4); ctx.fillStyle = col; ctx.globalAlpha = clamp(0.25 + shape * 0.75, 0.2, 1) * (S.destroyed ? (0.5 + pulse * 0.5) : 1);
+    ctx.beginPath(); ctx.arc(x, y, 3.4, 0, TAU); ctx.fill();
+    if (S.v > 0.02 && ((i * 7 + j * 3) & 3) === 0) { ctx.globalAlpha = Math.min(0.8, S.v * 3); ctx.fillStyle = '#dff4ff'; ctx.beginPath(); ctx.arc(x + 2, y - 2, 1.6, 0, TAU); ctx.fill(); }
+  }
+  ctx.globalAlpha = 1;
+  // çubuklar (5x5 kare)
+  const ins = S.p / M.STROKE; for (const [i, j] of [[-4, -4], [0, -5], [4, -4], [-5, 0], [5, 0], [-4, 4], [0, 5], [4, 4], [0, 0]]) { const x = cx + i * 9.2 - 5, y = cy + j * 9.2 - 5; ctx.fillStyle = S.jammed ? '#ffc83d' : '#0b0f17'; ctx.fillRect(x, y, 10, 10); ctx.fillStyle = '#7c8fb0'; ctx.fillRect(x + 1, y + 1, 8, 8 * ins); }
+  // sağ: okumalar
+  txt(mw >= 1000 ? Math.round(mw).toLocaleString() : mw.toFixed(mw < 10 ? 1 : 0), 270, 38, 34, mw > PN * 1.3 ? '#ff5468' : '#fff', 'center'); txt(t('mw'), 270, 62, 12, '#8aa0bf', 'center');
+  const ormCol = orm < 15 ? '#ff5468' : orm < 26 ? '#ffc83d' : '#46e0a0';
+  const per = S.n > 1e-3 && S._pn ? (() => { const g = (Math.log(S.n) - Math.log(S._pn)) / 0.05; return Math.abs(g) < 1e-4 ? 0 : 1 / g; })() : 0; S._pn = S.n;
+  const rows = [[t('orm'), orm.toFixed(1), ormCol], [t('rho'), info['rho$'].toFixed(2) + ' $', Math.abs(info['rho$']) > 0.6 ? '#ff5468' : '#e9f2ff'], [t('per'), per > 0 && per < 200 ? per.toFixed(0) + ' s' : '—', per > 0 && per < 20 ? '#ff5468' : '#e9f2ff'], [t('void'), (info.void * 100).toFixed(1) + '%', '#e9f2ff'], [t('fl'), Math.round(info.flow * 100) + '%', '#e9f2ff'], [t('xe'), info['xe$'].toFixed(1) + ' $', '#e9f2ff']];
+  rows.forEach((r, i) => { const y = 82 + i * 19; txt(r[0], 192, y, 12, '#8aa0bf'); txt(r[1], 348, y, 14, r[2], 'right'); });
+  // grafikler
+  const gy = 205, gh = 78;
+  for (const [gx, gw, title, data, lo, hi, logs, colr] of [[12, 168, t('pw'), hist, 0, 5, true, '#5fd3ff'], [190, 158, t('xc'), xh, -14, 0, false, '#ffc83d']]) {
+    ctx.fillStyle = '#101d31'; rr(gx, gy, gw, gh, 8); ctx.fill(); txt(title, gx + 6, gy + 9, 9, '#6f86a6');
+    ctx.strokeStyle = colr; ctx.lineWidth = 1.6; ctx.beginPath(); const nmax = 400, off = Math.max(0, data.length - nmax); data.slice(off).forEach((v, i, a) => { const val = logs ? Math.log10(Math.max(1, v)) : v, x = gx + 6 + i / nmax * (gw - 12), y = gy + gh - 6 - (clamp(val, lo, hi) - lo) / (hi - lo) * (gh - 24); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+    if (logs) { ctx.strokeStyle = 'rgba(255,255,255,.12)'; for (const lv of [2, 3, 4]) { const y = gy + gh - 6 - (lv - lo) / (hi - lo) * (gh - 24); ctx.beginPath(); ctx.moveTo(gx + 4, y); ctx.lineTo(gx + gw - 4, y); ctx.stroke(); } }
+  }
+  // uyarı panelleri
+  const al = []; if (orm < 26) al.push([t('aOrm1'), '#ffc83d']); if (orm < 15) al.push([t('aOrm2'), '#ff5468']); if (mw < 700 && scen !== 1) al.push([t('aLow'), '#ffc83d']); if (per > 0 && per < 20) al.push([t('aPer'), '#ff5468']); if (S.az) al.push([t('aAz'), '#ff5468']); if (S.jammed) al.push([t('aJam'), '#ff5468']); if (S.test) al.push([t('aTest'), '#5fd3ff']);
+  al.forEach((a, i) => { const x = 12 + (i % 2) * 172, y = 295 + Math.floor(i / 2) * 22; ctx.fillStyle = a[1] === '#ff5468' && pulse > 0.5 ? 'rgba(255,84,104,.35)' : 'rgba(255,255,255,.07)'; rr(x, y, 164, 18, 6); ctx.fill(); ctx.strokeStyle = a[1]; ctx.lineWidth = 1.2; ctx.stroke(); txt(a[0], x + 82, y + 9.5, 10.5, a[1], 'center'); });
+  // mesaj
+  if (msgT > 0 && msg) { ctx.fillStyle = 'rgba(5,9,16,.85)'; rr(10, 385, 340, 38, 9); ctx.fill(); ctx.strokeStyle = '#2b4a74'; ctx.lineWidth = 1.5; ctx.stroke(); wrap(msg, 180, 404, 322, 12.5); }
+  if (S.destroyed) { ctx.fillStyle = `rgba(255,255,255,${clamp(0.8 - S.destroyT * 0.3, 0, 0.8)})`; ctx.fillRect(0, 0, W, H); }
+}
+function wrap(s, x, y, maxW, size) { ctx.font = `600 ${size}px 'Trebuchet MS',system-ui,sans-serif`; const words = s.split(' '); let line = '', lines = []; for (const w of words) { const test = line ? line + ' ' + w : w; if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test; } lines.push(line); lines.slice(0, 2).forEach((l, i, a) => txt(l, x, y + (i - (a.length - 1) / 2) * (size + 2), size, '#e9f2ff', 'center', 600)); }
+
+let last = 0, acc = 0;
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000 || 0); last = now;
+  if (playing && S) {
+    acc += dt * speed; while (acc >= DT && playing) { tick(); acc -= DT; }
+    if (azHold) { const k = (performance.now() - azHold) / 700; azb.firstChild.style.width = Math.min(100, k * 100) + '%'; if (k >= 1) { azHold = 0; azb.firstChild.style.width = '0'; M.azStart(S); say('m_a3'); msgT = 0; syncUI(); beep(160, 0.5); } }
+    if (msgT > 0) msgT -= dt; if (Math.floor(now / 200) % 3 === 0) syncUI();
+    const orm = M.ORM(S.p); if ((orm < 15 || S.az) && now - lastBeep > 700 && !S.destroyed) { lastBeep = now; beep(orm < 15 ? 880 : 440, 0.12); }
+  }
+  draw(now); requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && playing) { playing = false; el('pause').textContent = '▶'; } });
+menu(); requestAnimationFrame(frame);
+if (window.__RB_TEST__) window.__rb = { M, get S() { return S; }, initScenario, tick, finish, get scenT() { return scenT; }, get playing() { return playing; }, set playing(v) { playing = v; } };
+})();
+</script>
+</body>
+</html>
