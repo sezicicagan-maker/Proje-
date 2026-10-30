@@ -23,11 +23,13 @@ ok(r5.jam, 'ORM 5: güç sıçramasında çubuklar sıkışıyor');
     ok(await p.evaluate(() => window.__rb.playing), name + ': senaryo başladı');
     await p.screenshot({ path: `${OUT}/rb-${name}-play.png` });
     if (name === 'mobile') {
-      // tarihsel yol: regülatör hatası, 200 MW'a dönüş, test, AZ-5 (düşük ORM)
       const res = await p.evaluate(() => {
         const R = window.__rb, S = () => R.S, M = R.M; R.playing = false; const out = {};
         for (let i = 0; i < 20 * 100 && R.scenT < 100; i++) R.tick();
-        S().auto = true; S().nSet = 0.0625; for (let i = 0; i < 20 * 15; i++) R.tick();
+        // 1) kilit AÇIKKEN 200 MW'a dönmek mümkün değil
+        S().auto = true; S().nSet = 0.0625; for (let i = 0; i < 20 * 60; i++) R.tick(); out.lockedORM = M.ORM(S().p); out.lockedMW = S().n * 3200;
+        // 2) kilit devre dışı (baskıya boyun eğ): 200 MW'a dön, test, AZ-5
+        R.setBypass(true); for (let i = 0; i < 20 * 15; i++) R.tick();
         out.ormEarly = M.ORM(S().p); out.mwEarly = S().n * 3200;
         S().test = true; S().testT = 0; S().flowBase = S().flow; for (let i = 0; i < 20 * 5; i++) R.tick();
         out.ormAtAz = M.ORM(S().p); M.azStart(S()); for (let i = 0; i < 20 * 20 && !S().destroyed; i++) R.tick();
@@ -35,10 +37,25 @@ ok(r5.jam, 'ORM 5: güç sıçramasında çubuklar sıkışıyor');
         R.finish('done'); R.playing = false; return out;
       });
       console.log('   tarihsel yol:', JSON.stringify(res));
-      ok(res.ormEarly < 15, name + ': ksenon çukurundan dönüşte ORM 15 altına düşüyor (' + res.ormEarly.toFixed(1) + ')');
+      ok(res.lockedORM >= 14.9 && res.lockedMW < 100, name + ': kilit açıkken ORM 15 altına inilemiyor (ORM ' + res.lockedORM.toFixed(1) + ', ' + Math.round(res.lockedMW) + ' MW)');
+      ok(res.ormEarly < 15, name + ': kilit devre dışıyken ORM 15 altına düşüyor (' + res.ormEarly.toFixed(1) + ')');
       ok(res.peak > 2 * res.mwEarly, name + ': düşük ORM + AZ-5 → pozitif scram sıçraması (' + Math.round(res.mwEarly) + ' → ' + Math.round(res.peak) + ' MW)');
       await p.waitForTimeout(300); await p.screenshot({ path: `${OUT}/rb-${name}-end.png` });
       ok(await p.evaluate(() => !document.getElementById('ov').hidden), name + ': bitiş ekranı açıldı');
+      // korumalar ve yavaş çekim (serbest mod)
+      await p.evaluate(() => window.__rb.initScenario(3)); await p.evaluate(() => { window.__rb.playing = false; });
+      const pr = await p.evaluate(() => {
+        const R = window.__rb, S = () => R.S, M = R.M; const o = {};
+        S().auto = false; S().pTarget = 0; for (let i = 0; i < 20 * 40; i++) R.tick(); o.ormAfterMaxWithdraw = M.ORM(S().p); o.alive = !S().destroyed; o.az = S().az;
+        R.initScenario(3); R.playing = false; S().flowTarget = 0.3; for (let i = 0; i < 20 * 120 && !S().az; i++) R.tick(); o.lowFlowTrip = S().az; o.alive2 = !S().destroyed;
+        R.initScenario(3); R.playing = false; R.setBypass(true); S().auto = false; S().pTarget = 0; let slow = false; for (let i = 0; i < 20 * 120 && !S().destroyed; i++) { R.tick(); if (R.ts < 0.5) slow = true; } o.slowMo = slow; o.destroyedWithBypass = S().destroyed;
+        return o;
+      });
+      console.log('   koruma:', JSON.stringify(pr));
+      ok(pr.ormAfterMaxWithdraw >= 14.9 && pr.alive, name + ': çubuklar sonuna çekilse bile kilit ORM 15\'te tutuyor');
+      ok(pr.lowFlowTrip && pr.alive2, name + ': düşük debide otomatik AZ-5 devreye giriyor ve reaktör sağlam');
+      ok(pr.slowMo, name + ': güç sıçramasında ağır çekim devreye giriyor');
+      await p.screenshot({ path: `${OUT}/rb-${name}-sandbox.png` });
     }
     ok(errs.length === 0, name + ': hata yok ' + errs.join('|'));
     await ctx.close();
