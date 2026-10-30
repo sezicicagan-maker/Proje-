@@ -1,0 +1,23 @@
+{
+ "en": { "name": "English", "locale": "en-US", "dir": "ltr", "script": "latin" },
+ "tr": { "name": "Türkçe", "locale": "tr-TR", "dir": "ltr", "script": "latin" },
+ "de": { "name": "Deutsch", "locale": "de-DE", "dir": "ltr", "script": "latin" },
+ "es": { "name": "Español", "locale": "es-ES", "dir": "ltr", "script": "latin" },
+ "pt": { "name": "Português", "locale": "pt-BR", "dir": "ltr", "script": "latin" },
+ "fr": { "name": "Français", "locale": "fr-FR", "dir": "ltr", "script": "latin" },
+ "ru": { "name": "Русский", "locale": "ru-RU", "dir": "ltr", "script": "cyrillic" },
+ "it": { "name": "Italiano", "locale": "it-IT", "dir": "ltr", "script": "latin" },
+ "pl": { "name": "Polski", "locale": "pl-PL", "dir": "ltr", "script": "latin" },
+ "uk": { "name": "Українська", "locale": "uk-UA", "dir": "ltr", "script": "cyrillic" },
+ "nl": { "name": "Nederlands", "locale": "nl-NL", "dir": "ltr", "script": "latin" },
+ "cs": { "name": "Čeština", "locale": "cs-CZ", "dir": "ltr", "script": "latin" },
+ "ro": { "name": "Română", "locale": "ro-RO", "dir": "ltr", "script": "latin" },
+ "sv": { "name": "Svenska", "locale": "sv-SE", "dir": "ltr", "script": "latin" },
+ "id": { "name": "Bahasa Indonesia", "locale": "id-ID", "dir": "ltr", "script": "latin" },
+ "vi": { "name": "Tiếng Việt", "locale": "vi-VN", "dir": "ltr", "script": "latin" },
+ "ar": { "name": "العربية", "locale": "ar", "dir": "rtl", "script": "arabic" },
+ "hi": { "name": "हिन्दी", "locale": "hi-IN", "dir": "ltr", "script": "devanagari" },
+ "ja": { "name": "日本語", "locale": "ja-JP", "dir": "ltr", "script": "cjk" },
+ "ko": { "name": "한국어", "locale": "ko-KR", "dir": "ltr", "script": "cjk" },
+ "zh": { "name": "简体中文", "locale": "zh-CN", "dir": "ltr", "script": "cjk" }
+}
