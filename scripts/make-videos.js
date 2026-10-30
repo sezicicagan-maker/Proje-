@@ -18,7 +18,7 @@ fs.writeFileSync(tmp, `<!doctype html><html><head><meta charset="utf-8"><meta na
     await p.evaluate(() => { const E = window.__evolute; E.newGame(); window.__vid = setInterval(() => { if (E.g && E.g.mode === 'pick') E.pickMut(E.g.pickOffer[0]); else if (E.g && E.g.mode === 'play') window.__bot(E); }, 140); });
     await p.waitForTimeout(16000); await ctx.close();
     const webm = fs.readdirSync(vdir).find(f => f.endsWith('.webm'));
-    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', path.join(vdir, webm), '-t', '18', '-vf', `scale=${W}:${H}:flags=lanczos,fps=30`, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-an', path.join(out, `preview-${name}.mp4`)]);
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', path.join(vdir, webm), '-t', '18', '-vf', `scale=${W}:${H}:flags=lanczos,fps=30`, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-an', path.join(out, `preview-${name === 'portrait' ? 'portrait-2x3-1080x1620' : name}.mp4`)]);
     fs.rmSync(vdir, { recursive: true, force: true }); console.log(name);
   }
   fs.rmSync(tmp); await b.close();
