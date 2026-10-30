@@ -19,6 +19,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:www
+      - run: mkdir -p www/core-shift && cp games/core-shift/index.html www/core-shift/index.html
       - run: touch www/.nojekyll
       - uses: peaceiris/actions-gh-pages@v4
         with:

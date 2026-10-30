@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#070d17">
+<title>Core Shift</title>
+<style>
+:root{color-scheme:dark;--bg:#070d17;--panel:#101d31;--ink:#e9f2ff;--muted:#8aa0bf;--ok:#46e0a0;--warn:#ffc83d;--bad:#ff5468;--acc:#5fd3ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Trebuchet MS',system-ui,sans-serif;overflow:hidden;touch-action:manipulation;user-select:none}
+#app{position:relative;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column}
+canvas{display:block;width:100%;flex:0 1 auto;min-height:0;aspect-ratio:360/400;max-height:58dvh;margin:0 auto}
+#ctl{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:8px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.row{background:var(--panel);border-radius:14px;padding:8px 14px 10px}
+.row label{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:2px}
+.row label b{color:var(--ink)}
+input[type=range]{width:100%;height:34px;background:transparent;-webkit-appearance:none;appearance:none}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:6px;background:linear-gradient(90deg,#1d3556,#2f5a8f)}
+input[type=range]::-moz-range-track{height:10px;border-radius:6px;background:linear-gradient(90deg,#1d3556,#2f5a8f)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-12px;border-radius:50%;background:var(--acc);border:3px solid #0a2338;box-shadow:0 2px 8px #0008}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:var(--acc);border:3px solid #0a2338}
+input[type=range]:disabled{opacity:.45}
+#scram{font:800 18px/1 inherit;letter-spacing:.12em;padding:14px;border:0;border-radius:14px;background:linear-gradient(180deg,#ff6b7c,#d6283f);color:#fff;box-shadow:0 4px 0 #8f1427;cursor:pointer}
+#scram:active{transform:translateY(3px);box-shadow:0 1px 0 #8f1427}
+#scram:disabled{opacity:.45}
+#ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:rgba(5,9,16,.86)}
+#ov[hidden]{display:none}
+#ov h1{margin:0;font-size:40px;letter-spacing:.1em;background:linear-gradient(180deg,#fff,#7fd6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#ov h2{margin:0;font-size:28px}
+#ov p{margin:0;max-width:300px;color:var(--muted);font-size:15px;line-height:1.4}
+.btn{font:800 18px/1 inherit;padding:14px 34px;border:0;border-radius:14px;background:linear-gradient(180deg,#7be0ff,#2aa8e0);color:#052033;box-shadow:0 4px 0 #14709b;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #14709b}
+.ghost{font:600 14px/1 inherit;padding:10px 16px;border-radius:12px;border:2px solid #2b4a74;background:transparent;color:var(--ink);cursor:pointer}
+.ghost.sel{border-color:var(--acc);color:var(--acc)}
+.pair{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.stars{font-size:36px;letter-spacing:6px;color:#ffd23f}.stars i{font-style:normal;opacity:.25}.stars i.on{opacity:1}
+.stat{display:flex;gap:18px;color:var(--muted);font-size:14px}.stat b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="app">
+<canvas id="c" width="360" height="400"></canvas>
+<div id="ctl">
+ <div class="row"><label><span id="lrods"></span><b id="vrods">50%</b></label><input id="rods" type="range" min="0" max="100" value="50" aria-label="Control rods"></div>
+ <div class="row"><label><span id="lpump"></span><b id="vpump">50%</b></label><input id="pump" type="range" min="0" max="100" value="50" aria-label="Coolant pump"></div>
+ <button id="scram"></button>
+</div>
+<div id="ov"></div>
+</div>
+<script>
+(() => {
+'use strict';
+/* ---------- Metinler ---------- */
+const L = ((navigator.language || 'en').slice(0, 2) === 'tr') ? 'tr' : 'en';
+const STR = {
+  en: { rods: 'Control rods (inserted)', pump: 'Coolant pump', scram: 'SCRAM', start: 'Start shift', next: 'Next shift', retry: 'Retry', menu: 'Shifts', shift: 'Shift {0}',
+    how: 'Match POWER to the city\'s DEMAND and keep the core TEMPERATURE in the green. Inserting rods cuts power. The pump cools. Too cold wastes power. Above 75° steam makes the reactor run away.',
+    power: 'POWER', demand: 'DEMAND', temp: 'TEMP', sub: 'A fictional reactor shift game', score: 'Grid supplied', peak: 'Peak temp', melt: 'Core damaged', meltT: 'The core overheated. Cool it earlier next time.', done: 'Shift complete', locked: 'Locked',
+    tip1: 'Drag RODS right to cut power, left to raise it', tip2: 'Raise the PUMP when TEMP climbs', tip3: 'Follow the DEMAND marker', tip4: 'Above 75° steam bubbles add extra power!',
+    evPump: 'Pump fault: cooling reduced', evJam: 'Rods jammed!', evSurge: 'Demand surge!', evLeak: 'Coolant leak: cooling reduced', scrammed: 'SCRAM: rods locked while they reset', hot: 'OVERHEAT' },
+  tr: { rods: 'Kontrol çubukları (içeride)', pump: 'Soğutma pompası', scram: 'ACİL DURDUR', start: 'Vardiyayı başlat', next: 'Sonraki vardiya', retry: 'Tekrar', menu: 'Vardiyalar', shift: 'Vardiya {0}',
+    how: 'GÜCÜ şehrin TALEBİNE uydur ve çekirdek SICAKLIĞINI yeşilde tut. Çubuğu sokmak gücü keser. Pompa soğutur. Çok soğuk güç israfı, 75° üstünde buhar reaktörü kaçırır.',
+    power: 'GÜÇ', demand: 'TALEP', temp: 'ISI', sub: 'Kurgusal bir reaktör vardiyası oyunu', score: 'Şebekeye verilen', peak: 'En yüksek ısı', melt: 'Çekirdek hasar gördü', meltT: 'Çekirdek aşırı ısındı. Bir dahaki sefere daha erken soğut.', done: 'Vardiya bitti', locked: 'Kilitli',
+    tip1: 'ÇUBUKLARI sağa çek: güç düşer, sola: güç artar', tip2: 'ISI yükselince POMPAYI artır', tip3: 'TALEP işaretini takip et', tip4: '75° üstünde buhar ekstra güç ekler!',
+    evPump: 'Pompa arızası: soğutma azaldı', evJam: 'Çubuklar sıkıştı!', evSurge: 'Talep sıçraması!', evLeak: 'Soğutucu sızıntısı: soğutma azaldı', scrammed: 'ACİL DURDUR: çubuklar sıfırlanırken kilitli', hot: 'AŞIRI ISINMA' }
+};
+const t = (k, a) => { let s = STR[L][k] || STR.en[k] || k; if (a !== undefined) s = s.replace('{0}', a); return s; };
+
+/* ---------- Simülasyon (saf mantık, test edilebilir) ---------- */
+const SHIFT_LEN = 75, DT = 0.05, MELT_T = 100, MELT_HOLD = 1.5;
+const shiftCfg = n => ({ base: 38 + Math.min(n, 8) * 4, amp: 12 + Math.min(n, 8) * 2.5, events: Math.min(1 + Math.floor(n * 0.8), 6) });
+function demandAt(S, tt) {
+  const c = S.cfg; let d = c.base + c.amp * Math.sin(tt / 9 + S.phase) + (c.amp * 0.5) * Math.sin(tt / 3.7 + S.phase * 2);
+  for (const e of S.events) if (e.kind === 'surge' && tt >= e.at && tt < e.at + e.dur) d += 22;
+  return Math.max(15, Math.min(110, d));
+}
+function newShift(n, rng) {
+  rng = rng || Math.random;
+  const cfg = shiftCfg(n), kinds = ['pump', 'jam', 'surge', 'leak'], ev = [];
+  for (let i = 0; i < cfg.events; i++) {
+    const kind = kinds[Math.floor(rng() * kinds.length)];
+    ev.push({ kind, at: 12 + (SHIFT_LEN - 24) * ((i + rng() * 0.8) / cfg.events), dur: kind === 'jam' ? 6 : kind === 'surge' ? 10 : kind === 'pump' ? 8 : 12, shown: false });
+  }
+  return { n, cfg, t: 0, rods: 0.6, pump: 0.55, P: cfg.base, T: 55, supply: 0, ratioSum: 0, peakT: 55, meltTimer: 0, lockUntil: 0, lockRods: 0.6, events: ev, phase: rng() * 6, over: false, melted: false, msg: '', msgT: 0, hot: false, d: cfg.base };
+}
+function evActive(S, kind) { return S.events.some(e => e.kind === kind && S.t >= e.at && S.t < e.at + e.dur); }
+function step(S, dt) {
+  if (S.over) return;
+  S.t += dt;
+  for (const e of S.events) if (!e.shown && S.t >= e.at) { e.shown = true; S.msg = 'ev' + e.kind[0].toUpperCase() + e.kind.slice(1); S.msgT = 3.2; if (e.kind === 'jam') { S.lockUntil = Math.max(S.lockUntil, S.t + e.dur); S.lockRods = S.rods; } }
+  const locked = S.t < S.lockUntil, rodsEff = locked ? S.lockRods : S.rods;
+  const voidBonus = Math.max(0, S.T - 75) * 0.012;
+  const Pt = Math.max(0, Math.min(140, (1 - rodsEff) * 100 * (1 + voidBonus)));
+  S.P += (Pt - S.P) * (1 - Math.exp(-dt / 3));
+  const pumpEff = S.pump * (evActive(S, 'pump') ? 0.4 : 1) * (evActive(S, 'leak') ? 0.75 : 1);
+  S.T += (S.P * 0.033 - pumpEff * 0.06 * (S.T - 20)) * 2.4 * dt;
+  S.T = Math.max(20, S.T);
+  S.peakT = Math.max(S.peakT, S.T);
+  const eff = Math.max(0.15, Math.min(1, (S.T - 30) / 30));
+  S.supply = S.P * eff;
+  S.d = demandAt(S, S.t);
+  S.ratioSum += Math.max(0, 1 - Math.max(0, Math.abs(S.supply - S.d) - 0.06 * S.d) / (0.3 * S.d)) * dt;
+  S.hot = S.T > 85;
+  if (S.msgT > 0) S.msgT -= dt;
+  if (S.T >= MELT_T) { S.meltTimer += dt; if (S.meltTimer >= MELT_HOLD) { S.over = true; S.melted = true; } } else S.meltTimer = Math.max(0, S.meltTimer - dt * 0.5);
+  if (S.t >= SHIFT_LEN) S.over = true;
+}
+const pct = S => Math.round(S.ratioSum / Math.max(1, S.t) * 100);
+const starsOf = (S, p) => S.melted ? 0 : p >= 90 ? 3 : p >= 75 ? 2 : p >= 55 ? 1 : 0;
+function scram(S) { S.rods = 1; S.lockRods = 1; S.lockUntil = Math.max(S.lockUntil, S.t + 6); S.msg = 'scrammed'; S.msgT = 3.2; }
+
+/* ---------- Kayıt ---------- */
+const KEY = 'coreshift_v1';
+let save = { stars: {}, muted: false };
+try { const o = JSON.parse(localStorage.getItem(KEY)); if (o && typeof o === 'object') { save.muted = o.muted === true; for (const k of Object.keys(o.stars || {}).slice(0, 100)) { const v = Math.floor(Number(o.stars[k])); if (/^\d{1,3}$/.test(k) && v >= 0 && v <= 3) save.stars[k] = v; } } } catch (e) {}
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} };
+const unlocked = () => { let n = 1; while (save.stars[n] > 0) n++; return n; };
+
+/* ---------- Ses ---------- */
+let AC = null;
+function tone(f, d, type, v) { if (!AC || save.muted) return; const t0 = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(v || 0.06, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + d); }
+const ensureAudio = () => { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); };
+
+/* ---------- Arayüz ---------- */
+const cv = document.getElementById('c'), ctx = cv.getContext('2d'), ov = document.getElementById('ov');
+const rodsEl = document.getElementById('rods'), pumpEl = document.getElementById('pump'), scramEl = document.getElementById('scram');
+document.getElementById('lrods').textContent = t('rods'); document.getElementById('lpump').textContent = t('pump'); scramEl.textContent = t('scram');
+let S = newShift(1), playing = false, tipT = 0, shiftNo = 1, lastBeep = 0, T0 = 0;
+const W = 360, H = 400, TAU = Math.PI * 2;
+function syncSliders() { document.getElementById('vrods').textContent = Math.round(S.rods * 100) + '%'; document.getElementById('vpump').textContent = Math.round(S.pump * 100) + '%'; }
+rodsEl.addEventListener('input', () => { if (!playing) return; if (S.t < S.lockUntil) { rodsEl.value = Math.round(S.rods * 100); return; } S.rods = rodsEl.value / 100; syncSliders(); });
+pumpEl.addEventListener('input', () => { if (!playing) return; S.pump = pumpEl.value / 100; syncSliders(); });
+scramEl.addEventListener('click', () => { if (!playing) return; ensureAudio(); scram(S); rodsEl.value = 100; syncSliders(); tone(180, 0.5, 'sawtooth', 0.08); });
+
+function showMenu() {
+  playing = false; const un = unlocked();
+  const btns = []; for (let i = 1; i <= Math.min(un + 2, 12); i++) { const st = save.stars[i] || 0, lock = i > un; btns.push(`<button class="ghost ${i === shiftNo ? 'sel' : ''}" data-s="${i}" ${lock ? 'disabled' : ''}>${lock ? '🔒' : i} ${'★'.repeat(st)}</button>`); }
+  ov.hidden = false;
+  ov.innerHTML = `<h1>CORE SHIFT</h1><p>${t('sub')}</p><p>${t('how')}</p><div class="pair">${btns.join('')}</div><button class="btn" data-a="start">${t('start')} · ${shiftNo}</button><button class="ghost" data-a="mute">${save.muted ? '🔇' : '🔊'}</button>`;
+}
+function startShift(n) {
+  shiftNo = n; S = newShift(n); rodsEl.value = Math.round(S.rods * 100); pumpEl.value = Math.round(S.pump * 100); syncSliders(); tipT = 0;
+  rodsEl.disabled = pumpEl.disabled = scramEl.disabled = false; ov.hidden = true; playing = true; ensureAudio();
+}
+function endShift() {
+  playing = false; const p = pct(S), st = starsOf(S, p); if (st > (save.stars[shiftNo] || 0)) { save.stars[shiftNo] = st; persist(); }
+  const stars = [0, 1, 2].map(i => `<i class="${i < st ? 'on' : ''}">★</i>`).join('');
+  ov.hidden = false;
+  ov.innerHTML = S.melted
+    ? `<h2>${t('melt')}</h2><p>${t('meltT')}</p><div class="stat"><span>${t('peak')} <b>${Math.round(S.peakT)}°</b></span><span>${t('score')} <b>${p}%</b></span></div><button class="btn" data-a="again">${t('retry')}</button><button class="ghost" data-a="menu">${t('menu')}</button>`
+    : `<h2>${t('done')}</h2><div class="stars">${stars}</div><div class="stat"><span>${t('score')} <b>${p}%</b></span><span>${t('peak')} <b>${Math.round(S.peakT)}°</b></span></div>${st > 0 ? `<button class="btn" data-a="next">${t('next')}</button>` : ''}<button class="${st > 0 ? 'ghost' : 'btn'}" data-a="again">${t('retry')}</button><button class="ghost" data-a="menu">${t('menu')}</button>`;
+  tone(st ? 784 : 196, 0.4, 'triangle', 0.08);
+}
+ov.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; ensureAudio(); const d = b.dataset;
+  if (d.s) { shiftNo = +d.s; showMenu(); return; }
+  if (d.a === 'start' || d.a === 'again') startShift(shiftNo);
+  else if (d.a === 'next') startShift(shiftNo + 1);
+  else if (d.a === 'menu') showMenu();
+  else if (d.a === 'mute') { save.muted = !save.muted; persist(); showMenu(); }
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden && playing) { playing = false; ov.hidden = false; ov.innerHTML = `<h2>II</h2><button class="btn" data-a="resume">▶</button>`; } });
+ov.addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.dataset.a === 'resume') { ov.hidden = true; playing = true; } });
+
+/* ---------- Çizim ---------- */
+const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function tempColor(T) { const k = clamp((T - 30) / 70, 0, 1); const r = Math.round(lerp(40, 255, Math.min(1, k * 1.5))), g = Math.round(lerp(150, 70, k)), b = Math.round(lerp(255, 60, Math.min(1, k * 1.4))); return `rgb(${r},${g},${b})`; }
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function txt(s, x, y, size, col, al) { ctx.font = `700 ${size}px 'Trebuchet MS',system-ui,sans-serif`; ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); }
+function gauge(cx, cy, r, val, max, label, col, mark) {
+  ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.strokeStyle = '#17283f'; ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI * 0.8, Math.PI * 2.2); ctx.stroke();
+  const a0 = Math.PI * 0.8, span = Math.PI * 1.4; ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(cx, cy, r, a0, a0 + span * clamp(val / max, 0, 1)); ctx.stroke();
+  if (mark !== undefined) { const a = a0 + span * clamp(mark / max, 0, 1); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * (r - 9), cy + Math.sin(a) * (r - 9)); ctx.lineTo(cx + Math.cos(a) * (r + 9), cy + Math.sin(a) * (r + 9)); ctx.stroke(); }
+  txt(String(Math.round(val)), cx, cy - 2, 22, '#fff', 'center'); txt(label, cx, cy + 20, 11, '#8aa0bf', 'center');
+}
+const steam = [];
+function draw(now) {
+  const T = S.T; ctx.clearRect(0, 0, W, H);
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0b1626'); bg.addColorStop(1, '#070d17'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  // şehir silueti: talep karşılandıkça pencereler yanar
+  const ratio = clamp(S.supply / Math.max(1, S.d), 0, 1.2);
+  for (let i = 0; i < 18; i++) {
+    const bw = 18 + (i * 7) % 11, bh = 30 + ((i * 37) % 55), bx = i * 20 - 4, by = H - 8 - bh;
+    ctx.fillStyle = '#0e1b30'; ctx.fillRect(bx, by, bw, bh);
+    for (let wy = 0; wy < bh - 8; wy += 9) for (let wx = 3; wx < bw - 4; wx += 7) { const on = ((i * 13 + wy * 3 + wx) % 17) / 17 < ratio; ctx.fillStyle = on ? '#ffd877' : '#14243d'; ctx.fillRect(bx + wx, by + 4 + wy, 3, 5); }
+  }
+  // reaktör çekirdeği
+  const cx = 110, cy = 128, cw = 128, ch = 170, pulse = 0.5 + 0.5 * Math.sin(now / 250);
+  const gl = ctx.createRadialGradient(cx, cy, 20, cx, cy, 130); gl.addColorStop(0, tempColor(T).replace('rgb', 'rgba').replace(')', `,${0.18 + 0.2 * clamp((T - 40) / 60, 0, 1) + (S.hot ? 0.15 * pulse : 0)})`)); gl.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = gl; ctx.fillRect(0, 0, 230, 300);
+  rr(cx - cw / 2, cy - ch / 2, cw, ch, 14); ctx.fillStyle = '#0a1424'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = S.hot ? (pulse > 0.5 ? '#ff5468' : '#8a2a36') : '#2b4a74'; ctx.stroke();
+  const wl = ctx.createLinearGradient(0, cy - ch / 2, 0, cy + ch / 2); wl.addColorStop(0, tempColor(T - 12)); wl.addColorStop(1, tempColor(T + 6));
+  ctx.save(); rr(cx - cw / 2 + 6, cy - ch / 2 + 6, cw - 12, ch - 12, 9); ctx.clip(); ctx.fillStyle = wl; ctx.globalAlpha = 0.85; ctx.fillRect(cx - cw / 2, cy - ch / 2, cw, ch);
+  ctx.globalAlpha = 1; for (let i = 0; i < 6; i++) { ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(cx - cw / 2 + 16 + i * 19, cy - ch / 2 + 20, 7, ch - 40); }
+  const ins = (S.t < S.lockUntil ? S.lockRods : S.rods); for (let i = 0; i < 5; i++) { const x = cx - cw / 2 + 12 + i * 22 + 4; ctx.fillStyle = '#0b0f17'; ctx.fillRect(x, cy - ch / 2, 9, 12 + (ch - 24) * ins); ctx.fillStyle = S.t < S.lockUntil ? '#ffc83d' : '#334b6e'; ctx.fillRect(x - 1, cy - ch / 2 + 6 + (ch - 24) * ins, 11, 4); }
+  ctx.restore();
+  // buhar
+  if (T > 55 && (now | 0) % 3 === 0) steam.push({ x: cx - 30 + Math.random() * 60, y: cy - ch / 2 - 4, v: 18 + Math.random() * 20, a: 0.5 });
+  for (let i = steam.length - 1; i >= 0; i--) { const p = steam[i]; p.y -= p.v * 0.016; p.a -= 0.008; if (p.a <= 0) { steam.splice(i, 1); continue; } ctx.fillStyle = `rgba(210,230,255,${p.a * 0.5})`; ctx.beginPath(); ctx.arc(p.x, p.y, 5 + (1 - p.a) * 10, 0, TAU); ctx.fill(); }
+  // göstergeler
+  const tcol = T > 85 ? '#ff5468' : T > 76 ? '#ffc83d' : T < 58 ? '#5fd3ff' : '#46e0a0';
+  gauge(268, 66, 40, S.P, 120, t('power'), '#5fd3ff', S.d);
+  gauge(268, 150, 40, T, 110, t('temp'), tcol);
+  txt(t('demand') + ' ' + Math.round(S.d), 268, 206, 13, '#ffd877', 'center');
+  // gelecek talep şeridi (kendi aralığına ölçeklenir)
+  ctx.fillStyle = '#101d31'; rr(200, 214, 150, 62, 10); ctx.fill();
+  const fut = []; for (let i = 0; i <= 30; i++) fut.push(demandAt(S, S.t + i * 0.4));
+  const lo = Math.min(...fut, S.P) - 6, hi = Math.max(...fut, S.P) + 6, sc = v => 270 - (v - lo) / Math.max(30, hi - lo) * 52;
+  ctx.strokeStyle = '#ffd877'; ctx.lineWidth = 2; ctx.beginPath(); fut.forEach((d, i) => { const x = 208 + i * 4.6, y = sc(d); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+  ctx.fillStyle = '#5fd3ff'; ctx.beginPath(); ctx.arc(208, sc(S.P), 4, 0, TAU); ctx.fill();
+  // süre çubuğu
+  ctx.fillStyle = '#17283f'; ctx.fillRect(12, 10, W - 24, 6); ctx.fillStyle = '#5fd3ff'; ctx.fillRect(12, 10, (W - 24) * clamp(S.t / SHIFT_LEN, 0, 1), 6);
+  txt(t('shift', S.n) + ' · ' + pct(S) + '%', 14, 28, 13, '#e9f2ff');
+  // uyarılar ve ipuçları
+  let banner = '', bc = '#ffc83d';
+  if (S.msgT > 0) banner = t(S.msg); else if (S.hot) { banner = t('hot'); bc = '#ff5468'; }
+  if (S.t < S.lockUntil && !banner) { banner = t('evJam'); }
+  if (banner) { ctx.fillStyle = 'rgba(5,9,16,.8)'; rr(20, 300, 320, 34, 10); ctx.fill(); ctx.strokeStyle = bc; ctx.lineWidth = 2; ctx.stroke(); txt(banner, W / 2, 317, 15, bc, 'center'); }
+  else if (S.n === 1 && !save.stars[1] && S.t < 36) { const k = Math.floor(S.t / 9); txt(t('tip' + (k + 1)), W / 2, 317, 13, '#bfe9ff', 'center'); }
+}
+
+/* ---------- Döngü ---------- */
+let last = 0, acc = 0;
+function frame(now) {
+  const dt = Math.min(0.1, (now - last) / 1000 || 0); last = now;
+  if (playing) {
+    acc += dt; while (acc >= DT) { step(S, DT); acc -= DT; }
+    if ((S.hot || S.msgT > 2.9) && now - lastBeep > 500) { lastBeep = now; tone(S.hot ? 880 : 520, 0.12, 'square', 0.04); }
+    if (S.over) endShift();
+  }
+  draw(now); requestAnimationFrame(frame);
+}
+showMenu(); syncSliders(); requestAnimationFrame(frame);
+if (window.__CS_TEST__) window.__cs = { newShift, step, scram, pct, starsOf, demandAt, shiftCfg, SHIFT_LEN, DT, get S() { return S; }, startShift, get playing() { return playing; }, save };
+})();
+</script>
+</body>
+</html>
