@@ -1,4 +1,4 @@
-// CrazyGames önizleme videoları: store/web/videos/preview-landscape.mp4 (1920x1080) ve preview-portrait.mp4 (1080x1920), ~18 sn. Gereken: playwright + ffmpeg.
+// CrazyGames önizleme videoları: store/web/videos/preview-landscape.mp4 (1920x1080) ve preview-portrait.mp4 (1080x1620, 2:3), ~18 sn. Gereken: playwright + ffmpeg.
 const { chromium } = require('playwright'); const fs = require('fs'); const path = require('path'); const { execFileSync } = require('child_process');
 const root = path.join(__dirname, '..'), out = path.join(root, 'store', 'web', 'videos'); fs.mkdirSync(out, { recursive: true });
 const body = fs.readFileSync(path.join(root, 'prototype', 'evolute.html'), 'utf8');
@@ -7,7 +7,7 @@ const tmp = path.join(out, '_wrapped.html');
 fs.writeFileSync(tmp, `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:dark}body{margin:0;background:#07101d}[hidden]{display:none!important}</style></head><body>${body}</body></html>`);
 (async () => {
   const b = await chromium.launch();
-  for (const [name, w, h, W, H] of [['landscape', 1280, 720, 1920, 1080], ['portrait', 720, 1280, 1080, 1920]]) {
+  for (const [name, w, h, W, H] of [['landscape', 1280, 720, 1920, 1080], ['portrait', 720, 1080, 1080, 1620]]) {
     const vdir = path.join(out, '_rec_' + name); fs.rmSync(vdir, { recursive: true, force: true });
     const ctx = await b.newContext({ viewport: { width: w, height: h }, recordVideo: { dir: vdir, size: { width: w, height: h } }, locale: 'en-US' });
     await ctx.addInitScript(() => { window.__EVO_TEST__ = true; });
