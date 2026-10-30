@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#060b14">
-<title>RBMK Reactor Simulator</title>
+<title>Reactor Lab</title>
 <style>
-:root{color-scheme:dark;--bg:#060b14;--ink:#e6f0ff;--muted:#8199b8;--acc:#5fd3ff;--ok:#46e0a0;--warn:#ffc83d;--bad:#ff5468;--panel:#122035}
+:root{color-scheme:dark;--bg:#060b14;--ink:#e6f0ff;--muted:#8199b8;--acc:#5fd3ff;--ok:#46e0a0;--warn:#ffc83d;--bad:#ff5468}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:radial-gradient(ellipse at 50% 0%,#12233b,#060b14 70%);color:var(--ink);font-family:'Trebuchet MS',system-ui,sans-serif;overflow:hidden;touch-action:manipulation;user-select:none}
 #app{position:relative;max-width:480px;height:100dvh;margin:0 auto;display:flex;flex-direction:column}
@@ -16,8 +16,9 @@ canvas{display:block}
 #top button{width:30px;height:26px;border-radius:8px;border:1px solid #2b4a74;background:rgba(10,20,36,.8);color:var(--ink);font:700 13px/1 inherit;cursor:pointer}
 #ctl{flex:none;display:flex;flex-direction:column;gap:5px;padding:4px 10px calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(6,11,20,0),#0a1424 28%)}
 .row{background:linear-gradient(180deg,#15263f,#0f1c31);border:1px solid #22395c;border-radius:12px;padding:3px 12px 4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-.row label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);height:18px}
-.row label b{color:var(--ink);font-variant-numeric:tabular-nums}
+.row[hidden]{display:none}
+.row label{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);height:18px;gap:6px}
+.row label b{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .chip{font:700 10px/1 inherit;padding:3px 7px;border-radius:7px;border:1px solid #2f6b4f;background:rgba(70,224,160,.12);color:var(--ok);cursor:pointer}
 .chip.off{border-color:#8f2a38;background:rgba(255,84,104,.18);color:var(--bad)}
 .chip.arm{animation:blink .5s steps(2) infinite}@keyframes blink{50%{opacity:.35}}
@@ -31,7 +32,7 @@ input[type=range]:disabled{opacity:.4}
 .b{flex:1;font:700 12px/1 inherit;padding:0 4px;height:42px;border:1px solid #2a436b;border-radius:11px;background:linear-gradient(180deg,#1d3558,#14243f);color:var(--ink);cursor:pointer;box-shadow:0 2px 0 #08101c}
 .b.on{background:linear-gradient(180deg,#7be0ff,#2aa8e0);color:#04202f;border-color:#7be0ff}.b:disabled{opacity:.4}.b[hidden]{display:none}
 .azw{position:relative;flex:2}
-#az{position:relative;width:100%;height:42px;font:800 16px/1 inherit;letter-spacing:.12em;color:#fff;border:1px solid #7d1022;border-radius:11px;background:linear-gradient(180deg,#ff6b7c,#c91f37);box-shadow:0 3px 0 #6a0d1c;overflow:hidden;cursor:pointer}
+#az{position:relative;width:100%;height:42px;font:800 15px/1 inherit;letter-spacing:.1em;color:#fff;border:1px solid #7d1022;border-radius:11px;background:linear-gradient(180deg,#ff6b7c,#c91f37);box-shadow:0 3px 0 #6a0d1c;overflow:hidden;cursor:pointer}
 #az i{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,255,255,.4)}
 #az span{position:relative}
 #cover{position:absolute;inset:0;border-radius:11px;background:repeating-linear-gradient(45deg,#f2c200 0 9px,#1a1a1a 9px 18px);border:1px solid #000;display:flex;align-items:center;justify-content:center;transform-origin:50% 0;transition:transform .28s,opacity .28s;cursor:pointer;z-index:2}
@@ -41,23 +42,34 @@ input[type=range]:disabled{opacity:.4}
 #ov[hidden]{display:none}
 .hero{width:100%;flex:none;position:relative}
 .hero svg{display:block;width:100%;height:auto}
-.hero h1{position:absolute;left:0;right:0;bottom:6px;margin:0;font-size:31px;letter-spacing:.12em;background:linear-gradient(180deg,#fff,#8fd8ff 60%,#4aa6d8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))}
-.hero small{position:absolute;left:0;right:0;bottom:-2px;color:#9fb6d6;font-size:11px;letter-spacing:.2em}
-@keyframes steam{0%{transform:translateY(0) scale(.7);opacity:.0}20%{opacity:.5}100%{transform:translateY(-46px) scale(1.5);opacity:0}}
+.hero h1{position:absolute;left:0;right:0;bottom:12px;margin:0;font-size:29px;letter-spacing:.1em;background:linear-gradient(180deg,#fff,#8fd8ff 60%,#4aa6d8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(0,0,0,.8))}
+.hero small{position:absolute;left:0;right:0;bottom:-2px;color:#9fb6d6;font-size:10.5px;letter-spacing:.16em}
+@keyframes steam{0%{transform:translateY(0) scale(.7);opacity:0}20%{opacity:.5}100%{transform:translateY(-46px) scale(1.5);opacity:0}}
 .sm{animation:steam 5s linear infinite}.sm:nth-child(2){animation-delay:1.6s}.sm:nth-child(3){animation-delay:3.2s}
 @keyframes pulse{50%{opacity:.55}}.glow{animation:pulse 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.sm,.glow{animation:none}}
+.h3{margin:0;font-size:12px;letter-spacing:.18em;color:#7e96b6;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;padding:0 14px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px 10px;border:1px solid #2a436b;border-radius:15px;background:linear-gradient(180deg,#17294a,#0f1c33);color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 3px 0 #08101c}
+.tile:active{transform:translateY(2px);box-shadow:0 1px 0 #08101c}
+.tile svg{width:64px;height:54px}.tile b{font-size:15px}.tile span{font-size:10.5px;color:var(--muted);line-height:1.25;min-height:26px}.tile .st{color:#ffd23f;font-size:11px;letter-spacing:2px;min-height:0}
 .cards{display:flex;flex-direction:column;gap:9px;width:100%;padding:0 14px}
 .card{display:flex;align-items:center;gap:12px;text-align:left;padding:11px 13px;border:1px solid #2a436b;border-radius:14px;background:linear-gradient(180deg,#17294a,#0f1c33);color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 3px 0 #08101c}
 .card:active{transform:translateY(2px);box-shadow:0 1px 0 #08101c}
-.card .ic{flex:none;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:23px;background:#0b1626;border:1px solid #2a436b}
+.card .ic{flex:none;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:#0b1626;border:1px solid #2a436b}
 .card b{display:block;font-size:15px}.card span{display:block;font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
 .card .st{margin-left:auto;color:#ffd23f;font-size:13px;letter-spacing:2px;white-space:nowrap}
-.card.hard .ic{border-color:#8f2a38}.diff{font-size:10px!important;letter-spacing:.12em;color:#ffb36b!important}
-.mini{display:flex;gap:8px;justify-content:center}
+.card.hard .ic{border-color:#8f2a38}
+.stats{width:100%;padding:0 14px;display:flex;flex-direction:column;gap:6px}
+.stat{display:flex;align-items:center;gap:8px;font-size:11px}.stat em{font-style:normal;flex:0 0 108px;text-align:left;color:var(--muted)}
+.stat i{flex:1;height:7px;border-radius:5px;background:#0a1220;position:relative;overflow:hidden}.stat i s{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+.stat b{flex:0 0 96px;text-align:right;font-size:10px;letter-spacing:.04em}
+.mini{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .ghost{font:600 13px/1 inherit;padding:11px 15px;border-radius:11px;border:1px solid #2b4a74;background:rgba(10,20,36,.7);color:var(--ink);cursor:pointer}
+.ghost.sel{border-color:var(--acc);color:var(--acc)}
 .btn{font:800 16px/1 inherit;padding:13px 26px;border:0;border-radius:13px;background:linear-gradient(180deg,#7be0ff,#2aa8e0);color:#052033;box-shadow:0 4px 0 #14709b;cursor:pointer;min-width:200px}
 .pad{padding:0 18px;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
-#ov h2{margin:0;font-size:24px}
+#ov h2{margin:0;font-size:23px}
 #ov p{margin:0;max-width:330px;color:var(--muted);font-size:13.5px;line-height:1.45}
 #ov ul{margin:0;padding-left:18px;text-align:left;max-width:330px;color:#a8bcd6;font-size:13px;line-height:1.45}
 #ov li+li{margin-top:4px}
@@ -65,7 +77,12 @@ input[type=range]:disabled{opacity:.4}
 .help{width:100%;max-width:360px;display:flex;flex-direction:column;gap:9px;padding:0 14px;text-align:left}
 .hc{background:linear-gradient(180deg,#14253f,#0e1b30);border:1px solid #22395c;border-radius:12px;padding:10px 12px}
 .hc b{display:block;color:#fff;font-size:14px;margin-bottom:3px}.hc span{color:#a8bcd6;font-size:12.5px;line-height:1.4}
-.hc em{font-style:normal;color:var(--acc)}.hc u{text-decoration:none;color:var(--warn)}
+.sets{width:100%;max-width:360px;display:flex;flex-direction:column;gap:9px;padding:0 14px;text-align:left}
+.sr{display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(180deg,#14253f,#0e1b30);border:1px solid #22395c;border-radius:12px;padding:10px 12px;font-size:12px;letter-spacing:.06em;color:#9fb6d6}
+.sr .v{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sr .v .ghost{padding:8px 10px;font-size:12px}
+.sr input[type=range]{width:130px}
+.langs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 small.d{color:#6a82a3;font-size:11px;max-width:320px;line-height:1.4}
 </style>
 </head>
@@ -75,7 +92,8 @@ small.d{color:#6a82a3;font-size:11px;max-width:320px;line-height:1.4}
 <div id="ctl">
  <div class="row"><label><span id="lr"></span><span><button class="chip" id="bypass"></button> <b id="vr"></b></span></label><input id="rods" type="range" min="0" max="700" value="350" aria-label="rods"></div>
  <div class="row"><label><span id="lf"></span><b id="vf"></b></label><input id="flow" type="range" min="30" max="110" value="100" aria-label="flow"></div>
- <div class="btns"><button class="b" id="auto"></button><button class="b" id="test"></button><button class="b" id="spd">×1</button><button class="b" id="pause">II</button><div class="azw"><button id="az"><i></i><span>AZ-5</span></button><div id="cover"><span>AZ-5 ▲</span></div></div></div>
+ <div class="row" id="rowC" hidden><label><span id="lc"></span><b id="vc"></b></label><input id="load" type="range" min="30" max="100" value="100" aria-label="load"></div>
+ <div class="btns"><button class="b" id="auto"></button><button class="b" id="test"></button><button class="b" id="spd">×1</button><button class="b" id="pause">II</button><div class="azw"><button id="az"><i></i><span id="azt">AZ-5</span></button><div id="cover"><span id="cvt">AZ-5 ▲</span></div></div></div>
 </div>
 <div id="ov"></div>
 </div>
@@ -83,70 +101,30 @@ small.d{color:#6a82a3;font-size:11px;max-width:320px;line-height:1.4}
 (() => {
 'use strict';
 /*MODEL*/
-/* ---------- Metinler ---------- */
-const L = ((navigator.language || 'en').slice(0, 2) === 'tr') ? 'tr' : 'en';
-const T = {
- en: { title: 'RBMK', sub: 'REACTOR SIMULATOR', edu: 'Educational simulator with a simplified physics model. Not for engineering use. No real people are depicted.', read: 'Based on public analyses (IAEA INSAG-7). Numbers are simplified approximations.',
-  s1: 'Training', s1d: 'Hold the power setpoint while demand changes. Learn the slow rods.', s2: 'The Test', s2d: '1986-style night shift: xenon pit, pressure from the boss, one decision.', s3: 'Sandbox', s3d: 'Full power, no script. Experiment freely.', easy: 'EASY', hard: 'HARD', free: 'FREE',
-  how: 'HOW IT WORKS', snd: 'SOUND', again: 'Retry', menu: 'Menu', resume: 'Resume', close: 'Close',
-  rods: 'ROD BANK (m inserted)', flow: 'MAIN PUMPS', set: 'AUTO SETPOINT (MW)', auto: 'AUTO', man: 'MANUAL', test: 'START TEST', lock: 'INTERLOCK ON', byp: 'BYPASSED', conf: 'CONFIRM?',
-  mw: 'MW (thermal)', orm: 'ORM', rho: 'REACTIVITY $', per: 'Period', void: 'Steam void', fl: 'Flow', rd: 'Rods',
-  hdr1: 'REACTOR CORE', hdr2: 'POWER', hdr3: 'POWER TREND (log MW)', hdr4: 'XENON-135', hdr5: 'ROD / FLOW', hdr6: 'ANNUNCIATORS', hdr7: 'CONTROL ROOM',
-  xeT: 'XENON POISONING', xeEq: '% of full-power equilibrium', xeRods: 'eats ≈ {0} rods of reactivity', xeUp: 'rising', xeDn: 'falling', xeFl: 'steady', xeNorm: 'normal', xeHigh: 'HIGH', xePit: 'XENON PIT',
-  aOrm1: 'ORM < 26', aOrm2: 'ORM < 15', aLow: 'LOW POWER', aPer: 'SHORT PERIOD', aAz: 'AZ-5 ACTIVE', aJam: 'RODS STUCK', aTest: 'TEST RUNNING', aByp: 'BYPASSED',
-  goal1: 'Goal: stay within ±5% of the setpoint.', goal2: 'Goal: finish the shift safely. Rules: ORM ≥ 15.', goal3: 'Sandbox: no goal.',
-  done: 'Shift complete', destroyed: 'Reactor destroyed', safe: 'Safe shutdown', score: 'Time within ±5%', peak: 'Peak power after AZ-5', explain: 'What happened', okOrm: 'above the 15-rod limit',
-  m_t1: 'Hold the setpoint. Rods move slowly, so plan ahead.', m_t2: 'Setpoint change! Follow it.', m_a0: 'Supervisor: hold about 700 MW. The rundown test is scheduled.', m_a1: 'Regulator error: power is falling fast!',
-  m_a2: 'Supervisor: raise power to 200 MW and run the test NOW. Bypass the interlock if you must.', m_a2b: 'Interlock: rod withdrawal blocked at ORM 15. Xenon needs time to decay (try ×4).', m_a3: 'Rundown started: pumps are slowing.', m_a4: 'Test finished. Press AZ-5 for a planned shutdown.',
-  m_orm26: 'ORM below 26: procedure says be careful.', m_orm15: 'ORM below 15: procedure REQUIRES shutdown.', m_jam: 'Power surge: channels deformed, rods stuck!', m_lock: 'INTERLOCK: rods cannot be withdrawn below ORM 15.', m_byp: 'Interlock and protection BYPASSED. You are on your own.',
-  m_exc: 'EXCURSION! Slow motion engaged. Press AZ-5!', m_tp: 'AUTOMATIC AZ-5: short period', m_th: 'AUTOMATIC AZ-5: high power', m_tf: 'AUTOMATIC AZ-5: low coolant flow', hold: 'Free play. Everything is live.',
-  why1: 'Positive steam void coefficient: more power → more steam → more reactivity.', why2: 'Positive scram effect: graphite tips first ADD reactivity when entering a low-ORM core.', why3: 'Xenon poisoning forced rods out: ORM dropped to {0}.', why4: 'Rods need ~18 s to insert and jammed once the channels deformed.', why5: 'the rules required shutdown below 15',
-  why6: 'Interlock and protection were bypassed.', why7: 'Textbook result: waited out the xenon and finished the test with ORM ≥ 15.',
-  g_orm: 'ORM', g_ormT: 'Operational Reactivity Margin = how many control rods (equivalent) are inserted. More inserted = more shutdown safety. RBMK rules: keep ≥ 26, absolute minimum 15.',
-  g_xe: 'Xenon', g_xeT: 'Xenon-135 is a neutron poison made from iodine. It piles up after a power drop and peaks hours later (the “xenon pit”). Here time is compressed ×300. To hold power you must pull rods out, which lowers ORM.',
-  g_void: 'Steam voids', g_voidT: 'RBMK water boils in the core. In this design MORE steam means MORE reactivity (positive void coefficient). Less coolant flow or more power makes more steam, which feeds itself.',
-  g_rod: 'Rods & AZ-5', g_rodT: 'Rods move 0.4 m/s, a full stroke takes ~18 s. AZ-5 drops all rods. Their graphite tips briefly ADD reactivity when ORM is low (positive scram effect).',
-  g_rho: 'Reactivity $', g_rhoT: '0 $ = steady power. +1 $ = prompt critical: power explodes in a second or two. Under 0 = power falls.' },
- tr: { title: 'RBMK', sub: 'REAKTÖR SİMÜLATÖRÜ', edu: 'Basitleştirilmiş fizik modeliyle eğitim simülatörü. Mühendislik için kullanılamaz. Gerçek kişiler gösterilmez.', read: 'Kamuya açık analizlere dayanır (IAEA INSAG-7). Sayılar basitleştirilmiş yaklaşıklardır.',
-  s1: 'Eğitim', s1d: 'Talep değişirken güç hedefini tut. Yavaş çubukları öğren.', s2: 'Test', s2d: '1986 tarzı gece vardiyası: ksenon çukuru, patron baskısı, tek karar.', s3: 'Serbest mod', s3d: 'Tam güç, senaryo yok. Serbestçe dene.', easy: 'KOLAY', hard: 'ZOR', free: 'SERBEST',
-  how: 'NASIL ÇALIŞIR', snd: 'SES', again: 'Tekrar', menu: 'Menü', resume: 'Devam', close: 'Kapat',
-  rods: 'ÇUBUK GRUBU (m içeride)', flow: 'ANA POMPALAR', set: 'OTOMATİK HEDEF (MW)', auto: 'OTOMATİK', man: 'MANUEL', test: 'TESTİ BAŞLAT', lock: 'KİLİT AÇIK', byp: 'DEVRE DIŞI', conf: 'ONAY?',
-  mw: 'MW (ısıl)', orm: 'ORM', rho: 'REAKTİVİTE $', per: 'Periyot', void: 'Buhar boşluğu', fl: 'Debi', rd: 'Çubuk',
-  hdr1: 'REAKTÖR ÇEKİRDEĞİ', hdr2: 'GÜÇ', hdr3: 'GÜÇ GRAFİĞİ (log MW)', hdr4: 'KSENON-135', hdr5: 'ÇUBUK / DEBİ', hdr6: 'UYARI PANELİ', hdr7: 'KONTROL ODASI',
-  xeT: 'KSENON ZEHİRLENMESİ', xeEq: '% (tam güç dengesine göre)', xeRods: '≈ {0} çubuk reaktivite yiyor', xeUp: 'artıyor', xeDn: 'azalıyor', xeFl: 'sabit', xeNorm: 'normal', xeHigh: 'YÜKSEK', xePit: 'KSENON ÇUKURU',
-  aOrm1: 'ORM < 26', aOrm2: 'ORM < 15', aLow: 'DÜŞÜK GÜÇ', aPer: 'KISA PERİYOT', aAz: 'AZ-5 AKTİF', aJam: 'ÇUBUK SIKIŞTI', aTest: 'TEST SÜRÜYOR', aByp: 'DEVRE DIŞI',
-  goal1: 'Hedef: güç hedefinin ±%5 içinde kal.', goal2: 'Hedef: vardiyayı güvenle bitir. Kural: ORM ≥ 15.', goal3: 'Serbest mod: hedef yok.',
-  done: 'Vardiya bitti', destroyed: 'Reaktör tahrip oldu', safe: 'Güvenli kapatma', score: '±%5 içinde süre', peak: 'AZ-5 sonrası tepe güç', explain: 'Ne oldu', okOrm: '15 çubuk sınırının üstünde',
-  m_t1: 'Hedefi tut. Çubuklar yavaş, önceden planla.', m_t2: 'Hedef değişti! Takip et.', m_a0: 'Vardiya amiri: yaklaşık 700 MW\'ta kal. Koşma testi planlandı.', m_a1: 'Regülatör hatası: güç hızla düşüyor!',
-  m_a2: 'Amir: gücü 200 MW\'a çıkar ve testi HEMEN yap. Gerekirse kilidi devre dışı bırak.', m_a2b: 'Kilit: ORM 15\'te çubuk çekme engellendi. Ksenonun azalması zaman alır (×4 dene).', m_a3: 'Koşma başladı: pompalar yavaşlıyor.', m_a4: 'Test bitti. Planlı kapatma için AZ-5\'e bas.',
-  m_orm26: 'ORM 26 altında: prosedür dikkat der.', m_orm15: 'ORM 15 altında: prosedür kapatmayı ŞART koşar.', m_jam: 'Güç sıçraması: kanallar deforme oldu, çubuklar sıkıştı!', m_lock: 'KİLİT: ORM 15 altına çubuk çekilemez.', m_byp: 'Kilit ve koruma DEVRE DIŞI. Artık yalnızsın.',
-  m_exc: 'GÜÇ SIÇRAMASI! Ağır çekim açıldı. AZ-5\'e bas!', m_tp: 'OTOMATİK AZ-5: kısa periyot', m_th: 'OTOMATİK AZ-5: yüksek güç', m_tf: 'OTOMATİK AZ-5: düşük soğutucu debisi', hold: 'Serbest oyun. Her şey açık.',
-  why1: 'Pozitif buhar boşluğu katsayısı: güç artar → buhar artar → reaktivite artar.', why2: 'Pozitif scram etkisi: grafit uçlar, düşük ORM\'li çekirdeğe girerken önce reaktiviteyi ARTIRIR.', why3: 'Ksenon çubukları dışarı çektirdi: ORM {0}\'e düştü.', why4: 'Çubuklar ~18 sn\'de iner ve kanallar deforme olunca sıkıştı.', why5: 'kurallar 15 altında kapatmayı şart koşuyordu',
-  why6: 'Kilit ve koruma devre dışı bırakıldı.', why7: 'Kitap gibi sonuç: ksenonun çözülmesini bekledin ve testi ORM ≥ 15 ile bitirdin.',
-  g_orm: 'ORM', g_ormT: 'Operasyonel Reaktivite Marjı = içeride tutulan eşdeğer kontrol çubuğu sayısı. Ne kadar çok içerideyse kapatma güvenliği o kadar yüksek. RBMK kuralı: ≥ 26 tut, mutlak alt sınır 15.',
-  g_xe: 'Ksenon', g_xeT: 'Ksenon-135, iyottan oluşan bir nötron zehiridir. Güç düşünce birikir ve saatler sonra tepe yapar ("ksenon çukuru"). Burada zaman ×300 sıkıştırıldı. Gücü tutmak için çubuk çekersin, bu da ORM\'yi düşürür.',
-  g_void: 'Buhar boşlukları', g_voidT: 'RBMK\'da su çekirdekte kaynar. Bu tasarımda DAHA ÇOK buhar DAHA ÇOK reaktivite demek (pozitif boşluk katsayısı). Düşük debi ya da yüksek güç buharı artırır, buhar kendini besler.',
-  g_rod: 'Çubuklar ve AZ-5', g_rodT: 'Çubuklar 0,4 m/sn gider, tam iniş ~18 sn sürer. AZ-5 tüm çubukları bırakır. ORM düşükken grafit uçlar önce reaktiviteyi ARTIRIR (pozitif scram etkisi).',
-  g_rho: 'Reaktivite $', g_rhoT: '0 $ = sabit güç. +1 $ = ani kritik: güç bir iki saniyede patlar. 0\'ın altı = güç düşer.' }
-};
-const t = (k, a) => { let s = (T[L][k] !== undefined ? T[L][k] : T.en[k]) || k; if (a !== undefined) s = s.replace('{0}', a); return s; };
-
-/* ---------- Kayıt ---------- */
-const KEY = 'rbmksim_v2'; let save = { stars: {}, muted: false };
-try { const o = JSON.parse(localStorage.getItem(KEY)); if (o && typeof o === 'object') { save.muted = o.muted === true; for (const k of ['1', '2']) { const v = Math.floor(Number(o.stars && o.stars[k])); if (v >= 0 && v <= 3) save.stars[k] = v; } } } catch (e) {}
+/*I18N*/
+/* ---------- Kayıt ve dil ---------- */
+const KEY = 'reactorlab_v1', REACTORS = ['rbmk', 'pwr', 'bwr', 'candu'];
+const detect = () => { const n = (navigator.language || 'en').slice(0, 2); return LANGS[n] ? n : 'en'; };
+let save = { lang: null, muted: false, vol: 0.8, slow: true, flash: true, pct: false, stars: {} };
+try { const o = JSON.parse(localStorage.getItem(KEY)); if (o && typeof o === 'object') { if (LANGS[o.lang]) save.lang = o.lang; save.muted = o.muted === true; save.vol = Math.max(0, Math.min(1, Number(o.vol) || 0)); if (o.vol === undefined) save.vol = 0.8; save.slow = o.slow !== false; save.flash = o.flash !== false; save.pct = o.pct === true; if (o.stars && typeof o.stars === 'object') for (const k of Object.keys(o.stars).slice(0, 40)) { const v = Math.floor(Number(o.stars[k])); if (/^(rbmk|pwr|bwr|candu):(train|move|test)$/.test(k) && v >= 0 && v <= 3) save.stars[k] = v; } } } catch (e) {}
+if (!save.lang) save.lang = detect();
 const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} };
+const t = (k, a) => { let s = (T[save.lang] && T[save.lang][k] !== undefined) ? T[save.lang][k] : T.en[k]; if (s === undefined) s = k; if (a !== undefined) s = s.replace('{0}', a); return s; };
+const rname = id => T.en['r_' + id];
+const starsOf = (id, sc) => save.stars[id + ':' + sc] || 0;
+const typeStars = id => ['train', 'move', 'test'].reduce((a, s) => a + starsOf(id, s), 0);
 
 /* ---------- Durum ---------- */
 const cv = document.getElementById('c'), ctx = cv.getContext('2d'), ov = document.getElementById('ov'), cw = document.getElementById('cw');
-const el = id => document.getElementById(id), rodsEl = el('rods'), flowEl = el('flow');
-const W = 360, H = 520, PN = 3200, TAU = Math.PI * 2, DT = 0.05;
+const el = id => document.getElementById(id), rodsEl = el('rods'), flowEl = el('flow'), loadEl = el('load');
+let HH = 520, EX = 0; const W = 360, H = 520, TAU = Math.PI * 2, DT = 0.05;
 const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-let S = null, scen = 0, playing = false, speed = 1, ts = 1, msg = '', msgT = 0, hist = [], xh = [], histT = 0, scenT = 0, ended = false, score = { ok: 0, tot: 0 }, setpt = 0, azHold = 0, flags = {}, rate = 0, slowT = 0, bypArm = 0, lastN = 0;
+let S = null, TY = null, typeId = 'rbmk', scen = '', sdef = null, playing = false, speed = 1, ts = 1, msg = '', msgT = 0, hist = [], histD = [], xh = [], histT = 0, scenT = 0, ended = false, score = { ok: 0, tot: 0 }, azHold = 0, flags = {}, rate = 0, slowT = 0, bypArm = 0;
 
 /* ---------- Ses ---------- */
 let AC = null, lastBeep = 0;
 function initAudio() { if (AC !== null) return; try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = false; } }
-function tone(f, d, type, v, slide) { if (!AC || save.muted) return; try { if (AC.state === 'suspended') AC.resume(); const t0 = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'square'; o.frequency.setValueAtTime(f, t0); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f * slide), t0 + d); g.gain.setValueAtTime(v || 0.04, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + d); } catch (e) {} }
+function tone(f, d, type, v, slide) { if (!AC || save.muted || save.vol <= 0) return; try { if (AC.state === 'suspended') AC.resume(); const t0 = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = type || 'square'; o.frequency.setValueAtTime(f, t0); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f * slide), t0 + d); g.gain.setValueAtTime((v || 0.04) * save.vol * 1.6, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0 + d); } catch (e) {} }
 
 /* ---------- Doku önbelleği ---------- */
 let seed = 7; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
@@ -157,137 +135,166 @@ const metal = document.createElement('canvas'); metal.width = W; metal.height = 
 /* ---------- Çizim yardımcıları ---------- */
 function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 function txt(s, x, y, size, col, al, w, font) { ctx.font = `${w || 700} ${size}px ${font || "'Trebuchet MS',system-ui,sans-serif"}`; ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); }
+function fitTxt(s, x, y, size, col, al, maxW, w) { ctx.font = `${w || 700} ${size}px 'Trebuchet MS',system-ui,sans-serif`; let sz = size; while (sz > 6 && ctx.measureText(s).width > maxW) { sz -= 0.5; ctx.font = `${w || 700} ${sz}px 'Trebuchet MS',system-ui,sans-serif`; } ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); }
 function panel(x, y, w, h, title) {
   const g = ctx.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, '#17283f'); g.addColorStop(1, '#0d1829'); ctx.fillStyle = g; rr(x, y, w, h, 9); ctx.fill();
   ctx.strokeStyle = '#27426a'; ctx.lineWidth = 1; ctx.stroke(); ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.beginPath(); ctx.moveTo(x + 9, y + 1.5); ctx.lineTo(x + w - 9, y + 1.5); ctx.stroke();
   for (const [rx, ry] of [[x + 5, y + 5], [x + w - 5, y + 5], [x + 5, y + h - 5], [x + w - 5, y + h - 5]]) { ctx.fillStyle = '#3a526f'; ctx.beginPath(); ctx.arc(rx, ry, 1.6, 0, TAU); ctx.fill(); ctx.fillStyle = '#0a1220'; ctx.fillRect(rx - 1.2, ry - 0.3, 2.4, 0.6); }
-  if (title) txt(title, x + 12, y + 8.5, 8.5, '#6f89ab', 'left', 700);
+  if (title) fitTxt(title, x + 12, y + 8.5, 8.5, '#6f89ab', 'left', w - 24, 700);
 }
 function lamp(x, y, w, h, label, col, on, blink, now) {
   const lit = on && (!blink || Math.sin(now / 130) > -0.2); ctx.fillStyle = lit ? col : '#101a2a'; ctx.globalAlpha = lit ? 0.9 : 1; rr(x, y, w, h, 5); ctx.fill(); ctx.globalAlpha = 1;
   if (lit) { ctx.shadowColor = col; ctx.shadowBlur = 8; ctx.fillStyle = col; ctx.globalAlpha = 0.4; rr(x, y, w, h, 5); ctx.fill(); ctx.shadowBlur = 0; ctx.globalAlpha = 1; }
   ctx.strokeStyle = lit ? 'rgba(255,255,255,.5)' : '#22395c'; ctx.lineWidth = 1; rr(x, y, w, h, 5); ctx.stroke();
-  txt(label, x + w / 2, y + h / 2 + 0.5, 8.6, lit ? '#06101c' : '#4a6485', 'center', 800);
+  fitTxt(label, x + w / 2, y + h / 2 + 0.5, 8.6, lit ? '#06101c' : '#4a6485', 'center', w - 6, 800);
 }
-function dial(cx, cy, r, val, min, max, zones, label, valText, now) {
+function dial(cx, cy, r, val, min, max, zones, label, valText) {
   const a0 = Math.PI * 0.78, a1 = Math.PI * 2.22, ang = v => a0 + (a1 - a0) * clamp((v - min) / (max - min), 0, 1);
   ctx.fillStyle = '#070e1a'; ctx.beginPath(); ctx.arc(cx, cy, r + 5, 0, TAU); ctx.fill(); ctx.strokeStyle = '#2d4a74'; ctx.lineWidth = 1.5; ctx.stroke();
   for (const [z0, z1, c] of zones) { ctx.strokeStyle = c; ctx.lineWidth = 5; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.arc(cx, cy, r - 2, ang(z0), ang(z1)); ctx.stroke(); } ctx.globalAlpha = 1;
   ctx.strokeStyle = '#6f89ab'; ctx.lineWidth = 1; for (let i = 0; i <= 10; i++) { const a = a0 + (a1 - a0) * i / 10, l = i % 5 === 0 ? 7 : 4; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * (r - 7), cy + Math.sin(a) * (r - 7)); ctx.lineTo(cx + Math.cos(a) * (r - 7 - l), cy + Math.sin(a) * (r - 7 - l)); ctx.stroke(); }
   const na = ang(val); ctx.strokeStyle = '#ff7b6b'; ctx.lineWidth = 2; ctx.shadowColor = '#ff5468'; ctx.shadowBlur = 4; ctx.beginPath(); ctx.moveTo(cx - Math.cos(na) * 5, cy - Math.sin(na) * 5); ctx.lineTo(cx + Math.cos(na) * (r - 5), cy + Math.sin(na) * (r - 5)); ctx.stroke(); ctx.shadowBlur = 0;
   ctx.fillStyle = '#c9d6e8'; ctx.beginPath(); ctx.arc(cx, cy, 3.2, 0, TAU); ctx.fill();
-  txt(valText, cx, cy + r * 0.45, 12, '#fff', 'center', 800, "'Courier New',monospace"); txt(label, cx, cy + r * 0.82, 8, '#8199b8', 'center', 700);
+  txt(valText, cx, cy + r * 0.45, 12, '#fff', 'center', 800, "'Courier New',monospace"); fitTxt(label, cx, cy + r * 0.82, 8, '#8199b8', 'center', r * 1.7, 700);
 }
 function glowCol(n) { const k = clamp((Math.log10(Math.max(n, 1e-4)) + 3) / 4.2, 0, 1); return [Math.round(lerp(30, 255, Math.min(1, k * 1.5))), Math.round(lerp(70, 235, Math.max(0, k * 1.35 - 0.15))), Math.round(lerp(130, 190, Math.max(0, k * 1.5 - 0.55)))]; }
 
-/* ---------- Çizim ---------- */
+/* ---------- Çekirdek çizimleri (türe göre) ---------- */
 const RODS = [[-4, -4], [0, -5], [4, -4], [-5, 0], [0, 0], [5, 0], [-4, 4], [0, 5], [4, 4], [-2, -2], [2, -2], [-2, 2], [2, 2]];
-function draw(now) {
-  ctx.setTransform(sc * dpr, 0, 0, sc * dpr, 0, 0); ctx.clearRect(0, 0, W, H); ctx.drawImage(metal, 0, 0);
-  if (!S) return;
-  const info = M.info(S), orm = info.orm, mw = info.mw, n = S.n, pulse = 0.5 + 0.5 * Math.sin(now / 140);
-  // başlık
-  txt([t('s1'), t('s2'), t('s3')][scen - 1] || '', 10, 11, 12, '#b8cbe6', 'left', 800); const mm = Math.floor(scenT / 60), ss = Math.floor(scenT % 60);
-  txt(`${mm}:${String(ss).padStart(2, '0')}  ·  ×${M.Z} Xe${ts < 0.9 ? '  ·  SLOW-MO' : ''}`, W - 80, 11, 10.5, ts < 0.9 ? '#ff7b6b' : '#7e96b6', 'right', 700);
-  // ÇEKİRDEK
-  panel(6, 24, 170, 168, t('hdr1'));
-  const cx = 91, cy = 112, col = glowCol(n);
+function bubbles(cx, cy, R, v, now, size) { if (v < 0.01) return; const n = Math.round(v * 70); for (let i = 0; i < n; i++) { const a = (i * 2.399) % TAU, rr2 = Math.sqrt((i * 0.618) % 1) * R, ph = (now / 900 + i * 0.37) % 1, x = cx + Math.cos(a) * rr2, y = cy + Math.sin(a) * rr2 - ph * 6; ctx.fillStyle = `rgba(230,246,255,${0.55 * (1 - ph)})`; ctx.beginPath(); ctx.arc(x, y, size * (0.5 + ph * 0.8), 0, TAU); ctx.fill(); } }
+function drawCore(now) {
+  const id = TY.id, n = S.n, col = glowCol(n), cx = 91, cy = 112;
   const halo = ctx.createRadialGradient(cx, cy, 10, cx, cy, 82); halo.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${0.12 + 0.3 * clamp(Math.log10(Math.max(n, 1e-3)) / 2 + 0.8, 0, 1)})`); halo.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = halo; ctx.fillRect(8, 30, 166, 160);
+  const ins = S.p / TY.stroke, jam = S.jammed;
+  if (id === 'candu') {
+    ctx.save(); rr(cx - 76, cy - 52, 152, 104, 16); ctx.clip(); ctx.fillStyle = '#0a111d'; ctx.fillRect(cx - 76, cy - 52, 152, 104);
+    for (let r = 0; r < 12; r++) { const y = cy - 46 + r * 8.4; ctx.fillStyle = '#1d2733'; ctx.fillRect(cx - 74, y - 2.5, 148, 5); for (let c = 0; c < 22; c++) { const x = cx - 70 + c * 6.8, fl = 0.9 + 0.1 * Math.sin(now / 260 + c + r), a = clamp(0.25 + Math.cos((c - 10.5) / 11 * 1.3) * 0.75, 0.2, 1) * fl; ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a})`; ctx.fillRect(x, y - 1.8, 5.2, 3.6); } }
+    if (S.v > 0.01) bubbles(cx, cy, 44, S.v, now, 1.2);
+    for (let i = 0; i < 7; i++) { const x = cx - 54 + i * 18; ctx.fillStyle = '#05080d'; ctx.fillRect(x - 3, cy - 52, 6, 104); ctx.fillStyle = jam ? '#ffc83d' : '#9fb4d0'; ctx.fillRect(x - 2, cy - 52, 4, 104 * ins); }
+    ctx.restore(); ctx.strokeStyle = '#3a5a8a'; ctx.lineWidth = 2.5; rr(cx - 76, cy - 52, 152, 104, 16); ctx.stroke(); for (let r = 0; r < 12; r++) { ctx.fillStyle = '#4b607d'; ctx.fillRect(cx - 82, cy - 48 + r * 8.4, 5, 3); ctx.fillRect(cx + 77, cy - 48 + r * 8.4, 5, 3); }
+    txt('D₂O', cx, 177, 9, '#8fa8c8', 'center'); return;
+  }
   ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, 71, 0, TAU); ctx.clip(); ctx.fillStyle = '#0a111d'; ctx.fillRect(cx - 72, cy - 72, 144, 144);
   for (let i = -7; i <= 7; i++) for (let j = -7; j <= 7; j++) {
-    const d = Math.hypot(i, j); if (d > 7.6) continue; const x = cx + i * 9.3, y = cy + j * 9.3, sh = shade[(i + 7) * 15 + j + 7];
-    ctx.fillStyle = `rgb(${34 + sh * 14},${38 + sh * 14},${46 + sh * 14})`; ctx.fillRect(x - 4.4, y - 4.4, 8.8, 8.8); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fillRect(x - 4.4, y - 4.4, 8.8, 1);
-    const shape = Math.cos(d / 8.2 * 1.35), fl = 0.88 + 0.12 * Math.sin(now / 260 + i * 1.7 + j * 2.3), a = clamp(0.2 + shape * 0.8, 0.15, 1) * fl;
-    ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a})`; ctx.beginPath(); ctx.arc(x, y, 2.9, 0, TAU); ctx.fill();
-    if (S.v > 0.015 && ((i * 5 + j * 3 + 100) % 4) === 0) { ctx.fillStyle = `rgba(230,246,255,${Math.min(0.9, S.v * 4)})`; ctx.beginPath(); ctx.arc(x + 1, y - 1, 1.3, 0, TAU); ctx.fill(); }
+    const d = Math.hypot(i, j); if (d > 7.6) continue; const x = cx + i * 9.3, y = cy + j * 9.3, sh = shade[(i + 7) * 15 + j + 7], shape = Math.cos(d / 8.2 * 1.35), fl = 0.88 + 0.12 * Math.sin(now / 260 + i * 1.7 + j * 2.3), a = clamp(0.2 + shape * 0.8, 0.15, 1) * fl;
+    if (id === 'rbmk') { ctx.fillStyle = `rgb(${34 + sh * 14},${38 + sh * 14},${46 + sh * 14})`; ctx.fillRect(x - 4.4, y - 4.4, 8.8, 8.8); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fillRect(x - 4.4, y - 4.4, 8.8, 1); ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a})`; ctx.beginPath(); ctx.arc(x, y, 2.9, 0, TAU); ctx.fill(); }
+    else { ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a})`; ctx.fillRect(x - 4.1, y - 4.1, 8.2, 8.2); ctx.strokeStyle = 'rgba(0,0,0,.45)'; ctx.lineWidth = 0.8; ctx.strokeRect(x - 4.1, y - 4.1, 8.2, 8.2); ctx.fillStyle = 'rgba(0,0,0,.25)'; for (const dx of [-2.4, 0, 2.4]) ctx.fillRect(x + dx - 0.4, y - 3.4, 0.8, 6.8); }
+    if (id === 'rbmk' && S.v > 0.015 && ((i * 5 + j * 3 + 100) % 4) === 0) { ctx.fillStyle = `rgba(230,246,255,${Math.min(0.9, S.v * 4)})`; ctx.beginPath(); ctx.arc(x + 1, y - 1, 1.3, 0, TAU); ctx.fill(); }
   }
-  const ins = S.p / M.STROKE;
-  for (const [i, j] of RODS) { const x = cx + i * 9.3, y = cy + j * 9.3; ctx.fillStyle = '#05080d'; ctx.beginPath(); ctx.arc(x, y, 4.2, 0, TAU); ctx.fill(); ctx.strokeStyle = S.jammed ? '#ffc83d' : '#5fd3ff'; ctx.lineWidth = 1.2; ctx.stroke(); ctx.fillStyle = S.jammed ? '#ffc83d' : '#9fb4d0'; ctx.beginPath(); ctx.arc(x, y, 2.8, Math.PI * 1.5 - ins * Math.PI, Math.PI * 1.5 + ins * Math.PI); ctx.lineTo(x, y); ctx.fill(); }
-  ctx.restore(); ctx.strokeStyle = S.destroyed ? '#ff5468' : '#3a5a8a'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(cx, cy, 72, 0, TAU); ctx.stroke();
-  txt(`${t('rd')} ${S.p.toFixed(1)} m`, 91, 185, 9, S.jammed ? '#ffc83d' : '#8fa8c8', 'center');
-  // GÜÇ paneli
+  if (id === 'pwr') { ctx.fillStyle = `rgba(70,170,255,${0.06 + clamp(S.boron / 1500, 0, 1) * 0.22})`; ctx.fillRect(cx - 72, cy - 72, 144, 144); }
+  if (id === 'bwr') { bubbles(cx, cy, 66, S.v, now, 1.8); ctx.strokeStyle = 'rgba(0,0,0,.5)'; ctx.lineWidth = 1; for (let k = -3; k <= 3; k++) { ctx.beginPath(); ctx.moveTo(cx + k * 18.6, cy - 70); ctx.lineTo(cx + k * 18.6, cy + 70); ctx.moveTo(cx - 70, cy + k * 18.6); ctx.lineTo(cx + 70, cy + k * 18.6); ctx.stroke(); } }
+  const pos = id === 'bwr' ? [[-3, -3], [-1, -3], [1, -3], [3, -3], [-3, -1], [-1, -1], [1, -1], [3, -1], [-3, 1], [-1, 1], [1, 1], [3, 1], [-3, 3], [-1, 3], [1, 3], [3, 3]].map(p => [p[0] * 2 - (p[0] > 0 ? 0 : 0), p[1] * 2]) : RODS;
+  for (const [i, j] of pos) { const x = cx + i * 9.3 / (id === 'bwr' ? 2 : 1) * (id === 'bwr' ? 1 : 1), y = cy + j * 9.3 / (id === 'bwr' ? 2 : 1);
+    if (id === 'bwr') { ctx.fillStyle = jam ? '#ffc83d' : '#0b0f17'; const L = 7 * ins + 1; ctx.fillRect(x - 1, y - L, 2, 2 * L); ctx.fillRect(x - L, y - 1, 2 * L, 2); ctx.fillStyle = '#9fb4d0'; ctx.fillRect(x - 0.6, y - L, 1.2, 2 * L); ctx.fillRect(x - L, y - 0.6, 2 * L, 1.2); }
+    else { ctx.fillStyle = '#05080d'; ctx.beginPath(); ctx.arc(x, y, 4.2, 0, TAU); ctx.fill(); ctx.strokeStyle = jam ? '#ffc83d' : '#5fd3ff'; ctx.lineWidth = 1.2; ctx.stroke(); ctx.fillStyle = jam ? '#ffc83d' : '#9fb4d0'; ctx.beginPath(); ctx.arc(x, y, 2.8, Math.PI * 1.5 - ins * Math.PI, Math.PI * 1.5 + ins * Math.PI); ctx.lineTo(x, y); ctx.fill(); } }
+  ctx.restore(); ctx.strokeStyle = S.destroyed ? '#ff5468' : '#3a5a8a'; ctx.lineWidth = id === 'pwr' ? 4 : 2.5; ctx.beginPath(); ctx.arc(cx, cy, 72, 0, TAU); ctx.stroke();
+  if (id === 'pwr') { ctx.fillStyle = '#4b607d'; ctx.fillRect(12, cy - 5, 8, 10); ctx.fillRect(162, cy - 5, 8, 10); }
+}
+
+/* ---------- Ana çizim ---------- */
+function draw(now) {
+  ctx.setTransform(sc * dpr, 0, 0, sc * dpr, 0, 0); ctx.clearRect(0, 0, W, HH); ctx.drawImage(metal, 0, 0, W, HH);
+  if (!S) return;
+  const T0 = TY, info = M.info(S), orm = info.orm, mw = info.mw, n = S.n, pulse = 0.5 + 0.5 * Math.sin(now / 140), pwr = T0.id === 'pwr';
+  fitTxt(`${rname(T0.id)} · ${t('s_' + scen)}`, 10, 11, 12, '#b8cbe6', 'left', 200, 800); const mm = Math.floor(scenT / 60), ss = Math.floor(scenT % 60);
+  txt(`${mm}:${String(ss).padStart(2, '0')}  ·  ×${M.Z} Xe${ts < 0.9 ? '  ·  SLOW' : ''}`, W - 80, 11, 10.5, ts < 0.9 ? '#ff7b6b' : '#7e96b6', 'right', 700);
+  panel(6, 24, 170, 168, t('hdr1')); drawCore(now); fitTxt(`${t('rd')} ${S.p.toFixed(1)} m`, 91, 185, 9, S.jammed ? '#ffc83d' : '#8fa8c8', 'center', 150);
   panel(180, 24, 174, 168, t('hdr2'));
   ctx.fillStyle = '#04110b'; rr(188, 36, 158, 36, 7); ctx.fill(); ctx.strokeStyle = '#1a3a2a'; ctx.lineWidth = 1.5; ctx.stroke();
-  const big = n > 1.2; ctx.shadowColor = big ? '#ff5468' : '#46ffa8'; ctx.shadowBlur = 8; txt(mw >= 1000 ? Math.round(mw).toLocaleString('en-US') : mw.toFixed(mw < 10 ? 1 : 0), 340, 55, 27, big ? '#ff7b8a' : '#7dffb4', 'right', 700, "'Courier New',monospace"); ctx.shadowBlur = 0; txt('MW', 194, 44, 8, '#2f7a56', 'left');
-  dial(222, 118, 32, orm, 0, 30, [[0, 15, '#ff5468'], [15, 26, '#ffc83d'], [26, 30, '#46e0a0']], t('orm'), orm.toFixed(1), now);
-  const rho = info['rho$'];
-  dial(312, 118, 32, clamp(rho, -3, 2), -3, 2, [[-3, -0.6, '#3a6ea8'], [-0.6, 0.5, '#46e0a0'], [0.5, 1, '#ffc83d'], [1, 2, '#ff5468']], '$', rho.toFixed(2), now);
+  const big = n > T0.tripN; ctx.shadowColor = big ? '#ff5468' : '#46ffa8'; ctx.shadowBlur = 8;
+  const lcd = save.pct ? (n * 100 >= 100 ? Math.round(n * 100).toLocaleString('en-US') : (n * 100).toFixed(n * 100 < 10 ? 1 : 0)) + '%' : (mw >= 1000 ? Math.round(mw).toLocaleString('en-US') : mw.toFixed(mw < 10 ? 1 : 0));
+  txt(lcd, 340, 55, lcd.length > 7 ? 22 : 27, big ? '#ff7b8a' : '#7dffb4', 'right', 700, "'Courier New',monospace"); ctx.shadowBlur = 0; txt(save.pct ? '%' : t('mw'), 194, 44, 8, '#2f7a56', 'left');
+  const mz = [[0, T0.minM, '#ff5468'], [T0.minM, T0.warn, '#ffc83d'], [T0.warn, T0.N, '#46e0a0']];
+  dial(222, 118, 32, orm, 0, T0.N, mz, T0.id === 'rbmk' ? t('orm_rbmk') : t('orm_o'), orm.toFixed(1));
+  const rho = info['rho$']; dial(312, 118, 32, clamp(rho, -3, 2), -3, 2, [[-3, -0.6, '#3a6ea8'], [-0.6, 0.5, '#46e0a0'], [0.5, 1, '#ffc83d'], [1, 2, '#ff5468']], '$', rho.toFixed(2));
   const per = rate > 1e-3 ? 1 / rate : Infinity; S._per = per;
-  txt(`${t('per')}: ${isFinite(per) && per < 999 ? per.toFixed(0) + ' s' : '—'}`, 190, 173, 10, isFinite(per) && per < 20 ? '#ff5468' : '#b8cbe6', 'left'); txt(`${t('void')}: ${(info.void * 100).toFixed(0)}%`, 346, 173, 10, '#b8cbe6', 'right'); txt(`${t('fl')}: ${Math.round(info.flow * 100)}%`, 346, 185, 10, S.flow < 0.6 ? '#ffc83d' : '#b8cbe6', 'right'); txt(t('rho'), 190, 185, 8, '#6f89ab', 'left');
-  // GÜÇ GRAFİĞİ
-  panel(6, 198, 170, 72, t('hdr3')); const gx = 14, gy = 212, gw = 154, gh = 50;
-  ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1; for (const lv of [0, 1, 2, 3, 4, 5]) { const y = gy + gh - lv / 5 * gh; ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx + gw, y); ctx.stroke(); }
+  fitTxt(`${t('per')}: ${isFinite(per) && per < 999 ? per.toFixed(0) + ' s' : '—'}`, 190, 173, 10, isFinite(per) && per < 20 ? '#ff5468' : '#b8cbe6', 'left', 80);
+  if (pwr) { const dT = S.Tm - M.tRef(S.D); fitTxt(`${t('tavg')}: ${S.Tm.toFixed(1)}°`, 346, 173, 10, Math.abs(dT) > 2.5 ? '#ffc83d' : '#b8cbe6', 'right', 90); fitTxt(`${t('bor')}: ${Math.round(S.boron)}`, 346, 185, 10, '#b8cbe6', 'right', 90); }
+  else { fitTxt(`${t('void')}: ${(info.void * 100).toFixed(0)}%`, 346, 173, 10, '#b8cbe6', 'right', 90); fitTxt(`${t('fl')}: ${Math.round(info.flow * 100)}%`, 346, 185, 10, S.flow < 0.6 ? '#ffc83d' : '#b8cbe6', 'right', 90); }
+  fitTxt(t('rho'), 190, 185, 8, '#6f89ab', 'left', 80);
+  ctx.save(); ctx.translate(0, EX * 0.12);
+  panel(6, 198, 170, 72, t('hdr3')); const gx = 14, gy = 212, gw = 154, gh = 50, Pn = T0.Pn;
+  ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1; for (let lv = 0; lv <= 5; lv++) { const y = gy + gh - lv / 5 * gh; ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx + gw, y); ctx.stroke(); }
   txt('1', gx + 2, gy + gh - 3, 7, '#3f5a7e'); txt('1k', gx + 2, gy + gh - 3 * 10.2, 7, '#3f5a7e'); txt('100k', gx + 2, gy + 3, 7, '#3f5a7e');
+  if (histD.length > 1) curve(histD, gx, gy, gw, gh, v => clamp(Math.log10(Math.max(1, v)) / 5, 0, 1), 'rgba(255,255,255,.5)', true);
   curve(hist, gx, gy, gw, gh, v => clamp(Math.log10(Math.max(1, v)) / 5, 0, 1), '#5fd3ff');
-  // KSENON grafiği
   panel(180, 198, 174, 72, t('hdr4')); const xx = 188, xy = 212, xw = 158, xhh = 50;
   for (const [a, b, c] of [[0, 110, 'rgba(70,224,160,.16)'], [110, 160, 'rgba(255,200,61,.16)'], [160, 260, 'rgba(255,84,104,.18)']]) { ctx.fillStyle = c; ctx.fillRect(xx, xy + xhh - b / 260 * xhh, xw, (b - a) / 260 * xhh); }
-  curve(xh, xx, xy, xw, xhh, v => clamp(v / 260, 0, 1), '#ffc83d');
-  // KSENON okuma paneli
+  curve(xh, xx, xy, xw, xhh, v => clamp(v / 260, 0, 1), '#ffc83d'); ctx.restore();
+  ctx.save(); ctx.translate(0, EX * 0.26);
   panel(6, 276, 230, 62, t('xeT'));
   const xp = M.xenonPct(S), xr = M.xenonRods(S), dx = S._dxe || 0, zone = xp > 160 ? 2 : xp > 110 ? 1 : 0, zc = ['#46e0a0', '#ffc83d', '#ff5468'][zone];
   ctx.fillStyle = '#0a1220'; rr(14, 296, 214, 11, 5); ctx.fill(); for (const [a, b, c] of [[0, 110, '#2f8f6a'], [110, 160, '#9a7a1f'], [160, 260, '#9a3340']]) { ctx.fillStyle = c; ctx.fillRect(14 + a / 260 * 214, 297, (b - a) / 260 * 214, 9); }
   const mx = 14 + clamp(xp / 260, 0, 1) * 214; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(mx, 294); ctx.lineTo(mx - 4, 288); ctx.lineTo(mx + 4, 288); ctx.fill(); ctx.fillRect(mx - 1, 294, 2, 14);
-  txt(`${Math.round(xp)}%`, 14, 321, 17, zc, 'left', 800, "'Courier New',monospace"); txt(`${dx > 0.02 ? '▲ ' + t('xeUp') : dx < -0.02 ? '▼ ' + t('xeDn') : '■ ' + t('xeFl')}`, 70, 321, 10, '#b8cbe6', 'left'); txt(zone === 2 ? t('xePit') : zone === 1 ? t('xeHigh') : t('xeNorm'), 228, 321, 10, zc, 'right', 800); txt(t('xeRods', xr.toFixed(0)), 14, 331, 9, '#8fa8c8', 'left');
-  // çubuk / debi
+  txt(`${Math.round(xp)}%`, 14, 321, 17, zc, 'left', 800, "'Courier New',monospace"); fitTxt(`${dx > 0.02 ? '▲ ' + t('xeUp') : dx < -0.02 ? '▼ ' + t('xeDn') : '■ ' + t('xeFl')}`, 70, 321, 10, '#b8cbe6', 'left', 90); fitTxt(zone === 2 ? t('xePit') : zone === 1 ? t('xeHigh') : t('xeNorm'), 228, 321, 10, zc, 'right', 90, 800); fitTxt(t('xeRods', xr.toFixed(0)), 14, 331, 9, '#8fa8c8', 'left', 212);
   panel(242, 276, 112, 62, t('hdr5'));
-  for (const [bx, v, mx2, c, lb] of [[252, S.p, 7, '#9fb4d0', 'm'], [304, S.flow * 100, 110, '#5fd3ff', '%']]) { ctx.fillStyle = '#0a1220'; rr(bx, 288, 14, 44, 4); ctx.fill(); const h2 = clamp(v / mx2, 0, 1) * 42; ctx.fillStyle = c; rr(bx + 1.5, 331 - h2, 11, h2, 3); ctx.fill(); }
-  txt(S.p.toFixed(1), 280, 304, 12, '#e6f0ff', 'center', 800, "'Courier New',monospace"); txt('m', 280, 315, 8, '#6f89ab', 'center'); txt(Math.round(S.flow * 100), 333, 304, 12, '#e6f0ff', 'center', 800, "'Courier New',monospace"); txt('%', 333, 315, 8, '#6f89ab', 'center');
-  // uyarı lambaları
+  const b2 = pwr ? [S.boron, 1500, '#6aa8ff', Math.round(S.boron)] : [S.flow * 100, 110, '#5fd3ff', Math.round(S.flow * 100)];
+  for (const [bx, v, mx2, c] of [[252, S.p, TY.stroke, '#9fb4d0'], [304, b2[0], b2[1], b2[2]]]) { ctx.fillStyle = '#0a1220'; rr(bx, 288, 14, 44, 4); ctx.fill(); const h2 = clamp(v / mx2, 0, 1) * 42; ctx.fillStyle = c; rr(bx + 1.5, 331 - h2, 11, h2, 3); ctx.fill(); }
+  txt(S.p.toFixed(1), 280, 304, 12, '#e6f0ff', 'center', 800, "'Courier New',monospace"); txt('m', 280, 315, 8, '#6f89ab', 'center'); txt(String(b2[3]), 333, 304, pwr ? 10 : 12, '#e6f0ff', 'center', 800, "'Courier New',monospace"); txt(pwr ? 'ppm' : '%', 333, 315, 8, '#6f89ab', 'center'); ctx.restore();
+  ctx.save(); ctx.translate(0, EX * 0.46);
   panel(6, 344, 348, 62, t('hdr6'));
-  const lamps = [[t('aOrm1'), '#ffc83d', orm < 26], [t('aOrm2'), '#ff5468', orm < 15, 1], [t('aLow'), '#ffc83d', mw < 700 && scen !== 1 && !S.az], [t('aPer'), '#ff5468', isFinite(per) && per < 20 && n > 0.02, 1], [t('aAz'), '#ff5468', S.az, 1], [t('aJam'), '#ff5468', S.jammed, 1], [t('aTest'), '#5fd3ff', S.test], [t('aByp'), '#ff5468', S.bypass, 1]];
+  const lamps = [[t('aM1', T0.warn), '#ffc83d', orm < T0.warn - 0.05], [t('aM2', T0.minM), '#ff5468', orm < T0.minM - 0.05, 1], [scen === 'test' ? t('aLow') : t('aXe'), '#ffc83d', scen === 'test' ? mw < 700 && !S.az : xp > 160], [t('aPer'), '#ff5468', isFinite(per) && per < 2 * T0.tripPer && n > 0.02, 1], [t('aTrip'), '#ff5468', S.az, 1], [t('aJam'), '#ff5468', S.jammed, 1], pwr ? [t('aTavg'), '#ffc83d', Math.abs(S.Tm - M.tRef(S.D)) > 2.5] : [t('aTest'), '#5fd3ff', S.test], [t('aByp'), '#ff5468', S.bypass, 1]];
   lamps.forEach((l, i) => lamp(14 + (i % 4) * 85, 358 + Math.floor(i / 4) * 22, 80, 18, l[0], l[1], l[2], l[3], now));
-  // mesaj
-  panel(6, 412, 348, 56, t('hdr7'));
-  if (msgT > 0 && msg) wrap(msg, 180, 442, 326, 12); else txt(goalText(), 180, 442, 11.5, '#7e96b6', 'center', 600);
-  // bir ipucu şeridi
-  txt(S.bypass ? '' : (S.interlock ? '🔒 ' + t('lock') : ''), 12, 480, 10, '#46e0a0', 'left'); 
-  if (ts < 0.9) { ctx.fillStyle = `rgba(255,60,80,${0.1 + 0.08 * pulse})`; ctx.fillRect(0, 0, W, H); }
-  if (S.destroyed) { ctx.fillStyle = `rgba(255,255,255,${clamp(0.85 - S.destroyT * 0.3, 0, 0.85)})`; ctx.fillRect(0, 0, W, H); }
+  ctx.restore(); ctx.save(); ctx.translate(0, EX * 0.46); const mh = 56 + EX * 0.54;
+  panel(6, 412, 348, mh, t('hdr7'));
+  if (msgT > 0 && msg) wrap(msg, 180, 440 + mh / 2 - 28, 326, 12); else wrap(goalText(), 180, 440 + mh / 2 - 28, 326, 11.5, '#7e96b6');
+  txt(S.interlock && !S.bypass ? '🔒 ' + t(TY.id === 'rbmk' ? 'lock_rbmk' : 'lock_o') : '', 12, 412 + mh + 11, 10, '#46e0a0', 'left'); ctx.restore();
+  if (ts < 0.9 && save.flash) { ctx.fillStyle = `rgba(255,60,80,${0.1 + 0.08 * pulse})`; ctx.fillRect(0, 0, W, HH); }
+  if (S.destroyed) { ctx.fillStyle = `rgba(255,255,255,${clamp((save.flash ? 0.85 : 0.35) - S.destroyT * 0.3, 0, 0.85)})`; ctx.fillRect(0, 0, W, HH); }
 }
-function curve(data, x, y, w, h, f, col) {
+function curve(data, x, y, w, h, f, col, dashed) {
   if (data.length < 2) return; const nmax = 400, off = Math.max(0, data.length - nmax), sl = data.slice(off);
   ctx.beginPath(); sl.forEach((v, i) => { const px = x + i / (nmax - 1) * w, py = y + h - f(v) * h; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+  if (dashed) { ctx.setLineDash([3, 3]); ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.stroke(); ctx.setLineDash([]); return; }
   ctx.strokeStyle = col; ctx.globalAlpha = 0.3; ctx.lineWidth = 4; ctx.stroke(); ctx.globalAlpha = 1; ctx.lineWidth = 1.6; ctx.stroke();
   const lx = x + (sl.length - 1) / (nmax - 1) * w, ly = y + h - f(sl[sl.length - 1]) * h; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(lx, ly, 2.2, 0, TAU); ctx.fill();
 }
-function wrap(s, x, y, maxW, size) { ctx.font = `700 ${size}px 'Trebuchet MS',system-ui,sans-serif`; const words = s.split(' '); let line = '', lines = []; for (const w of words) { const tt = line ? line + ' ' + w : w; if (ctx.measureText(tt).width > maxW && line) { lines.push(line); line = w; } else line = tt; } lines.push(line); lines.slice(0, 3).forEach((l, i, a) => txt(l, x, y + (i - (a.length - 1) / 2) * (size + 2), size, msgT > 0 && /AUTO|OTOMATİK|EXC|SIÇ|BYPASS|DEVRE/.test(msg) ? '#ff9aa6' : '#e6f0ff', 'center', 700)); }
-const goalText = () => scen === 1 ? t('goal1') : scen === 2 ? t('goal2') : t('goal3');
+function wrap(s, x, y, maxW, size, colr) { ctx.font = `700 ${size}px 'Trebuchet MS',system-ui,sans-serif`; const words = s.split(' '); let line = '', lines = []; for (const w of words) { const tt = line ? line + ' ' + w : w; if (ctx.measureText(tt).width > maxW && line) { lines.push(line); line = w; } else line = tt; } lines.push(line); const alarm = !colr && msgT > 0 && /AUTO|EXC|BYPASS|TRIP|ARRÊT|DISPARO|DESARME|ABSCH|ОСТАН|ЗАЩИТ|ОТКЛ|SIÇ|OTOMATİK|DEVRE/i.test(s); lines.slice(0, 3).forEach((l, i, a) => txt(l, x, y + (i - (a.length - 1) / 2) * (size + 2), size, colr || (alarm ? '#ff9aa6' : '#e6f0ff'), 'center', 700)); }
+const goalText = () => scen === 'train' ? (TY.id === 'pwr' ? t('goal_pwr') : t('goal_train')) : scen === 'move' ? t('goal_move') : scen === 'test' ? t('goal_test') : t('goal_sand');
 
-/* ---------- Boyutlandırma ---------- */
 let sc = 1, dpr = 1;
-function resize() { const r = cw.getBoundingClientRect(); sc = Math.max(0.3, Math.min(r.width / W, r.height / H)); dpr = Math.min(2.5, window.devicePixelRatio || 1); cv.style.width = W * sc + 'px'; cv.style.height = H * sc + 'px'; cv.width = Math.round(W * sc * dpr); cv.height = Math.round(H * sc * dpr); }
+function resize() { const r = cw.getBoundingClientRect(); HH = clamp(W * r.height / Math.max(1, r.width), H, 640); EX = HH - H; sc = Math.max(0.3, Math.min(r.width / W, r.height / HH)); dpr = Math.min(2.5, window.devicePixelRatio || 1); cv.style.width = W * sc + 'px'; cv.style.height = HH * sc + 'px'; cv.width = Math.round(W * sc * dpr); cv.height = Math.round(HH * sc * dpr); }
 window.addEventListener('resize', resize);
 
-/* ---------- Senaryo ---------- */
+/* ---------- Senaryolar ---------- */
+const steps = (arr, d0) => tt => { let v = d0; for (const [a, b] of arr) if (tt >= a) v = b; return v; };
+function ramp(low, t0, t1, t2, t3) { return tt => tt < t0 ? 1 : tt < t1 ? 1 - (1 - low) * (tt - t0) / (t1 - t0) : tt < t2 ? low : tt < t3 ? low + (1 - low) * (tt - t2) / (t3 - t2) : 1; }
+function scenDef(id, sn) {
+  const rb = id === 'rbmk', cd = id === 'candu';
+  if (sn === 'train') return rb ? { opts: { n: 0.6, orm: 22, nHist: 0.6 }, demand: steps([[30, 0.42], [75, 0.6], [110, 0.5]], 0.6), end: 150, auto: true } : { opts: {}, demand: steps([[30, 0.7], [75, 1], [110, 0.85]], 1), end: 150, auto: true };
+  if (sn === 'move') return rb ? { opts: { orm: 27 }, demand: ramp(0.6, 20, 40, 120, 150), end: 200, auto: true } : cd ? { opts: {}, demand: ramp(0.5, 20, 40, 70, 100), end: 160, auto: true } : { opts: {}, demand: ramp(0.4, 20, 40, 120, 150), end: 200, auto: true };
+  if (sn === 'test') return { opts: { n: 0.22, orm: 27, nHist: 1.0, sub: 0.15 }, demand: null, end: 420, auto: true, n0: 0.22 };
+  return { opts: {}, demand: null, end: 1e9, auto: false };
+}
 function say(k, raw) { msg = raw || t(k); msgT = 7; }
-function initScenario(n) {
-  scen = n; ended = false; flags = {}; hist = []; xh = []; histT = 0; scenT = 0; score = { ok: 0, tot: 0 }; rate = 0; ts = 1; slowT = 0; lastN = 0;
-  if (n === 1) { S = M.create({ n: 0.5, p: 4.3, flow: 1, nHist: 0.5 }); setpt = 0.5; S.auto = true; S.nSet = 0.5; }
-  else if (n === 2) { S = M.create({ n: 0.22, p: 5.6, flow: 1, nHist: 1.0, sub: 0.15 }); setpt = 0.22; S.auto = true; S.nSet = 0.22; }
-  else { S = M.create({ n: 1, p: 3.5, flow: 1, nHist: 1 }); setpt = 1; }
-  S.interlock = true; S.bypass = false; S._dxe = 0; S._xe0 = M.xenonPct(S);
-  speed = 1; el('spd').textContent = '×1'; syncUI(true); say(n === 1 ? 'm_t1' : n === 2 ? 'm_a0' : 'hold');
+function initScenario(sn, id) {
+  if (id) typeId = id; scen = sn; ended = false; flags = {}; hist = []; histD = []; xh = []; histT = 0; scenT = 0; score = { ok: 0, tot: 0 }; rate = 0; ts = 1; slowT = 0; bypArm = 0; sdef = scenDef(typeId, sn);
+  S = M.create(typeId, sdef.opts); TY = S.T; S.auto = sdef.auto; S.nSet = sdef.n0 || S.n; S.D = sdef.demand ? sdef.demand(0) : S.n; if (sdef.demand && !TY.mod) S.nSet = S.D; S.interlock = true; S.bypass = false; S._dxe = 0;
+  speed = 1; el('spd').textContent = '×1'; el('azt').textContent = t(typeId === 'rbmk' ? 'trip_rbmk' : 'trip_o'); el('cvt').textContent = t(typeId === 'rbmk' ? 'trip_rbmk' : 'trip_o') + ' ▲'; cover.classList.remove('open');
+  syncUI(true); say(sn === 'train' ? 'm_t1' : sn === 'move' ? 'm_mv' : sn === 'test' ? 'm_a0' : 'm_hold');
 }
 function setBypass(on) { S.bypass = on; S.interlock = !on; flags.bypassUsed = flags.bypassUsed || on; say(on ? 'm_byp' : 'm_lock'); syncUI(); }
 function syncUI(force) {
-  const auto = S.auto, locked = S.az || S.jammed || (scen === 2 && scenT >= 60 && scenT < 100);
-  el('lr').textContent = auto ? t('set') : t('rods'); const sl = el('rods');
-  if (auto) { sl.min = 30; sl.max = 1600; sl.step = 10; if (force || !sl.matches(':active')) sl.value = Math.round(S.nSet * PN); el('vr').textContent = Math.round(S.nSet * PN) + ' MW'; sl.disabled = S.az; }
-  else { sl.min = 0; sl.max = 700; sl.step = 1; if (force || !sl.matches(':active')) sl.value = Math.round(S.pTarget * 100); el('vr').textContent = S.p.toFixed(2) + ' → ' + S.pTarget.toFixed(1) + ' m'; sl.disabled = locked; }
-  el('lf').textContent = t('flow'); flowEl.disabled = S.test || S.az; if (!flowEl.matches(':active')) flowEl.value = Math.round(S.flowTarget * 100); el('vf').textContent = Math.round(S.flow * 100) + '%';
-  const b = el('bypass'); b.textContent = bypArm ? t('conf') : S.bypass ? t('byp') : t('lock'); b.classList.toggle('off', S.bypass); b.classList.toggle('arm', !!bypArm);
+  if (!S) return; const auto = S.auto, pwr = TY.id === 'pwr', locked = S.az || S.jammed || (scen === 'test' && scenT >= 60 && scenT < 100), sl = rodsEl;
+  const rowLbl = auto ? (pwr ? t('c_autoT') : t('c_set')) : t('c_rods_' + TY.id); el('lr').textContent = rowLbl;
+  if (auto && !pwr) { sl.min = Math.round(0.02 * TY.Pn); sl.max = Math.round(1.1 * TY.Pn); sl.step = Math.max(1, Math.round(TY.Pn / 320)); if (force || !sl.matches(':active')) sl.value = Math.round(S.nSet * TY.Pn); el('vr').textContent = Math.round(S.nSet * TY.Pn) + ' MW'; sl.disabled = S.az; }
+  else { sl.min = 0; sl.max = Math.round(TY.stroke * 100); sl.step = 1; if (force || !sl.matches(':active')) sl.value = Math.round((auto ? S.p : S.pTarget) * 100); el('vr').textContent = S.p.toFixed(2) + (auto ? '' : ' → ' + S.pTarget.toFixed(1)) + ' m'; sl.disabled = auto || locked; }
+  if (pwr) { el('lf').textContent = t('c_boron'); flowEl.min = 0; flowEl.max = 1500; flowEl.step = 5; if (force || !flowEl.matches(':active')) flowEl.value = Math.round(S.boronTarget); el('vf').textContent = Math.round(S.boron) + ' ppm'; flowEl.disabled = S.az; }
+  else { el('lf').textContent = t(TY.id === 'bwr' ? 'c_flow_bwr' : 'c_flow'); flowEl.min = 30; flowEl.max = 110; flowEl.step = 1; flowEl.disabled = S.test || S.az; if (force || !flowEl.matches(':active')) flowEl.value = Math.round(S.flowTarget * 100); el('vf').textContent = Math.round(S.flow * 100) + '%'; }
+  el('rowC').hidden = !pwr; if (pwr) { el('lc').textContent = t('c_load'); loadEl.disabled = !!sdef.demand || S.az; if (force || !loadEl.matches(':active')) loadEl.value = Math.round(S.D * 100); el('vc').textContent = Math.round(S.D * 100) + '%'; }
+  const b = el('bypass'); b.textContent = bypArm ? t('conf') : S.bypass ? t('byp') : t(TY.id === 'rbmk' ? 'lock_rbmk' : 'lock_o'); b.classList.toggle('off', S.bypass); b.classList.toggle('arm', !!bypArm);
   el('auto').textContent = auto ? t('auto') : t('man'); el('auto').classList.toggle('on', auto); el('auto').disabled = S.az || locked;
-  el('test').hidden = scen !== 2; el('test').textContent = t('test'); el('test').disabled = S.test || S.az || scenT < 100 || S.n < 0.04;
+  el('test').hidden = scen !== 'test'; el('test').textContent = t('test'); el('test').disabled = S.test || S.az || scenT < 100 || S.n < 0.04;
 }
-rodsEl.addEventListener('input', () => { if (!S || S.az) return; if (S.auto) { S.nSet = rodsEl.value / PN; setpt = S.nSet; } else { let v = rodsEl.value / 100; if (S.interlock && v < Math.min(S.p, 3.5) - 0.01) { v = Math.min(S.p, 3.5); rodsEl.value = Math.round(v * 100); if (!flags.lockMsg || scenT - flags.lockMsg > 4) { flags.lockMsg = scenT; say('m_lock'); tone(300, 0.15, 'square', 0.05); } } S.pTarget = v; } syncUI(); });
-flowEl.addEventListener('input', () => { if (S && !S.test && !S.az) { S.flowTarget = flowEl.value / 100; syncUI(); } });
-el('auto').addEventListener('click', () => { initAudio(); S.auto = !S.auto; if (S.auto) { S.nSet = clamp(S.n, 0.01, 0.5); setpt = S.nSet; } syncUI(true); });
-el('test').addEventListener('click', () => { if (scen === 2 && !S.test) { S.test = true; S.testT = 0; S.flowBase = S.flow; flags.ormAtTest = M.ORM(S.p); say('m_a3'); syncUI(); } });
+rodsEl.addEventListener('input', () => { if (!S || S.az) return; if (S.auto && TY.id !== 'pwr') { S.nSet = rodsEl.value / TY.Pn; } else if (!S.auto) { let v = rodsEl.value / 100; if (S.interlock && v < Math.min(S.p, S.pLock) - 0.01) { v = Math.min(S.p, S.pLock); rodsEl.value = Math.round(v * 100); if (!flags.lockMsg || scenT - flags.lockMsg > 4) { flags.lockMsg = scenT; say('m_lock'); tone(300, 0.15, 'square', 0.05); } } S.pTarget = v; } syncUI(); });
+flowEl.addEventListener('input', () => { if (!S || S.az) return; if (TY.id === 'pwr') S.boronTarget = +flowEl.value; else if (!S.test) S.flowTarget = flowEl.value / 100; syncUI(); });
+loadEl.addEventListener('input', () => { if (S && TY.id === 'pwr' && !sdef.demand) { S.D = loadEl.value / 100; syncUI(); } });
+el('auto').addEventListener('click', () => { initAudio(); S.auto = !S.auto; if (S.auto && TY.id !== 'pwr') S.nSet = clamp(sdef.demand ? S.D : S.n, 0.02, 1.0); syncUI(true); });
+el('test').addEventListener('click', () => { if (scen === 'test' && !S.test) { S.test = true; S.testT = 0; S.flowBase = S.flow; say('m_a3'); syncUI(); } });
 el('spd').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; el('spd').textContent = '×' + speed; });
 el('pause').addEventListener('click', () => { if (playing) pauseMenu(); });
 el('bypass').addEventListener('click', () => { if (!S) return; if (S.bypass) { setBypass(false); return; } if (bypArm && performance.now() - bypArm < 3000) { bypArm = 0; setBypass(true); } else { bypArm = performance.now(); syncUI(); setTimeout(() => { if (bypArm && performance.now() - bypArm >= 2900) { bypArm = 0; syncUI(); } }, 3000); } });
-el('bhelp').addEventListener('click', () => { if (playing) { playing = false; } helpScreen(true); });
+el('bhelp').addEventListener('click', () => { if (playing) playing = false; helpScreen('game'); });
 el('bmenu').addEventListener('click', () => { if (playing) pauseMenu(); });
 const azb = el('az'), cover = el('cover'); let coverT = 0;
 cover.addEventListener('click', () => { initAudio(); cover.classList.add('open'); coverT = performance.now(); tone(520, 0.08, 'square', 0.04); setTimeout(() => { if (performance.now() - coverT > 5900) cover.classList.remove('open'); }, 6000); });
@@ -297,83 +304,95 @@ azb.addEventListener('pointerdown', azDown); azb.addEventListener('pointerup', a
 function fireAz(auto) { if (S.az) return; M.azStart(S); azHold = 0; azb.firstChild.style.width = '0'; tone(140, 0.7, 'sawtooth', 0.08, 0.6); if (!auto) msgT = 0; syncUI(); setTimeout(() => cover.classList.remove('open'), 1200); }
 
 /* ---------- Menü ekranları ---------- */
-const hero = () => `<div class="hero"><svg viewBox="0 0 360 190" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1a30"/><stop offset=".6" stop-color="#1b3a5e"/><stop offset="1" stop-color="#e08a4a"/></linearGradient><radialGradient id="gl" cx=".5" cy="1" r=".6"><stop offset="0" stop-color="#7fe0ff" stop-opacity=".7"/><stop offset="1" stop-color="#7fe0ff" stop-opacity="0"/></radialGradient></defs><rect width="360" height="190" fill="url(#sk)"/><g fill="#fff" opacity=".6">${[[20, 20], [60, 40], [120, 14], [200, 30], [260, 18], [310, 44], [340, 12], [90, 60]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="1"/>`).join('')}</g><ellipse class="glow" cx="170" cy="168" rx="110" ry="40" fill="url(#gl)"/><g fill="#0a1220"><rect x="60" y="120" width="190" height="70"/><rect x="48" y="146" width="30" height="44"/><rect x="236" y="110" width="52" height="80"/><polygon points="60,120 120,96 190,96 250,120"/></g><g><rect x="296" y="52" width="14" height="138" fill="#0a1220"/><rect x="296" y="62" width="14" height="14" fill="#c9202f"/><rect x="296" y="90" width="14" height="14" fill="#c9202f"/><rect x="296" y="118" width="14" height="14" fill="#c9202f"/><rect x="296" y="76" width="14" height="14" fill="#e8eef7"/><rect x="296" y="104" width="14" height="14" fill="#e8eef7"/></g><g fill="#ffd877" opacity=".9">${Array.from({ length: 22 }, (_, i) => `<rect x="${72 + (i % 11) * 16}" y="${130 + Math.floor(i / 11) * 18}" width="6" height="8"/>`).join('')}</g><g fill="#dfeaf7"><circle class="sm" cx="303" cy="48" r="9"/><circle class="sm" cx="306" cy="48" r="8"/><circle class="sm" cx="300" cy="48" r="10"/></g><rect y="186" width="360" height="4" fill="#060b14"/></svg><h1>${t('title')}</h1><small>${t('sub')}</small></div>`;
-function menu() {
-  playing = false; ov.hidden = false; const st = k => '★'.repeat(save.stars[k] || 0) + '☆'.repeat(3 - (save.stars[k] || 0));
-  ov.innerHTML = `${hero()}<div class="cards"><button class="card" data-s="1"><div class="ic">🎓</div><div><b>${t('s1')}</b><span>${t('s1d')}</span><span class="diff">${t('easy')}</span></div><div class="st">${st(1)}</div></button><button class="card hard" data-s="2"><div class="ic">☢</div><div><b>${t('s2')}</b><span>${t('s2d')}</span><span class="diff">${t('hard')}</span></div><div class="st">${st(2)}</div></button><button class="card" data-s="3"><div class="ic">🎛</div><div><b>${t('s3')}</b><span>${t('s3d')}</span><span class="diff">${t('free')}</span></div></button></div><div class="mini"><button class="ghost" data-a="help">? ${t('how')}</button><button class="ghost" data-a="mute">${save.muted ? '🔇' : '🔊'} ${t('snd')}</button></div><small class="d">${t('edu')}<br>${t('read')}</small>`;
+const hero = (small) => `<div class="hero"><svg viewBox="0 0 360 ${small ? 120 : 190}" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1a30"/><stop offset=".6" stop-color="#1b3a5e"/><stop offset="1" stop-color="#e08a4a"/></linearGradient><radialGradient id="gl" cx=".5" cy="1" r=".6"><stop offset="0" stop-color="#7fe0ff" stop-opacity=".7"/><stop offset="1" stop-color="#7fe0ff" stop-opacity="0"/></radialGradient></defs><rect width="360" height="190" fill="url(#sk)"/><g fill="#fff" opacity=".6">${[[20, 20], [60, 40], [120, 14], [200, 30], [260, 18], [310, 44], [340, 12], [90, 60]].map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="1"/>`).join('')}</g><ellipse class="glow" cx="170" cy="168" rx="110" ry="40" fill="url(#gl)"/><g fill="#0a1220"><rect x="60" y="120" width="190" height="70"/><rect x="48" y="146" width="30" height="44"/><rect x="236" y="110" width="52" height="80"/><polygon points="60,120 120,96 190,96 250,120"/></g><g><rect x="296" y="52" width="14" height="138" fill="#0a1220"/><rect x="296" y="62" width="14" height="14" fill="#c9202f"/><rect x="296" y="90" width="14" height="14" fill="#c9202f"/><rect x="296" y="118" width="14" height="14" fill="#c9202f"/><rect x="296" y="76" width="14" height="14" fill="#e8eef7"/><rect x="296" y="104" width="14" height="14" fill="#e8eef7"/></g><g fill="#ffd877" opacity=".9">${Array.from({ length: 22 }, (_, i) => `<rect x="${72 + (i % 11) * 16}" y="${130 + Math.floor(i / 11) * 18}" width="6" height="8"/>`).join('')}</g><g fill="#dfeaf7"><circle class="sm" cx="303" cy="48" r="9"/><circle class="sm" cx="306" cy="48" r="8"/><circle class="sm" cx="300" cy="48" r="10"/></g><rect y="186" width="360" height="4" fill="#060b14"/></svg><h1>${t('title')}</h1><small>${t('sub')}</small></div>`;
+const ICON = {
+  rbmk: '<svg viewBox="0 0 64 54"><rect x="6" y="6" width="40" height="42" rx="3" fill="#1d2733" stroke="#4b607d"/><g fill="#5fd3ff">' + Array.from({ length: 16 }, (_, i) => `<circle cx="${14 + (i % 4) * 9}" cy="${14 + Math.floor(i / 4) * 9}" r="2.6"/>`).join('') + '</g><rect x="50" y="14" width="8" height="34" fill="#e8eef7"/><rect x="50" y="20" width="8" height="7" fill="#c9202f"/><rect x="50" y="34" width="8" height="7" fill="#c9202f"/></svg>',
+  pwr: '<svg viewBox="0 0 64 54"><path d="M18 10 Q32 -2 46 10 V44 Q32 52 18 44 Z" fill="#1d2733" stroke="#4b607d" stroke-width="2"/><g fill="#6aa8ff" opacity=".8"><rect x="23" y="22" width="18" height="18" rx="1"/></g><g stroke="#0b0f17" stroke-width="2"><path d="M26 12 V28 M32 10 V28 M38 12 V28"/></g><rect x="8" y="26" width="10" height="6" fill="#4b607d"/><rect x="46" y="26" width="10" height="6" fill="#4b607d"/></svg>',
+  bwr: '<svg viewBox="0 0 64 54"><path d="M20 6 Q32 -2 44 6 V44 Q32 52 20 44 Z" fill="#1d2733" stroke="#4b607d" stroke-width="2"/><rect x="23" y="24" width="18" height="18" fill="#5fa8d8" opacity=".6"/><g fill="#e6f6ff" opacity=".8"><circle cx="27" cy="30" r="2"/><circle cx="35" cy="26" r="2.4"/><circle cx="32" cy="35" r="1.8"/><circle cx="38" cy="33" r="1.6"/></g><path d="M20 38 H8 V16 H20" fill="none" stroke="#4b607d" stroke-width="2"/></svg>',
+  candu: '<svg viewBox="0 0 64 54"><rect x="8" y="12" width="48" height="30" rx="8" fill="#1d2733" stroke="#4b607d" stroke-width="2"/><g fill="#5fd3ff">' + Array.from({ length: 4 }, (_, r) => `<rect x="14" y="${18 + r * 6}" width="36" height="3"/>`).join('') + '</g><g fill="#0b0f17">' + [20, 32, 44].map(x => `<rect x="${x}" y="12" width="3" height="30"/>`).join('') + '</g></svg>'
+};
+function mainMenu() {
+  playing = false; ov.hidden = false;
+  ov.innerHTML = `${hero()}<p class="h3">${t('pick')}</p><div class="grid">${REACTORS.map(id => { const s = typeStars(id); return `<button class="tile" data-r="${id}">${ICON[id]}<b>${rname(id)}</b><span>${t('rn_' + id)}</span><span class="st">${s ? '★'.repeat(Math.min(s, 9)) : ''}</span></button>`; }).join('')}</div><div class="mini"><button class="ghost" data-a="help">? ${t('how')}</button><button class="ghost" data-a="settings">⚙ ${t('set')}</button></div><small class="d">${t('edu')}<br>${t('read')}</small>`;
 }
-function pauseMenu() { playing = false; ov.hidden = false; ov.innerHTML = `<div class="pad" style="margin-top:60px"><h2>II</h2><button class="btn" data-a="resume">${t('resume')}</button><button class="ghost" data-a="help">? ${t('how')}</button><button class="ghost" data-a="mute">${save.muted ? '🔇' : '🔊'} ${t('snd')}</button><button class="ghost" data-a="menu">${t('menu')}</button></div>`; }
-function helpScreen(fromGame) {
-  ov.hidden = false; flags.helpFrom = fromGame ? 'game' : 'menu';
-  const c = (a, b) => `<div class="hc"><b>${t(a)}</b><span>${t(b)}</span></div>`;
-  ov.innerHTML = `<div class="pad" style="margin-top:18px"><h2>${t('how')}</h2></div><div class="help">${c('g_orm', 'g_ormT')}${c('g_xe', 'g_xeT')}${c('g_void', 'g_voidT')}${c('g_rod', 'g_rodT')}${c('g_rho', 'g_rhoT')}</div><button class="btn" data-a="closehelp">${t('close')}</button>`;
+const STATS = { rbmk: [['v_pos', 1, '#ff5468'], ['sp_slow', 0.15, '#ff5468'], ['stb_low', 0.2, '#ff5468'], ['d_hard', 1, '#ff5468']], pwr: [['v_none', 0.12, '#46e0a0'], ['sp_fast', 0.8, '#46e0a0'], ['stb_hi', 0.95, '#46e0a0'], ['d_med', 0.5, '#ffc83d']], bwr: [['v_neg', 0.6, '#46e0a0'], ['sp_med', 0.6, '#ffc83d'], ['stb_mid', 0.6, '#ffc83d'], ['d_med', 0.55, '#ffc83d']], candu: [['v_small', 0.35, '#ffc83d'], ['sp_vfast', 1, '#46e0a0'], ['stb_mid', 0.55, '#ffc83d'], ['d_med', 0.6, '#ffc83d']] };
+function reactorMenu(id) {
+  playing = false; typeId = id; ov.hidden = false; const st = STATS[id], lab = ['st_void', 'st_trip', 'st_stab', 'st_diff'];
+  const sc = [['train', '🎓'], ['move', '📉'], ...(id === 'rbmk' ? [['test', '☢']] : []), ['sand', '🎛']];
+  ov.innerHTML = `${hero(true)}<div class="pad" style="margin-top:6px"><h2>${rname(id)}</h2><p>${t('rd_' + id)}</p></div><div class="stats">${st.map((s, i) => `<div class="stat"><em>${t(lab[i])}</em><i><s style="width:${Math.round(s[1] * 100)}%;background:${s[2]}"></s></i><b style="color:${s[2]}">${t(s[0])}</b></div>`).join('')}</div><div class="cards">${sc.map(([k, ic]) => { const s = starsOf(id, k); return `<button class="card ${k === 'test' ? 'hard' : ''}" data-s="${k}"><div class="ic">${ic}</div><div><b>${t('s_' + k)}</b><span>${t('s_' + k + 'd')}</span></div>${k !== 'sand' ? `<div class="st">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</div>` : ''}</button>`; }).join('')}</div><div class="mini"><button class="ghost" data-a="main">‹ ${t('back')}</button><button class="ghost" data-a="help">? ${t('how')}</button></div>`;
 }
+function pauseMenu() { playing = false; ov.hidden = false; ov.innerHTML = `<div class="pad" style="margin-top:60px"><h2>II</h2><button class="btn" data-a="resume">${t('resume')}</button><button class="ghost" data-a="help">? ${t('how')}</button><button class="ghost" data-a="settings">⚙ ${t('set')}</button><button class="ghost" data-a="menu">${t('menu')}</button></div>`; flags.from = 'pause'; }
+function helpScreen(from) {
+  ov.hidden = false; flags.helpFrom = from; const c = k => `<div class="hc"><b>${t(k)}</b><span>${t(k + 'T')}</span></div>`;
+  const tk = S && from === 'game' ? TY.id : typeId; const ex = { rbmk: '', pwr: c('g_pwr'), bwr: c('g_bwr'), candu: c('g_candu') }[tk] || '';
+  ov.innerHTML = `<div class="pad" style="margin-top:18px"><h2>${t('how')}</h2></div><div class="help">${ex}${c('g_orm')}${c('g_xe')}${c('g_void')}${c('g_rod')}${c('g_rho')}</div><button class="btn" data-a="closehelp">${t('close')}</button>`;
+}
+function settingsScreen(from) {
+  ov.hidden = false; if (from) flags.setFrom = from; const tg = (k, v) => `<button class="ghost ${v ? 'sel' : ''}" data-tg="${k}">${v ? t('on') : t('off')}</button>`;
+  ov.innerHTML = `<div class="pad" style="margin-top:18px"><h2>⚙ ${t('set')}</h2></div><div class="sets"><div class="sr" style="flex-direction:column;align-items:stretch"><span>${t('st_lang')}</span><div class="langs">${Object.keys(LANGS).map(l => `<button class="ghost ${l === save.lang ? 'sel' : ''}" data-lang="${l}">${LANGS[l]}</button>`).join('')}</div></div><div class="sr"><span>${t('st_sound')}</span><div class="v">${tg('muted', !save.muted)}</div></div><div class="sr"><span>${t('st_vol')}</span><div class="v"><input type="range" min="0" max="100" value="${Math.round(save.vol * 100)}" id="volr" aria-label="volume"></div></div><div class="sr"><span>${t('st_slow')}</span><div class="v">${tg('slow', save.slow)}</div></div><div class="sr"><span>${t('st_flash')}</span><div class="v">${tg('flash', save.flash)}</div></div><div class="sr"><span>${t('st_units')}</span><div class="v"><button class="ghost ${!save.pct ? 'sel' : ''}" data-u="mw">${t('u_mw')}</button><button class="ghost ${save.pct ? 'sel' : ''}" data-u="pct">${t('u_pct')}</button></div></div><div class="sr"><span>${t('st_reset')}</span><div class="v">${flags.resetQ ? `<span style="color:#ff9aa6">${t('st_resetq')}</span><button class="ghost" data-a="resetyes">${t('yes')}</button><button class="ghost" data-a="resetno">${t('no')}</button>` : `<button class="ghost" data-a="reset">⟲</button>`}</div></div></div><button class="btn" data-a="closeset">${t('back')}</button><small class="d">${t('ver')} 3.0 · ${t('read')}</small>`;
+  const v = el('volr'); if (v) { v.addEventListener('input', () => { save.vol = v.value / 100; persist(); }); v.addEventListener('change', () => { initAudio(); tone(660, 0.12, 'triangle', 0.05); }); }
+}
+function afterSettings() { flags.resetQ = false; const f = flags.setFrom; if (f === 'pause' && S && !ended) pauseMenu(); else if (f === 'reactor') reactorMenu(typeId); else mainMenu(); }
 ov.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return; initAudio(); const d = b.dataset;
-  if (d.s) { initScenario(+d.s); ov.hidden = true; playing = true; tone(660, 0.1, 'triangle', 0.05); }
-  else if (d.a === 'menu') menu(); else if (d.a === 'again') { initScenario(scen); ov.hidden = true; playing = true; }
+  if (d.r) reactorMenu(d.r);
+  else if (d.s) { initScenario(d.s, typeId); ov.hidden = true; playing = true; tone(660, 0.1, 'triangle', 0.05); }
+  else if (d.a === 'main') mainMenu(); else if (d.a === 'menu') { S = null; reactorMenu(typeId); } else if (d.a === 'again') { initScenario(scen); ov.hidden = true; playing = true; }
   else if (d.a === 'resume') { ov.hidden = true; playing = true; }
-  else if (d.a === 'help') helpScreen(false);
-  else if (d.a === 'closehelp') { if (flags.helpFrom === 'game' && S && !ended) { ov.hidden = true; playing = true; } else if (S && !ended && ov.dataset.k === 'x') menu(); else menu(); }
-  else if (d.a === 'mute') { save.muted = !save.muted; persist(); const h = ov.querySelector('.card') ? menu : pauseMenu; h(); }
+  else if (d.a === 'help') helpScreen(flags.from === 'pause' ? 'pause' : (S && !ended && ov.querySelector('h2') && ov.querySelector('h2').textContent === 'II') ? 'pause' : (document.querySelector('.tile') ? 'main' : 'reactor'));
+  else if (d.a === 'closehelp') { const f = flags.helpFrom; if (f === 'game') { ov.hidden = true; playing = true; } else if (f === 'pause') pauseMenu(); else if (f === 'reactor') reactorMenu(typeId); else mainMenu(); }
+  else if (d.a === 'settings') { const from = ov.querySelector('h2') && ov.querySelector('h2').textContent === 'II' ? 'pause' : (ov.querySelector('.tile') ? 'main' : 'reactor'); settingsScreen(from); }
+  else if (d.a === 'closeset') afterSettings();
+  else if (d.a === 'reset') { flags.resetQ = true; settingsScreen(); } else if (d.a === 'resetno') { flags.resetQ = false; settingsScreen(); } else if (d.a === 'resetyes') { save.stars = {}; persist(); flags.resetQ = false; settingsScreen(); }
+  else if (d.lang) { save.lang = d.lang; persist(); try { document.documentElement.lang = d.lang; } catch (er) {} settingsScreen(); if (S) { el('azt').textContent = t(TY.id === 'rbmk' ? 'trip_rbmk' : 'trip_o'); el('cvt').textContent = el('azt').textContent + ' ▲'; syncUI(true); } }
+  else if (d.tg) { if (d.tg === 'muted') save.muted = !save.muted; else save[d.tg] = !save[d.tg]; persist(); settingsScreen(); }
+  else if (d.u) { save.pct = d.u === 'pct'; persist(); settingsScreen(); }
 });
 function finish(kind) {
   if (ended) return; ended = true; playing = false;
-  const orm = S.azORM !== undefined ? S.azORM : M.ORM(S.p); let stars = 0, title = t('done'), body = '';
+  const orm = S.azORM !== undefined ? S.azORM : M.ORM(S, S.p); let stars = 0, title = t('done'), body = '';
   const star = () => `<div class="stars">${[0, 1, 2].map(i => `<i class="${i < stars ? 'on' : ''}">★</i>`).join('')}</div>`;
-  if (scen === 1) { const p = Math.round(score.ok / Math.max(1, score.tot) * 100); stars = p >= 85 ? 3 : p >= 65 ? 2 : p >= 40 ? 1 : 0; body = `${star()}<p>${t('score')}: <b>${p}%</b></p>`; }
-  else if (scen === 2) {
-    const dead = S.destroyed || kind === 'destroyed', pk = Math.round((S.maxAz || S.n) * PN), mo = flags.minORM === undefined ? orm : flags.minORM, spike = (S.maxAz || 0) > 2 * (S.azN || 0.01), li = [];
-    if (dead) { title = t('destroyed'); stars = 0; }
-    else if (S.az) { title = t('safe'); stars = flags.bypassUsed || orm < 15 ? 1 : (S.test && S.testT >= 55 && (flags.minORMtest === undefined || flags.minORMtest >= 15)) ? 3 : 2; }
-    li.push(`ORM: <b>${orm.toFixed(1)}</b> · ${orm < 15 ? t('why5') : t('okOrm')}`);
-    if (S.az) li.push(`${t('peak')}: <b>${pk.toLocaleString('en-US')} MW</b>`);
-    if (flags.bypassUsed) li.push(t('why6'));
-    if (spike) li.push(t('why2') + ` (+${(S.psF * M.ps0).toFixed(1)} β)`);
-    if ((flags.maxV || 0) > 0.05 && (spike || dead)) li.push(t('why1'));
-    if (mo < 15) li.push(t('why3', mo.toFixed(0)));
-    if (S.jammed) li.push(t('why4'));
-    if (stars === 3) li.push(t('why7'));
+  const pct = Math.round(score.ok / Math.max(1, score.tot) * 100), li = [];
+  if (scen === 'train' || scen === 'move') {
+    stars = pct >= 85 ? 3 : pct >= 65 ? 2 : pct >= 40 ? 1 : 0; if (kind === 'poison') { stars = 0; title = t('destroyed'); li.push(t('why8')); } else if (flags.autoTrip) { stars = 0; title = t('tripped'); li.push(t('why9')); }
+    body = `${star()}<p>${t('score')}: <b>${pct}%</b></p>${li.length ? `<ul>${li.map(x => `<li>${x}</li>`).join('')}</ul>` : ''}`;
+  } else if (scen === 'test') {
+    const dead = S.destroyed || kind === 'destroyed', pk = Math.round((S.maxAz || S.n) * TY.Pn), mo = flags.minORM === undefined ? orm : flags.minORM, spike = (S.maxAz || 0) > 2 * (S.azN || 0.01);
+    if (dead) { title = t('destroyed'); stars = 0; } else if (S.az) { title = t('safe'); stars = flags.bypassUsed || orm < 15 ? 1 : (S.test && S.testT >= 55 && (flags.minORMtest === undefined || flags.minORMtest >= 15)) ? 3 : 2; }
+    li.push(`ORM: <b>${orm.toFixed(1)}</b> · ${orm < 15 ? t('why5') : t('okM')}`); if (S.az) li.push(`${t('peak')}: <b>${pk.toLocaleString('en-US')} MW</b>`); if (flags.bypassUsed) li.push(t('why6')); if (spike) li.push(t('why2') + ` (+${(S.psF * TY.ps0).toFixed(1)} β)`); if ((flags.maxV || 0) > 0.05 && (spike || dead)) li.push(t('why1')); if (mo < 15) li.push(t('why3', mo.toFixed(0))); if (S.jammed) li.push(t('why4')); if (stars === 3) li.push(t('why7'));
     body = `${star()}<p><b>${t('explain')}</b></p><ul>${li.map(x => `<li>${x}</li>`).join('')}</ul>`;
-  }
-  if (scen > 0 && scen < 3) { if (stars > (save.stars[scen] || 0)) { save.stars[scen] = stars; persist(); } }
+  } else { title = S.destroyed || kind === 'destroyed' ? t('destroyed') : S.az ? t('safe') : t('done'); body = `<p>${t('peak')}: <b>${Math.round((S.maxAz || S.maxN) * TY.Pn).toLocaleString('en-US')} MW</b></p>`; }
+  const key = typeId + ':' + scen; if (scen !== 'sand' && stars > (save.stars[key] || 0)) { save.stars[key] = stars; persist(); }
   ov.hidden = false; ov.innerHTML = `<div class="pad" style="margin-top:34px"><h2>${title}</h2>${body}<button class="btn" data-a="again">${t('again')}</button><button class="ghost" data-a="menu">${t('menu')}</button><small class="d">${t('read')}</small></div>`;
   tone(stars ? 784 : 196, 0.4, 'triangle', 0.07);
 }
 
 /* ---------- Simülasyon ---------- */
 function tick() {
-  M.step(S, DT); scenT += DT;
-  const orm = M.ORM(S.p), mw = S.n * PN;
-  // periyot (EMA)
-  rate = S.rate || 0;
-  const per = rate > 1e-3 ? 1 / rate : Infinity;
-  // yavaş çekim (aşırı güç sıçraması)
+  M.step(S, DT); scenT += DT; const T0 = TY, orm = M.ORM(S, S.p), mw = S.n * T0.Pn, pwr = T0.id === 'pwr';
+  rate = S.rate || 0; const per = rate > 1e-3 ? 1 / rate : Infinity;
+  if (sdef.demand) { S.D = sdef.demand(scenT); if (!pwr && S.auto) S.nSet = S.D; }
   const ref = Math.max(0.02, S.auto ? S.nSet : (S._ref || S.n)); if (!S.auto) S._ref = S._ref ? lerp(S._ref, S.n, 0.002) : S.n;
-  const exc = (isFinite(per) && per < 15 && S.n > 0.02) || S.n > 3 * ref;
-  if (exc) { slowT = 3; if (!flags.excMsg) { flags.excMsg = 1; say('m_exc'); tone(900, 0.2, 'square', 0.06); } } else slowT = Math.max(0, slowT - DT);
-  ts = slowT > 0 ? 0.22 : 1;
-  // koruma (otomatik AZ-5)
-  if (!S.bypass && !S.az && !S.destroyed) {
-    let why = null; if (isFinite(per) && per < 10 && S.n > 0.02) why = 'm_tp'; else if (S.n > 1.2) why = 'm_th'; else if (S.flow < 0.45 && S.n > 0.2) why = 'm_tf';
-    if (why) { fireAz(true); say(why); }
-  }
+  const exc = (isFinite(per) && per < 15 && S.n > 0.02) || S.n > 3 * ref * (pwr ? 1.5 : 1);
+  if (exc && save.slow) { slowT = 3; if (!flags.excMsg) { flags.excMsg = 1; say('m_exc'); tone(900, 0.2, 'square', 0.06); } } else slowT = Math.max(0, slowT - DT); ts = slowT > 0 ? 0.22 : 1;
+  if (!S.bypass && !S.az && !S.destroyed) { let why = null; if (isFinite(per) && per < T0.tripPer && S.n > 0.02) why = 'm_tp'; else if (S.n > T0.tripN) why = 'm_th'; else if (T0.tripFlow && S.flow < T0.tripFlow && S.n > 0.2) why = 'm_tf'; if (why) { flags.autoTrip = true; fireAz(true); say(why); } }
   S._xe1 = (S._xe1 === undefined) ? M.xenonPct(S) : S._xe1; if (Math.floor(scenT * 20) % 20 === 0) { const x = M.xenonPct(S); S._dxe = (x - S._xe1) / 100; S._xe1 = x; }
-  if (scen === 1) {
-    for (const [tt, k, v] of [[30, 'm_t2', 0.35], [75, 'm_t2', 0.5], [110, 'm_t2', 0.42]]) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; say(k); setpt = v; S.nSet = v; S.auto = true; syncUI(true); }
-    score.tot++; if (Math.abs(S.n - setpt) <= 0.05 * setpt) score.ok++; if (scenT >= 150) finish('done');
+  if (scen === 'train' || scen === 'move') {
+    if (scen === 'train') for (const tt of [30, 75, 110]) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; say('m_t2'); }
+    score.tot++; const okT = pwr ? Math.abs(S.Tm - M.tRef(S.D)) <= 2.5 : Math.abs(S.n - S.D) <= 0.05 * S.D; if (okT && orm >= T0.minM && !S.az) score.ok++;
+    if (T0.id === 'candu' && M.xenonPct(S) > 260 && S.n < 0.05 && !flags.poison) { flags.poison = 1; say('m_poison'); setTimeout(() => { if (!ended) finish('poison'); }, 2500); }
+    if (scenT >= sdef.end) finish('done');
   }
-  if (scen === 2) {
+  if (scen === 'test') {
     for (const [tt, k] of [[60, 'm_a1'], [100, 'm_a2'], [140, 'm_a2b']]) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; say(k); }
-    if (scenT >= 60 && !flags.dip) { flags.dip = 1; S.auto = false; S.pTarget = Math.min(7, S.p + 2.8); syncUI(true); }
+    if (scenT >= 60 && !flags.dip) { flags.dip = 1; S.auto = false; S.pTarget = Math.min(TY.stroke, S.p + 2.8); syncUI(true); }
     if (S.test && S.testT > 55 && !flags.m4) { flags.m4 = 1; say('m_a4'); }
-    if (orm < 26 && !flags.o26) { flags.o26 = 1; say('m_orm26'); }
-    if (orm < 15 && !flags.o15) { flags.o15 = 1; say('m_orm15'); }
-    if (scenT > 420 && !S.az) finish('done');
+    if (orm < T0.warn && !flags.o26) { flags.o26 = 1; say('m_m1'); } if (orm < T0.minM && !flags.o15) { flags.o15 = 1; say('m_m2'); }
+    if (scenT > sdef.end && !S.az) finish('done');
   }
   flags.minORM = Math.min(flags.minORM === undefined ? 99 : flags.minORM, orm); if (S.test) flags.minORMtest = Math.min(flags.minORMtest === undefined ? 99 : flags.minORMtest, orm); flags.maxV = Math.max(flags.maxV || 0, S.v);
   if (S.jammed && !flags.jam) { flags.jam = 1; say('m_jam'); }
-  histT += DT; if (histT >= 1) { histT = 0; hist.push(mw); xh.push(M.xenonPct(S)); if (hist.length > 700) { hist.shift(); xh.shift(); } }
+  histT += DT; if (histT >= 1) { histT = 0; hist.push(mw); histD.push(sdef.demand || scen === 'test' ? (scen === 'test' ? 0 : S.D * T0.Pn) : 0); xh.push(M.xenonPct(S)); if (hist.length > 700) { hist.shift(); histD.shift(); xh.shift(); } }
   if (S.destroyed && S.destroyT > 2.5) finish('destroyed'); else if (S.az && !S.destroyed && S.azT > 30 && S.n < 0.05) finish('done');
 }
 let last = 0, acc = 0;
@@ -383,13 +402,14 @@ function frame(now) {
     acc += dt * speed * ts; let guard = 0; while (acc >= DT && playing && guard++ < 400) { tick(); acc -= DT; }
     if (azHold) { const k = (performance.now() - azHold) / 450; azb.firstChild.style.width = Math.min(100, k * 100) + '%'; if (k >= 1) fireAz(false); }
     if (msgT > 0) msgT -= dt; if (Math.floor(now / 160) % 2 === 0) syncUI();
-    const orm = M.ORM(S.p), per = S._per; if (!S.destroyed && now - lastBeep > (S.az ? 900 : 700)) { if (S.az) { lastBeep = now; tone(440, 0.12, 'square', 0.03); } else if (orm < 15) { lastBeep = now; tone(880, 0.1, 'square', 0.03); } else if (isFinite(per) && per < 20 && S.n > 0.02) { lastBeep = now; tone(1100, 0.08, 'square', 0.04); } }
+    const orm = M.ORM(S, S.p), per = S._per; if (!S.destroyed && now - lastBeep > (S.az ? 900 : 700)) { if (S.az) { lastBeep = now; tone(440, 0.12, 'square', 0.03); } else if (orm < TY.minM) { lastBeep = now; tone(880, 0.1, 'square', 0.03); } else if (isFinite(per) && per < 20 && S.n > 0.02) { lastBeep = now; tone(1100, 0.08, 'square', 0.04); } }
   }
   draw(now); requestAnimationFrame(frame);
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden && playing) pauseMenu(); });
-resize(); menu(); requestAnimationFrame(frame);
-if (window.__RB_TEST__) window.__rb = { M, get S() { return S; }, initScenario, tick, finish, fireAz, setBypass, get scenT() { return scenT; }, get playing() { return playing; }, set playing(v) { playing = v; }, get ts() { return ts; } };
+try { document.documentElement.lang = save.lang; } catch (e) {}
+resize(); mainMenu(); requestAnimationFrame(frame);
+if (window.__RB_TEST__) window.__rb = { M, T, LANGS, get S() { return S; }, get save() { return save; }, initScenario, tick, finish, fireAz, setBypass, get scenT() { return scenT; }, get playing() { return playing; }, set playing(v) { playing = v; }, get ts() { return ts; }, get TY() { return TY; } };
 })();
 </script>
 </body>
