@@ -260,7 +260,7 @@
  "br_skip": "Não mostrar este briefing de novo",
  "start": "INICIAR TURNO",
  "br_rbmk1": "As barras são lentas (0,4 m/s). Comece a movê-las antes de a demanda mudar.",
- "br_rbmk2": "Aqui o vapor aumenta a potência. Nunca deixe o período ficar curto; o AUTO o mantém em torno de 30 s.",
+ "br_rbmk2": "Aqui o vapor aumenta a potência. Nunca deixe o período ficar curto; o AUTO o mantém em torno de 40 s.",
  "br_rbmk3": "Mantenha o ORM acima de 15. Depois de uma queda de potência, o xenônio vai tentar você a retirar barras.",
  "br_pwr1": "O AUTO mantém a temperatura média do refrigerante (Tavg) no programa. Observe o indicador de Tavg.",
  "br_pwr2": "Água mais quente reduz a potência, então a usina acompanha a carga sozinha.",

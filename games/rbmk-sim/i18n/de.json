@@ -258,7 +258,7 @@
  "br_skip": "Dieses Briefing nicht mehr anzeigen",
  "start": "SCHICHT BEGINNEN",
  "br_rbmk1": "Die Stäbe sind langsam (0,4 m/s). Bewege sie, bevor sich die Last ändert.",
- "br_rbmk2": "Hier erhöht Dampf die Leistung. Lass die Periode nie kurz werden; AUTO hält sie bei etwa 30 s.",
+ "br_rbmk2": "Hier erhöht Dampf die Leistung. Lass die Periode nie kurz werden; AUTO hält sie bei etwa 40 s.",
  "br_rbmk3": "Halte die ORM über 15. Das Xenon nach einer Leistungsabsenkung verleitet dich, Stäbe zu ziehen.",
  "br_pwr1": "AUTO hält die mittlere Kühlmitteltemperatur (Tavg) am Sollwert. Behalte die Tavg-Anzeige im Blick.",
  "br_pwr2": "Heißeres Wasser senkt die Leistung, deshalb folgt die Anlage der Last von selbst.",

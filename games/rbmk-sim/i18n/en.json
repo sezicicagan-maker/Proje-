@@ -258,7 +258,7 @@
  "br_skip": "Don't show this briefing again",
  "start": "START SHIFT",
  "br_rbmk1": "Rods are slow (0.4 m/s). Start moving them before the demand changes.",
- "br_rbmk2": "Here steam adds power. Never let the period get short; AUTO keeps it around 30 s.",
+ "br_rbmk2": "Here steam adds power. Never let the period get short; AUTO keeps it around 40 s.",
  "br_rbmk3": "Keep ORM above 15. Xenon after a power drop will tempt you to pull rods.",
  "br_pwr1": "AUTO keeps the average coolant temperature (Tavg) on program. Watch the Tavg readout.",
  "br_pwr2": "Hotter water lowers power, so the plant follows the load by itself.",

@@ -258,7 +258,7 @@
  "br_skip": "Bu brifingi bir daha gösterme",
  "start": "VARDİYAYI BAŞLAT",
  "br_rbmk1": "Çubuklar yavaş (0,4 m/sn). Talep değişmeden önce hareket ettirmeye başla.",
- "br_rbmk2": "Burada buhar gücü artırır. Periyodun kısalmasına asla izin verme; OTOMATİK onu 30 sn civarında tutar.",
+ "br_rbmk2": "Burada buhar gücü artırır. Periyodun kısalmasına asla izin verme; OTOMATİK onu 40 sn civarında tutar.",
  "br_rbmk3": "ORM'yi 15'in üstünde tut. Güç düşüşünden sonraki ksenon seni çubuk çekmeye zorlayacak.",
  "br_pwr1": "OTOMATİK, ortalama soğutucu sıcaklığını (Tavg) programda tutar. Tavg göstergesini izle.",
  "br_pwr2": "Isınan su gücü düşürür, bu yüzden santral yükü kendiliğinden izler.",

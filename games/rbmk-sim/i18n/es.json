@@ -260,7 +260,7 @@
  "br_skip": "No volver a mostrar estas instrucciones",
  "start": "EMPEZAR TURNO",
  "br_rbmk1": "Las barras son lentas (0,4 m/s). Empieza a moverlas antes de que cambie la demanda.",
- "br_rbmk2": "Aquí el vapor añade potencia. No dejes que el periodo se acorte; AUTO lo mantiene en torno a 30 s.",
+ "br_rbmk2": "Aquí el vapor añade potencia. No dejes que el periodo se acorte; AUTO lo mantiene en torno a 40 s.",
  "br_rbmk3": "Mantén el ORM por encima de 15. El xenón tras una bajada de potencia te tentará a sacar barras.",
  "br_pwr1": "AUTO mantiene la temperatura media del refrigerante (Tavg) en el programa. Vigila la lectura de Tavg.",
  "br_pwr2": "El agua más caliente reduce la potencia, así que la central sigue la carga por sí sola.",
