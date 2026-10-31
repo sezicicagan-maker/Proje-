@@ -32,6 +32,7 @@ function goalText() {
 /* Senaryo başlat */
 function initScenario(sn, id) {
   if (id) typeId = id; scen = sn; sdef = scenDef(typeId, sn); ended = false; scenT = 0; histT = 0; ts = 1; slowT = 0; speed = 1; acc = 0;
+  FXP = []; RINGS = [];
   flags = { trips: 0, autoTrips: 0, stepbacks: 0, minORM: 99, maxV: 0, maxXe: 0 }; score = { ok: 0, tot: 0 }; EVENTS = []; HIST = { p: [], d: [], x: [] };
   S = M.create(typeFor(typeId, sn), sdef.opts); TY = S.T; S.auto = sdef.auto; S.prot = sn === 'test' ? 'full' : save.prot; S.interlock = true; S._dxe = 0;
   const d0 = sdef.demand ? sdef.demand(0) : S.n; S.Dset = S.D = d0; if (TY.id !== 'pwr') S.nSet = sdef.n0 || d0;
@@ -52,7 +53,7 @@ function trip(auto, why) {
   M.azStart(S); flags.trips++; if (auto) flags.autoTrips++; S.stepback = false;
   if (TY.id === 'pwr') { flags.turbOff = true; S.Dset = 0; S.D = 0; }
   const now = performance.now(); SHAKE = now + 600; FLASH = now + 700; FLASHC = '255,60,80';
-  SFX.trip(); buzz([90, 50, 180]); note(why, 'bad', undefined, true, { trip: true }); attn('lamps');
+  SFX.trip(); buzz([90, 50, 180]); tripFX(); note(why, 'bad', undefined, true, { trip: true }); attn('lamps');
   if (TY.id === 'pwr') logEv('m_turb', 'warn'); if (TY.id === 'candu' && scen !== 'test') logEv('m_candu_hint', 'warn');
   azHold = 0; keyHold = 0; azb.firstChild.style.width = '0'; setTimeout(() => cover.classList.remove('open'), 900);
   ctlSync(true);
@@ -146,7 +147,7 @@ function tick() {
     if (scenT > sdef.end && !S.az) return finish('done');
   }
   if (S.jammed && !flags.jam) { flags.jam = 1; note('m_jam', 'bad', undefined, true); SHAKE = performance.now() + 900; }
-  if (S.destroyed && !flags.boom) { flags.boom = 1; SFX.boom(); buzz([300, 80, 500]); SHAKE = performance.now() + 1500; logEv('destroyed', 'bad', undefined, { trip: true }); }
+  if (S.destroyed && !flags.boom) { flags.boom = 1; boomFX(); SFX.boom(); buzz([300, 80, 500]); SHAKE = performance.now() + 1500; logEv('destroyed', 'bad', undefined, { trip: true }); }
   histT += DT; if (histT >= 1 - 1e-9) { histT = 0; histPush(); }
   if (S.destroyed && S.destroyT > 2.5) finish('destroyed');
   else if (scen === 'test' && S.az && !S.destroyed && S.azT > 30 && S.n < 0.05) finish('done');

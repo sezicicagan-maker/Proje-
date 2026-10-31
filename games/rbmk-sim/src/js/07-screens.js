@@ -33,11 +33,12 @@ const maxStars = id => (SCENS(id).length - 1) * 3;
 /* Ana menü */
 function mainMenu(dir) {
   playing = false;
-  show(`${hero()}<p class="h3">${t('pick')}</p>
+  show(`${hero()}<button class="btn go quick" data-a="quick">▶ ${t('quick')}</button><small class="d">🤖 ${t('k_title')}</small><p class="h3">🔬 ${t('k_expert')}</p>
   <div class="grid stag">${REACTORS.map(id => { const s = typeStars(id); return `<button class="tile" data-a="r" data-id="${id}">${ICON[id]}<b>${rname(id)}</b><span>${t('rn_' + id)}</span><span class="st">${s ? '★ ' + nf(s) + '/' + nf(maxStars(id)) : ''}</span></button>`; }).join('')}</div>
   <div class="mini stag"><button class="ghost" data-a="help">? ${t('how')}</button><button class="ghost" data-a="set">⚙ ${t('set')}</button></div>
   <small class="d">${t('edu')}<br>${t('read')}<br>${t('o_ver', VERSION)}</small>`, dir, {
     r: b => { SFX.open(); reactorMenu(b.dataset.id); },
+    quick: () => { SFX.open(); kidsMenu(); },
     help: () => { SFX.open(); helpScreen(() => mainMenu('back')); },
     set: () => { SFX.open(); settingsScreen(() => mainMenu('back')); },
     lang: () => { SFX.open(); langPicker(() => mainMenu('back')); }
@@ -134,7 +135,7 @@ function settingsScreen(back, dir) {
     },
     reset: () => { E('rsr').innerHTML = `<div class="lb"><b style="color:#ff9aa6">${t('o_resetQ')}</b></div><div class="seg"><button data-a="resetyes">${t('yes')}</button><button data-a="resetno" aria-checked="true">${t('no')}</button></div>`; SFX.warn(); },
     resetno: () => { E('rsr').outerHTML = resetRow(); SFX.back(); },
-    resetyes: () => { save.stars = {}; save.best = {}; save.seen = {}; save.cr = 0; save.up = {}; persist(); E('rsr').outerHTML = resetRow(); toast(t('o_resetDone'), 'ok', 1800); SFX.reset(); }
+    resetyes: () => { save.stars = {}; save.best = {}; save.seen = {}; save.cr = 0; save.up = {}; save.kst = 0; save.klv = 1; save.kls = {}; save.hats = { party: 1 }; save.hat = 'party'; persist(); E('rsr').outerHTML = resetRow(); toast(t('o_resetDone'), 'ok', 1800); SFX.reset(); }
   }, 'settings');
   const v = E('volr');
   v.addEventListener('input', () => { save.vol = v.value / 100; E('volv').textContent = pc(+v.value); audioInit(); audioVol(); });

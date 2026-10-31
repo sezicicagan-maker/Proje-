@@ -23,6 +23,11 @@ function loadSave() {
     if (o.best && typeof o.best === 'object') for (const k of Object.keys(o.best).slice(0, 40)) { const s = Math.round(+o.best[k]); if (ok(k) && s >= 0 && s <= 100) d.best[k] = s; }
     if (Number.isFinite(+o.cr)) d.cr = clamp(Math.floor(+o.cr), 0, 999999);
     if (o.up && typeof o.up === 'object') for (const k of Object.keys(o.up).slice(0, 40)) if (/^(rbmk|pwr|bwr|candu):[a-z]{2,10}$/.test(k) && o.up[k] === 1) d.up[k] = 1;
+    if (Number.isFinite(+o.kst)) d.kst = clamp(Math.floor(+o.kst), 0, 999999);
+    if (Number.isFinite(+o.klv)) d.klv = clamp(Math.floor(+o.klv), 1, 12);
+    if (o.kls && typeof o.kls === 'object') { d.kls = {}; for (let i = 1; i <= 12; i++) { const v = Math.floor(+o.kls[i]); if (v >= 1 && v <= 3) d.kls[i] = v; } }
+    if (o.hats && typeof o.hats === 'object') { d.hats = { party: 1 }; for (const h of ['cap', 'glasses', 'chef', 'crown', 'wizard']) if (o.hats[h] === 1) d.hats[h] = 1; }
+    if (typeof o.hat === 'string' && d.hats && d.hats[o.hat]) d.hat = o.hat;
     if (o.seen && typeof o.seen === 'object') for (const k of Object.keys(o.seen).slice(0, 40)) if (/^(rbmk|pwr|bwr|candu):(train|move|test|sand)$/.test(k)) d.seen[k] = 1;
   }
   save = d;

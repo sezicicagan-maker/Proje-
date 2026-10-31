@@ -49,7 +49,7 @@ ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa man
     await ctx.addInitScript(() => { window.__RB_TEST__ = true; });
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
     await p.goto('file://' + HTML); await p.waitForTimeout(500);
-    const expect = { mobile: /CHOOSE A REACTOR/, small: /REAKTÖR SEÇ/, desktop: /CHOOSE A REACTOR/ }[name];
+    const expect = { mobile: /▶ PLAY/, small: /▶ OYNA/, desktop: /▶ PLAY/ }[name];
     ok(expect.test(await p.textContent('#ov')), name + ': menü cihaz diline göre açıldı');
     ok(await p.evaluate(() => window.__rb.WIDE) === (name === 'desktop'), name + ': yerleşim ' + (name === 'desktop' ? 'yatay' : 'dikey'));
     await p.screenshot({ path: `${OUT}/rb-${name}-menu.png` });
@@ -82,8 +82,8 @@ ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa man
       ok(await p.evaluate(() => [...document.querySelectorAll('.lang')].filter(b => !b.hidden).map(b => b.dataset.c).join()) === 'ru', 'dil araması çalışıyor (russ → ru)');
       await p.click('[data-a="pick"][data-c="ru"]'); await p.waitForTimeout(400); ok(/ЯЗЫК/.test(await p.textContent('#ov')), 'dil Rusça\'ya değişti, ayarlara dönüldü');
       await p.click('[data-a="back"]'); await p.waitForTimeout(300); await p.click('[data-a="quit"]'); await p.waitForTimeout(300); await p.click('[data-a="back"]'); await p.waitForTimeout(300);
-      ok(/ВЫБЕРИТЕ РЕАКТОР/.test(await p.textContent('#ov')), 'menü yeni dilde');
-      await p.reload(); await p.waitForTimeout(400); ok(/ВЫБЕРИТЕ РЕАКТОР/.test(await p.textContent('#ov')), 'dil seçimi yeniden yüklemede korunuyor');
+      ok(/▶ ИГРАТЬ/.test(await p.textContent('#ov')), 'menü yeni dilde');
+      await p.reload(); await p.waitForTimeout(400); ok(/▶ ИГРАТЬ/.test(await p.textContent('#ov')), 'dil seçimi yeniden yüklemede korunuyor');
       ok(await p.evaluate(() => window.__rb.save.flash === false && window.__rb.save.pct === true && window.__rb.save.prot === 'full'), 'ayarlar (flaş, birim, koruma) kalıcı');
       // biçimlendirme ve çoğul
       const fmt = await p.evaluate(() => { const R = window.__rb, o = {}; R.setLang('de'); o.de = document.documentElement.lang; R.setLang('tr'); o.trPct = document.createElement('x') && null; R.setLang('en'); o.one = R.T.en.why_trips.one; R.setLang('pseudo'); o.pseudo = R.T.pseudo && R.T.pseudo.title; R.setLang('en'); return o; });
@@ -150,6 +150,15 @@ ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa man
     ok(e3[0] === 4.4 && e3[1] === 1.2, 'yükseltme: 1986 testi özgün tasarımla, diğer senaryolar yükseltilmiş');
     await p.evaluate(() => { window.__rb.save.cr = 10; window.__rb.upgradesScreen('bwr', () => {}); }); await p.waitForTimeout(400);
     ok(await p.evaluate(() => [...document.querySelectorAll('.buy')].every(b => b.disabled)), 'yükseltme: kredi yetmezse satın alınamıyor');
+    // çocuk modu: menüden oyna, kol + su, seviye sonu yıldız ve kilit açma
+    await p.evaluate(() => window.__rb.mainMenu()); await p.waitForTimeout(400); await p.click('[data-a="quick"]'); await p.waitForTimeout(500);
+    ok(await p.evaluate(() => document.querySelectorAll('.klv').length) === 12, 'çocuk modu: 12 seviye listeleniyor');
+    await p.click('[data-a="play"]'); await p.waitForTimeout(600); ok(await p.isVisible('#kids') && await p.isVisible('#kwater'), 'çocuk modu: oyun ekranı, kol ve su düğmesi');
+    await p.fill('#klev', '100'); await p.waitForTimeout(3000); const hot = await p.evaluate(() => window.__rb.K.H); await p.click('#kwater'); await p.waitForTimeout(900); const cooled = await p.evaluate(() => window.__rb.K.H);
+    ok(hot > 0 && cooled < hot, 'çocuk modu: yüksek güç ısıtıyor, su soğutuyor (' + hot.toFixed(2) + ' → ' + cooled.toFixed(2) + ')');
+    await p.evaluate(() => { const K = window.__rb.K; K.t = K.dur - 0.05; K.green = K.tot; }); await p.waitForTimeout(1500);
+    ok(await p.evaluate(() => window.__rb.save.klv >= 2 && window.__rb.save.kls[1] === 3), 'çocuk modu: seviye bitince 3 yıldız ve sonraki seviye açılıyor');
+    await p.click('[data-a="hats"]'); await p.waitForTimeout(500); ok(await p.evaluate(() => document.querySelectorAll('.hat').length) === 6, 'çocuk modu: şapka dükkanı');
     ok(errs.length === 0, 'yükseltme: hata yok ' + errs.join('|')); await ctx.close();
   }
   console.log(fails ? 'BAŞARISIZ ' + fails : '\nHEPSİ GEÇTİ'); await b.close(); process.exit(fails ? 1 : 0);

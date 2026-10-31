@@ -156,6 +156,26 @@ function pMsg(w, h, now) {
   let y = top + 8;
   for (const e of evs) { if (y > h - 6) break; txt(fmtTime(e.t), 10, y, 8.5, '#5d7698', 'left', 700, MONO); ellTxt(t(e.key, e.arg), 44, y, 9.5, KINDC[e.kind] || '#a8bcd6', 'left', w - 54, 600); y += 13; }
 }
+/* Parçacık efektleri: patlama enkazı, şok dalgası, sıçrama kıvılcımları, kapatma halkası (tasarım koordinatlarında) */
+let FXP = [], RINGS = [], fxLast = 0;
+const coreC = () => { const r = LAYOUT.r.core; return [r.x + r.w / 2, r.y + r.h / 2 + 4]; };
+function boomFX() {
+  if (!LAYOUT || RM()) return; const [cx, cy] = coreC();
+  for (let i = 0; i < 140; i++) { const a = rnd() * TAU, v = 50 + rnd() * 300; FXP.push({ x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 90, g: 240, life: 1 + rnd() * 1.8, t: 0, s: 0.8 + rnd() * 3.2, c: rnd() < 0.55 ? '255,150,50' : rnd() < 0.5 ? '255,235,190' : '120,130,145' }); }
+  RINGS.push({ x: cx, y: cy, t: 0, d: 1.1, R: 520, c: '255,220,170', w: 10 }, { x: cx, y: cy, t: -0.15, d: 1.4, R: 380, c: '255,120,60', w: 6 });
+}
+function tripFX() { if (!LAYOUT || RM()) return; const [cx, cy] = coreC(); RINGS.push({ x: cx, y: cy, t: 0, d: 0.8, R: 150, c: '95,211,255', w: 5 }); for (let i = 0; i < 26; i++) { const a = rnd() * TAU, v = 30 + rnd() * 90; FXP.push({ x: cx + Math.cos(a) * 30, y: cy + Math.sin(a) * 30, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: 0, life: 0.5 + rnd() * 0.5, t: 0, s: 1 + rnd() * 1.5, c: '150,230,255' }); } }
+function emberFX(dt) { if (RM() || !LAYOUT) return; const [cx, cy] = coreC(), k = clamp(Math.log10(Math.max(1, S.n * 10)), 0.3, 2); for (let i = 0; i < Math.round(dt * 40 * k); i++) FXP.push({ x: cx + (rnd() - 0.5) * 120, y: cy + (rnd() - 0.3) * 70, vx: (rnd() - 0.5) * 20, vy: -40 - rnd() * 70, g: -10, life: 0.8 + rnd() * 0.8, t: 0, s: 0.8 + rnd() * 1.6, c: rnd() < 0.7 ? '255,120,60' : '255,210,120' }); }
+function drawFX(now) {
+  const dt = Math.min(0.05, (now - fxLast) / 1000 || 0); fxLast = now;
+  if (playing && ts < 0.9 && S && !S.destroyed) emberFX(dt);
+  if (!FXP.length && !RINGS.length) return;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  FXP = FXP.filter(p => { p.t += dt; if (p.t > p.life) return false; p.vy += p.g * dt; p.vx *= 0.99; p.x += p.vx * dt; p.y += p.vy * dt; const a = 1 - p.t / p.life; ctx.fillStyle = `rgba(${p.c},${a})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.s * (0.6 + a * 0.6), 0, TAU); ctx.fill(); return true; });
+  RINGS = RINGS.filter(r => { r.t += dt; if (r.t > r.d) return false; if (r.t < 0) return true; const k = r.t / r.d, e = 1 - Math.pow(1 - k, 3); ctx.strokeStyle = `rgba(${r.c},${(1 - k) * 0.9})`; ctx.lineWidth = r.w * (1 - k) + 1; ctx.beginPath(); ctx.arc(r.x, r.y, 8 + e * r.R, 0, TAU); ctx.stroke(); return true; });
+  ctx.restore();
+  if (FXP.length > 600) FXP.splice(0, FXP.length - 600);
+}
 function draw(now) {
   REG = []; PIDX = 0;
   const L = LAYOUT; if (!L) return;
@@ -175,5 +195,6 @@ function draw(now) {
   else if (S.stepback && save.flash) { const g = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * 0.4, L.W / 2, L.H / 2, Math.max(L.W, L.H) * 0.7); g.addColorStop(0, 'rgba(255,154,61,0)'); g.addColorStop(1, `rgba(255,154,61,${0.1 + (RM() ? 0 : 0.06 * Math.sin(now / 200))})`); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
   if (ts < 0.9) { const s2 = t('slow'), pw = Math.min(L.W * 0.6, (ctx.font = font(800, 11 * FS), ctx.measureText(s2).width + 26)), px = L.W / 2 - pw / 2, py = 24, a = RM() ? 1 : 0.75 + 0.25 * Math.sin(now / 140); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(80,8,20,.92)'; rr(px, py, pw, 18, 9); ctx.fill(); ctx.strokeStyle = '#ff5468'; ctx.lineWidth = 1.2; ctx.stroke(); fitTxt(s2, L.W / 2, py + 9.5, 11, '#ffd0d6', 'center', pw - 14, 800); ctx.globalAlpha = 1; }
   if (FLASH > now && save.flash) { ctx.fillStyle = `rgba(${FLASHC},${0.45 * (FLASH - now) / 700})`; ctx.fillRect(0, 0, L.W, L.H); }
+  drawFX(now);
   if (S.destroyed) { ctx.fillStyle = `rgba(255,255,255,${clamp((save.flash ? 0.85 : 0.3) - S.destroyT * 0.3, 0, 0.85)})`; ctx.fillRect(0, 0, L.W, L.H); }
 }

@@ -38,12 +38,12 @@ cv.addEventListener('pointermove', e => {
   const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * cv.width / r.width, y = (e.clientY - r.top) * cv.height / r.height;
   cv.style.cursor = REG.some(g => x >= g.x0 && x <= g.x1 && y >= g.y0 && y <= g.y1) ? 'pointer' : '';
 });
-document.addEventListener('visibilitychange', () => { if (document.hidden && playing) pauseMenu(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && playing) pauseMenu(); if (document.hidden && K && !kidsEl.hidden) E('kpause').click(); });
 try { matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', applyPrefs); } catch (e) {}
 /* Açılış */
 loadSave(); setLang(pickLang(), false); applyPrefs(); resize(); mainMenu('up'); requestAnimationFrame(frame);
 if (window.__RB_TEST__) window.__rb = {
-  M, T, LANGS, QA, MISSING, get REG() { return REG; }, initScenario, tick, finish, trip, doReset, canReset, setBypass, setProt, setLimit, setAuto, setLang, relabel, mainMenu, reactorMenu, briefing, settingsScreen, langPicker, helpScreen, pauseMenu, showTip, closeTip, go, draw, resize, computeLayout, UPG, typeFor, upgradesScreen, creditsFor,
+  M, T, LANGS, QA, MISSING, get REG() { return REG; }, initScenario, tick, finish, trip, doReset, canReset, setBypass, setProt, setLimit, setAuto, setLang, relabel, mainMenu, reactorMenu, briefing, settingsScreen, langPicker, helpScreen, pauseMenu, showTip, closeTip, go, draw, resize, computeLayout, UPG, typeFor, upgradesScreen, creditsFor, kidsMenu, kidsStart, hatShop, get K() { return K; },
   get S() { return S; }, get TY() { return TY; }, get save() { return save; }, get scen() { return scen; }, get scenT() { return scenT; }, get flags() { return flags; }, get score() { return score; }, get EVENTS() { return EVENTS; }, get HIST() { return HIST; },
   get playing() { return playing; }, set playing(v) { playing = v; }, get ended() { return ended; }, get ts() { return ts; }, get LANG() { return LANG; }, get WIDE() { return WIDE; }, get LAYOUT() { return LAYOUT; }, get VIEW() { return VIEW; }, set VIEW(v) { VIEW = v; }, get PLANT_ERR() { return PLANT_ERR; }
 };
