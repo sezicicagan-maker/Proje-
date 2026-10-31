@@ -7,11 +7,11 @@ const M = (() => {
   const XeqF = (n, kb) => (gI + gX) * n / (lX + kb * n);
   const TYPES = {
     rbmk: { id: 'rbmk', Pn: 3200, beta: 0.0048, Lam: 1e-3, stroke: 7, vRod: 0.4, vAz: 0.4, N: 30, wRod: 0.45, warn: 26, minM: 15, aD: 1.4e-5, Tf: 550, actuator: 'rods', flowMin: 0.3, flowMax: 1.1,
-      vsign: 1, vmax: 0.25, x0: 0.3, U0: 0.12, av0: 5, cV: 2, ps0: 4.4, tauV: 1.5, kb: 0.38, xeW: 6.5, boron: false, mod: false, prot: { alertPer: 30, stepPer: 14, tripPer: 6, stepN: 1.10, tripN: 1.20, lowFlow: 0.45, lowFlowN: 0.2 }, init: { n: 1, orm: 15, flow: 1 } },
+      vsign: 1, vmax: 0.25, x0: 0.3, U0: 0.12, av0: 5, cV: 2, ps0: 4.4, tauV: 1.5, kb: 0.38, xeW: 6.5, boron: false, mod: false, prot: { alertPer: 12, stepPer: 9, tripPer: 5, stepN: 1.10, tripN: 1.20, lowFlow: 0.45, lowFlowN: 0.2 }, init: { n: 1, orm: 28, flow: 1 } },
     pwr: { id: 'pwr', Pn: 3000, beta: 0.0065, Lam: 2e-5, stroke: 3.66, vRod: 0.06, vAz: 1.5, N: 30, wRod: 0.4, warn: 20, minM: 10, aD: 2.5e-5, Tf: 450, tauF: 8, actuator: 'rods', flowMin: 0.3, flowMax: 1.1,
       vsign: 1, vmax: 0.02, x0: 0.5, U0: 1, av0: 0, cV: 0, ps0: 0, tauV: 1.5, kb: 0.45, xeW: 5.5, boron: true, bW: 8e-5, bRate: 4, bMax: 1500, mod: true, aM: 3e-4, kT: 16, dSlew: 0.04, autoGain: 2, autoDead: 0.25, prot: { alertPer: 10, stepPer: 5, tripPer: 3, stepN: 1.06, tripN: 1.10, lowFlow: 0, lowFlowN: 0 }, init: { n: 1, orm: 22, flow: 1, boron: 900 } },
-    bwr: { id: 'bwr', Pn: 3300, beta: 0.0055, Lam: 4e-5, stroke: 3.66, vRod: 0.05, vAz: 1.2, N: 30, wRod: 0.45, warn: 20, minM: 10, aD: 2e-5, Tf: 500, actuator: 'flow', flowMin: 0.55, flowMax: 1.08,
-      vsign: -1, vmax: 0.6, x0: 0.5, U0: 0.05, av0: 27, cV: 0, ps0: 0, tauV: 2.2, kb: 0.45, xeW: 5.5, boron: false, mod: false, prot: { alertPer: 20, stepPer: 12, tripPer: 5, stepN: 1.10, tripN: 1.20, lowFlow: 0.4, lowFlowN: 0.3 }, init: { n: 1, orm: 20, flow: 1 } },
+    bwr: { id: 'bwr', Pn: 3300, beta: 0.0055, Lam: 4e-5, stroke: 3.66, vRod: 0.05, vAz: 1.2, N: 30, wRod: 0.45, warn: 20, minM: 10, aD: 2e-5, Tf: 500, actuator: 'flow', flowMin: 0.55, flowMax: 1.08, fKi: 0.5, fRate: 0.08,
+      vsign: -1, vmax: 0.6, x0: 0.5, U0: 0.05, av0: 27, cV: 0, ps0: 0, tauV: 2.2, kb: 0.45, xeW: 5.5, boron: false, mod: false, prot: { alertPer: 20, stepPer: 12, tripPer: 5, stepN: 1.10, tripN: 1.20, lowFlow: 0.4, lowFlowN: 0.3 }, init: { n: 1, orm: 24, flow: 1 } },
     candu: { id: 'candu', Pn: 2060, beta: 0.0049, Lam: 9e-4, stroke: 3, vRod: 0.1, vAz: 3, N: 14, wRod: 0.5, warn: 8, minM: 4, aD: 1.2e-5, Tf: 500, actuator: 'rods', flowMin: 0.4, flowMax: 1.1,
       vsign: 1, vmax: 0.4, x0: 0.4, U0: 1.05, av0: 2.9, cV: 0, ps0: 0, tauV: 1.5, kb: 0.8, xeW: 4.5, boron: false, mod: false, prot: { alertPer: 20, stepPer: 12, tripPer: 5, stepN: 1.05, tripN: 1.10, lowFlow: 0.6, lowFlowN: 0.3 }, init: { n: 1, orm: 8, flow: 1 } }
   };
@@ -42,9 +42,9 @@ const M = (() => {
     if (!s.az && s.auto) {
       let d; const k = T.stroke / 7;
       if (T.actuator === 'flow') d = null;
-      else if (T.mod) { const e = tRef(s.D) - s.Tm, ea = Math.max(0, Math.abs(e) - (T.autoDead || 0.2)), vv = -Math.sign(e) * Math.min(1, ea / (T.autoGain || 3)); d = vv * T.vRod * dt * 1.001; }
-      else { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); d = -Math.max(-1, Math.min(1, 2.2 * e)) * 0.8 * k; if (d < 0 && s.rate > 1 / 30) d = 0; if (s.rate > 1 / 15) d = Math.max(d, 0.3 * k); }
-      if (d !== null) { tgt = Math.max(0, Math.min(T.stroke, s.p + d)); s.pTarget = tgt; }
+      else if (T.mod) { const e = tRef(s.D) - s.Tm, ea = Math.max(0, Math.abs(e) - (T.autoDead || 0.2)), vv = -Math.sign(e) * Math.min(1, ea / (T.autoGain || 3)); d = vv * T.vRod * dt * 1.001; if (s.n < 0.15) { if (d < 0 && s.rate > 1 / 20) d = 0; if (s.rate > 1 / 8) d = Math.max(d, 0.3 * T.vRod * dt); } }
+      else { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); d = -Math.max(-1, Math.min(1, 2.2 * e)) * 0.8 * k; if (d < 0 && s.rate > 1 / 40) d = 0; if (s.rate > 1 / 20) d = Math.max(d, 0.3 * k); /* periyot sınırlı: çekerken ≥ 40 sn, 20 sn altında geri sür */ }
+      if (d !== null) { const dd = Math.max(-v * dt, Math.min(v * dt, d)); tgt = Math.max(0, Math.min(T.stroke, s.p + dd)); s.pTarget = tgt; } // hedef yalnız bu adımın hareketi: OTOMATİK kapanınca çubuklar yerinde kalır
     }
     if (s.stepback && !s.az) { tgt = Math.min(T.stroke, Math.max(tgt, s.p + 1)); v = T.vRod * 1.6; }
     if (s.interlock) tgt = Math.max(tgt, Math.min(s.p, s.pLock));
@@ -56,11 +56,11 @@ const M = (() => {
     if (s.test) { s.testT += dt; s.flowTarget = s.flowBase * (0.55 + 0.45 * Math.exp(-s.testT / 25)); }
     if (T.dSlew) { const dd = s.Dset - s.D, mm = T.dSlew * dt; s.D += Math.abs(dd) <= mm ? dd : Math.sign(dd) * mm; } else s.D = s.Dset;
     if (T.actuator === 'flow' && !s.az && !s.test) {
-      if (s.auto) { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); s.flowTarget = Math.max(T.flowMin, Math.min(T.flowMax, s.flowTarget + Math.max(-1, Math.min(1, 2 * e)) * 0.03 * dt)); }
+      if (s.auto) { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); s.flowTarget = Math.max(T.flowMin, Math.min(T.flowMax, s.flowTarget + Math.max(-T.fRate, Math.min(T.fRate, T.fKi * e)) * dt)); }
       if (s.stepback) s.flowTarget = Math.max(T.flowMin, s.flowTarget - 0.04 * dt);
     }
     stepRods(s, dt);
-    const df = s.flowTarget - s.flow, mf = 0.012 * dt * (s.test ? 6 : 1) * (T.id === 'bwr' ? 3 : 1); s.flow += Math.abs(df) <= mf ? df : Math.sign(df) * mf;
+    const df = s.flowTarget - s.flow, mf = 0.012 * dt * (s.test ? 6 : 1) * (T.id === 'bwr' ? 5 : 1); s.flow += Math.abs(df) <= mf ? df : Math.sign(df) * mf;
     if (T.boron) { const db = s.boronTarget - s.boron, mb = T.bRate * dt; s.boron += Math.abs(db) <= mb ? db : Math.sign(db) * mb; }
     const nsub = Math.max(1, Math.ceil(dt / 0.002)), h = dt / nsub;
     for (let i = 0; i < nsub; i++) {

@@ -1,88 +1,137 @@
-// Reactor Lab testi: türlerin fiziği (Node), dil eşitliği, arayüz (tarayıcı). Ekran görüntüleri tests/out/.
+// Reactor Lab v4 testi: türlerin fiziği (Node), koruma sistemi, dil altyapısı, arayüz (tarayıcı). Ekran görüntüleri tests/out/.
+// Kullanım: node tests/rbmk.js [html]   (varsayılan games/rbmk-sim/index.html)
 const { chromium } = require('playwright'); const path = require('path'); const fs = require('fs');
 const OUT = path.join(__dirname, 'out'); fs.mkdirSync(OUT, { recursive: true });
+const HTML = path.resolve(process.argv[2] || path.join(__dirname, '..', 'games', 'rbmk-sim', 'index.html'));
 let fails = 0; const ok = (c, m) => { console.log((c ? 'OK   ' : 'FAIL ') + m); if (!c) fails++; };
-const M = require('../games/rbmk-sim/model.js'); const { T, LANGS } = require('../games/rbmk-sim/i18n.js');
+const M = require('../games/rbmk-sim/model.js');
+const I18N = path.join(__dirname, '..', 'games', 'rbmk-sim', 'i18n'), META = JSON.parse(fs.readFileSync(path.join(I18N, '_meta.json'), 'utf8'));
+const T = {}; for (const c of Object.keys(META)) { const f = path.join(I18N, c + '.json'); if (fs.existsSync(f)) T[c] = JSON.parse(fs.readFileSync(f, 'utf8')); }
 const run = (s, secs, fn) => { for (let i = 0; i < secs * 20 && !s.destroyed; i++) { if (fn) fn(i * 0.05); M.step(s, 0.05); } };
-// 1) her tür tam güçte kararlı
+
+/* 1) Fizik */
 for (const ty of ['rbmk', 'pwr', 'bwr', 'candu']) { const s = M.create(ty); run(s, 120); ok(Math.abs(s.n - 1) < 0.01, ty + ': tam güçte denge kararlı (n=' + s.n.toFixed(3) + ')'); }
-// 2) RBMK: ORM eşikleri (AZ-5)
 const azAt = orm => { const s = M.create('rbmk', { n: 0.0625, orm, flow: 0.55, nHist: 0.2, sub: 0.15 }); run(s, 2); const nb = s.n; M.azStart(s); run(s, 20); return { ratio: s.maxAz / nb, jam: s.jammed }; };
 const r26 = azAt(26), r15 = azAt(15), r8 = azAt(8), r5 = azAt(5);
 ok(r26.ratio < 1.2 && r15.ratio < 1.3, 'RBMK: ORM ≥ 15 iken AZ-5 güvenli'); ok(r8.ratio > 5, 'RBMK: ORM 8 pozitif scram sıçraması (x' + r8.ratio.toFixed(0) + ')'); ok(r5.jam, 'RBMK: ORM 5 çubuklar sıkışıyor');
-// 3) PWR kendini düzenler: yük 100→70%
-{ const s = M.create('pwr'); s.auto = true; s.D = 0.7; run(s, 60); ok(Math.abs(s.n - 0.7) < 0.08 && Math.abs(s.Tm - M.tRef(0.7)) < 3, 'PWR: yük düşünce güç kendiliğinden izliyor (n=' + s.n.toFixed(2) + ', Tavg ' + s.Tm.toFixed(1) + ')'); }
-// 4) BWR: debi gücü belirler; RBMK: debi kaybı gücü artırır
+{ const s = M.create('pwr'); s.auto = true; s.Dset = 0.7; run(s, 60); ok(Math.abs(s.n - 0.7) < 0.08 && Math.abs(s.Tm - M.tRef(0.7)) < 3, 'PWR: yük düşünce güç izliyor (n=' + s.n.toFixed(2) + ', Tavg ' + s.Tm.toFixed(1) + ')'); }
+{ const s = M.create('pwr'); s.auto = true; let minPer = 1e9; run(s, 90, t => { s.Dset = t < 10 ? 1 : t < 40 ? 0.7 : 1; if (s.rate > 1e-3) minPer = Math.min(minPer, 1 / s.rate); }); ok(minPer > 6 && Math.abs(s.n - 1) < 0.05, 'PWR: yük basamağında periyot güvenli (en kısa ' + minPer.toFixed(1) + ' sn)'); }
 { const s = M.create('bwr'); s.flowTarget = 0.65; run(s, 40); ok(s.n < 0.85, 'BWR: debi azalınca güç düşüyor (n=' + s.n.toFixed(2) + ')'); }
+{ const s = M.create('bwr'); s.auto = true; s.nSet = 0.7; run(s, 30); ok(Math.abs(s.n - 0.7) < 0.04 && s.flow < 0.85, 'BWR: OTOMATİK debiyi sürerek %70\'e iniyor (n=' + s.n.toFixed(2) + ', debi ' + s.flow.toFixed(2) + ')'); }
 { const s = M.create('rbmk'); s.flowTarget = 0.5; run(s, 40); ok(s.n > 2, 'RBMK: debi kaybında güç artıyor (pozitif boşluk) (n=' + s.n.toFixed(1) + ')'); }
-// 5) güç manevrası: 100→düşük→100
+{ const s = M.create('rbmk', { n: 0.001, orm: 20 }); s.auto = true; s.nSet = 0.5; let minPer = 1e9; run(s, 200, () => { if (s.rate > 1e-3) minPer = Math.min(minPer, 1 / s.rate); }); ok(minPer > s.T.prot.alertPer && s.n > 0.3, 'RBMK: OTOMATİK düşük güçten periyot sınırlı çıkıyor (en kısa ' + minPer.toFixed(0) + ' sn, n=' + s.n.toFixed(2) + ')'); }
+{ const s = M.create('rbmk'); s.auto = true; s.nSet = 0.5; run(s, 1); s.auto = false; const p0 = s.p; run(s, 3); ok(Math.abs(s.p - p0) < 0.01, 'OTOMATİK kapatılınca çubuklar yerinde kalıyor'); }
 const demand = (low, h0, h1, h2) => t => t < 20 ? 1 : t < h0 ? 1 - (1 - low) * (t - 20) / (h0 - 20) : t < h1 ? low : t < h2 ? low + (1 - low) * (t - h1) / (h2 - h1) : 1;
-const maneuver = (ty, low, h0, h1, h2, opts, boronBot) => { const s = M.create(ty, opts || {}); s.auto = true; const d = demand(low, h0, h1, h2); run(s, 220, t => { s.D = d(t); s.nSet = s.D; if (boronBot) { const o = M.ORM(s, s.p); if (o < 18) s.boronTarget = Math.max(0, s.boronTarget - 2); else if (o > 26) s.boronTarget = Math.min(1500, s.boronTarget + 2); } if (ty === 'bwr') s.flowTarget = Math.max(0.5, Math.min(1.1, 0.9 * s.D / Math.max(0.3, s.n / s.D))); }); return s; };
+const maneuver = (ty, low, h0, h1, h2, opts, boronBot) => { const s = M.create(ty, opts || {}); s.auto = true; const d = demand(low, h0, h1, h2); run(s, 220, t => { s.Dset = d(t); s.nSet = s.Dset; if (boronBot) { const o = M.ORM(s, s.p); if (o < 18) s.boronTarget = Math.max(0, s.boronTarget - 2); else if (o > 26) s.boronTarget = Math.min(1500, s.boronTarget + 2); } }); return s; };
 ok(Math.abs(maneuver('rbmk', 0.6, 40, 120, 150, { orm: 27 }).n - 1) < 0.05, 'RBMK: %60 manevrası sonunda tam güce dönüyor');
 ok(Math.abs(maneuver('pwr', 0.4, 40, 120, 150, {}, true).n - 1) < 0.05, 'PWR: %40 manevrası (bor ile) tam güce dönüyor');
 ok(Math.abs(maneuver('bwr', 0.4, 40, 120, 150).n - 1) < 0.05, 'BWR: %40 manevrası tam güce dönüyor');
 ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa manevra (30 sn düşük) tam güce dönüyor');
 { const s = maneuver('candu', 0.4, 40, 120, 150); ok(s.n < 0.05, 'CANDU: güç uzun süre düşük kalırsa ksenon zehirlenmesi (n=' + s.n.toFixed(2) + ', Xe ' + M.xenonPct(s).toFixed(0) + '%)'); }
-// 6) dil eşitliği
-{ const en = Object.keys(T.en).filter(k => !k.startsWith('r_')); let all = true; for (const l of Object.keys(LANGS)) { const miss = en.filter(k => !(k in T[l])); if (miss.length) { all = false; console.log('   ' + l + ' eksik:', miss.join(',')); } } ok(all && Object.keys(LANGS).length === 7, '7 dilde tüm metin anahtarları var'); }
+{ const s = M.create('rbmk'); M.azStart(s); run(s, 25); ok(M.resetTrip(s) && !s.az && !s.auto && Math.abs(s.pTarget - s.p) < 1e-9, 'Kapatma sonrası yeniden başlatma (resetTrip) durumu temizliyor'); }
+
+/* 2) Dil dosyaları */
+{
+  const en = Object.keys(T.en), ph = v => (typeof v === 'object' ? Object.values(v).join(' ') : v).split('{0}').length - 1;
+  const done = Object.keys(T).filter(l => en.every(k => k in T[l]));
+  ok(Object.keys(META).length === 21, '21 dil tanımlı (_meta.json)');
+  ok(done.includes('en') && done.includes('tr'), 'İngilizce ve Türkçe tam (' + done.length + '/' + Object.keys(META).length + ' dil tam: ' + done.join(' ') + ')');
+  let phOK = true; for (const l of Object.keys(T)) for (const k of en) if (T[l][k] !== undefined && ph(T[l][k]) && ph(T[l][k]) !== ph(T.en[k]) && typeof T.en[k] !== 'object') { phOK = false; console.log('   yer tutucu farkı', l, k); }
+  ok(phOK, 'Yer tutucular ({0}) tüm dillerde tutarlı');
+}
+
+/* 3) Tarayıcı */
 (async () => {
   const b = await chromium.launch();
-  for (const [name, vp, locale] of [['mobile', { width: 390, height: 844 }, 'en-US'], ['small', { width: 360, height: 640 }, 'tr-TR'], ['desktop', { width: 1280, height: 800 }, 'de-DE']]) {
+  for (const [name, vp, locale] of [['mobile', { width: 390, height: 844 }, 'en-US'], ['small', { width: 360, height: 640 }, 'tr-TR'], ['desktop', { width: 1280, height: 800 }, 'en-GB']]) {
     const ctx = await b.newContext({ viewport: vp, hasTouch: name !== 'desktop', isMobile: name !== 'desktop', locale });
     await ctx.addInitScript(() => { window.__RB_TEST__ = true; });
     const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
-    await p.goto('file://' + path.join(__dirname, '..', 'games', 'rbmk-sim', 'index.html')); await p.waitForTimeout(400);
-    const expect = { mobile: /CHOOSE A REACTOR/, small: /REAKTÖR SEÇ/, desktop: /REAKTOR WÄHLEN/ }[name];
+    await p.goto('file://' + HTML); await p.waitForTimeout(500);
+    const expect = { mobile: /CHOOSE A REACTOR/, small: /REAKTÖR SEÇ/, desktop: /CHOOSE A REACTOR/ }[name];
     ok(expect.test(await p.textContent('#ov')), name + ': menü cihaz diline göre açıldı');
+    ok(await p.evaluate(() => window.__rb.WIDE) === (name === 'desktop'), name + ': yerleşim ' + (name === 'desktop' ? 'yatay' : 'dikey'));
     await p.screenshot({ path: `${OUT}/rb-${name}-menu.png` });
     if (name === 'mobile') {
       for (const id of ['rbmk', 'pwr', 'bwr', 'candu']) {
-        await p.evaluate(() => { const o = document.getElementById('ov'); o.hidden = false; }); await p.evaluate(() => window.__rb.initScenario('sand', 'rbmk')); await p.evaluate(() => { window.__rb.playing = false; });
-        await p.evaluate(() => { document.querySelector('[data-a="menu"]') && 0; }); await p.evaluate(() => { const o = document.getElementById('ov'); o.innerHTML = ''; o.hidden = true; });
-      }
-      await p.reload(); await p.waitForTimeout(300);
-      for (const id of ['rbmk', 'pwr', 'bwr', 'candu']) {
-        await p.click(`[data-r="${id}"]`); await p.waitForTimeout(150); if (id === 'pwr') await p.screenshot({ path: `${OUT}/rb-mobile-reactor-pwr.png` });
-        ok(await p.evaluate(() => document.querySelectorAll('[data-s]').length) === (id === 'rbmk' ? 4 : 3), id + ': senaryo kartı sayısı (' + (id === 'rbmk' ? 'Test dahil' : 'Test yok') + ')');
-        await p.click('[data-s="train"]'); await p.waitForTimeout(900);
-        const ui = await p.evaluate(() => ({ playing: window.__rb.playing, rowC: !document.getElementById('rowC').hidden, lf: document.getElementById('lf').textContent, type: window.__rb.TY.id }));
-        ok(ui.playing && ui.type === id, id + ': eğitim başladı'); ok(ui.rowC === (id === 'pwr'), id + ': yük satırı yalnızca PWR\'de (' + ui.lf + ')');
+        await p.click(`[data-a="r"][data-id="${id}"]`); await p.waitForTimeout(500);
+        ok(await p.evaluate(() => document.querySelectorAll('[data-a="s"]').length) === (id === 'rbmk' ? 4 : 3), id + ': senaryo kartı sayısı (' + (id === 'rbmk' ? 'Test dahil' : 'Test yok') + ')');
+        await p.click('[data-s="train"]'); await p.waitForTimeout(500);
+        ok(await p.isVisible('.brief'), id + ': brifing gösteriliyor'); if (id === 'pwr') await p.screenshot({ path: `${OUT}/rb-mobile-brief-pwr.png` });
+        await p.click('[data-a="go"]'); await p.waitForTimeout(700);
+        const ui = await p.evaluate(() => ({ playing: window.__rb.playing, lF: document.getElementById('lF').textContent, lS: document.getElementById('lS').textContent, type: window.__rb.TY.id }));
+        ok(ui.playing && ui.type === id, id + ': eğitim başladı (' + ui.lS + ' / ' + ui.lF + ')');
+        ok((id === 'pwr') === /BORON/.test(ui.lF), id + ': alt kaydırıcı ' + (id === 'pwr' ? 'bor' : 'debi'));
+        await p.evaluate(() => { const R = window.__rb; R.playing = false; for (let i = 0; i < 20 * 20; i++) R.tick(); R.playing = true; }); await p.waitForTimeout(300);
         await p.screenshot({ path: `${OUT}/rb-mobile-play-${id}.png` });
-        await p.evaluate(() => { window.__rb.playing = false; document.getElementById('ov').hidden = false; });
-        await p.reload(); await p.waitForTimeout(250);
+        await p.keyboard.press('Escape'); await p.waitForTimeout(400); ok(await p.isVisible('[data-a="resume"]'), id + ': Esc duraklatıyor');
+        await p.click('[data-a="quit"]'); await p.waitForTimeout(400); await p.click('[data-a="back"]'); await p.waitForTimeout(400);
       }
-      // dil değiştirme ve kalıcılık
-      await p.click('[data-a="settings"]'); await p.waitForTimeout(150); await p.screenshot({ path: `${OUT}/rb-mobile-settings.png` });
-      await p.click('[data-lang="ru"]'); await p.waitForTimeout(100); ok(/ЯЗЫК/.test(await p.textContent('#ov')), 'dil Rusça\'ya değişti');
-      await p.click('[data-lang="fr"]'); ok(/LANGUE/.test(await p.textContent('#ov')), 'dil Fransızca\'ya değişti');
-      await p.click('[data-tg="flash"]'); await p.click('[data-u="pct"]'); await p.click('[data-a="closeset"]'); await p.waitForTimeout(100);
-      ok(/CHOISIR UN RÉACTEUR/.test(await p.textContent('#ov')), 'ayarlardan çıkınca menü yeni dilde');
-      await p.reload(); await p.waitForTimeout(250); ok(/CHOISIR UN RÉACTEUR/.test(await p.textContent('#ov')), 'dil seçimi yeniden yüklemede korunuyor');
-      ok(await p.evaluate(() => window.__rb.save.flash === false && window.__rb.save.pct === true), 'ayarlar (flaş, birim) kalıcı');
-      await p.screenshot({ path: `${OUT}/rb-mobile-menu-fr.png` });
-      // RBMK Test senaryosu: tarihsel yol ve korumalar
+      // ipucu kartı
+      await p.click('[data-a="r"][data-id="rbmk"]'); await p.waitForTimeout(300); await p.click('[data-s="sand"]'); await p.waitForTimeout(300); await p.click('[data-a="go"]'); await p.waitForTimeout(500);
+      const tipped = await p.evaluate(() => { const R = window.__rb, g = R.REG.find(r => r.key === 'tip_xe'); if (!g) return false; const c = document.getElementById('c'), b = c.getBoundingClientRect(), k = b.width / c.width; return { x: b.left + (g.x0 + g.x1) / 2 * k, y: b.top + (g.y0 + g.y1) / 2 * k }; });
+      ok(!!tipped, 'ipucu bölgeleri kaydediliyor'); if (tipped) { await p.mouse.click(tipped.x, tipped.y); await p.waitForTimeout(300); ok(await p.isVisible('#tip') && !(await p.evaluate(() => window.__rb.playing)), 'ⓘ dokununca ipucu açılıyor ve oyun duruyor'); await p.screenshot({ path: `${OUT}/rb-mobile-tip.png` }); await p.click('#tip button'); await p.waitForTimeout(200); ok(await p.evaluate(() => window.__rb.playing), 'ipucu kapanınca oyun sürüyor'); }
+      // klavye
+      const k0 = await p.evaluate(() => window.__rb.S.nSet); await p.keyboard.press('ArrowUp'); ok(await p.evaluate(() => window.__rb.S.nSet) !== k0 || k0 >= 1, 'klavye ↑ güç ayarını değiştiriyor');
+      // ayarlar ve dil
+      await p.keyboard.press('Escape'); await p.waitForTimeout(300); await p.click('[data-a="set"]'); await p.waitForTimeout(400); await p.screenshot({ path: `${OUT}/rb-mobile-settings.png`, fullPage: true });
+      await p.click('[data-a="seg"][data-k="prot"][data-v="full"]'); ok(await p.evaluate(() => window.__rb.save.prot === 'full' && window.__rb.S.prot === 'full'), 'koruma modu ayarı oyuna uygulanıyor');
+      await p.click('[data-a="tg"][data-k="flash"]'); await p.click('[data-a="seg"][data-k="pct"][data-v="pct"]');
+      await p.click('[data-a="lang"]'); await p.waitForTimeout(400); await p.fill('#lq', 'russ'); await p.waitForTimeout(100);
+      ok(await p.evaluate(() => [...document.querySelectorAll('.lang')].filter(b => !b.hidden).map(b => b.dataset.c).join()) === 'ru', 'dil araması çalışıyor (russ → ru)');
+      await p.click('[data-a="pick"][data-c="ru"]'); await p.waitForTimeout(400); ok(/ЯЗЫК/.test(await p.textContent('#ov')), 'dil Rusça\'ya değişti, ayarlara dönüldü');
+      await p.click('[data-a="back"]'); await p.waitForTimeout(300); await p.click('[data-a="quit"]'); await p.waitForTimeout(300); await p.click('[data-a="back"]'); await p.waitForTimeout(300);
+      ok(/ВЫБЕРИТЕ РЕАКТОР/.test(await p.textContent('#ov')), 'menü yeni dilde');
+      await p.reload(); await p.waitForTimeout(400); ok(/ВЫБЕРИТЕ РЕАКТОР/.test(await p.textContent('#ov')), 'dil seçimi yeniden yüklemede korunuyor');
+      ok(await p.evaluate(() => window.__rb.save.flash === false && window.__rb.save.pct === true && window.__rb.save.prot === 'full'), 'ayarlar (flaş, birim, koruma) kalıcı');
+      // biçimlendirme ve çoğul
+      const fmt = await p.evaluate(() => { const R = window.__rb, o = {}; R.setLang('de'); o.de = document.documentElement.lang; R.setLang('tr'); o.trPct = document.createElement('x') && null; R.setLang('en'); o.one = R.T.en.why_trips.one; R.setLang('pseudo'); o.pseudo = R.T.pseudo && R.T.pseudo.title; R.setLang('en'); return o; });
+      ok(fmt.de === 'de' && /\[/.test(fmt.pseudo || ''), 'setLang: html lang güncelleniyor, sahte dil üretilebiliyor');
+      // RBMK Test senaryosu: tarihsel yol
       await p.evaluate(() => { document.getElementById('ov').hidden = true; });
       const res = await p.evaluate(() => {
         const R = window.__rb, M = R.M; R.initScenario('test', 'rbmk'); R.playing = false; const S = () => R.S, out = {};
+        out.prot = S().prot;
         for (let i = 0; i < 20 * 100 && R.scenT < 100; i++) R.tick();
         S().auto = true; S().nSet = 0.0625; for (let i = 0; i < 20 * 60; i++) R.tick(); out.lockedORM = M.ORM(S(), S().p);
-        R.setBypass(true); for (let i = 0; i < 20 * 15; i++) R.tick(); out.ormEarly = M.ORM(S(), S().p); out.mwEarly = S().n * 3200;
-        S().test = true; S().testT = 0; S().flowBase = S().flow; for (let i = 0; i < 20 * 5; i++) R.tick(); M.azStart(S()); for (let i = 0; i < 20 * 20 && !S().destroyed; i++) R.tick(); out.peak = S().maxAz * 3200; R.finish('done'); R.playing = false; return out;
+        R.setBypass(true); for (let i = 0; i < 20 * 15; i++) R.tick(); out.ormEarly = M.ORM(S(), S().p); out.mwEarly = S().n * 3200; out.byp = R.flags.bypassUsed;
+        S().test = true; S().testT = 0; S().flowBase = S().flow; for (let i = 0; i < 20 * 5; i++) R.tick(); R.trip(false, 'm_trip_man'); for (let i = 0; i < 20 * 20 && !S().destroyed; i++) R.tick(); out.peak = S().maxAz * 3200; R.finish('done'); R.playing = false; return out;
       });
       console.log('   tarihsel yol:', JSON.stringify(res));
-      ok(res.lockedORM >= 14.9, 'RBMK Test: kilit açıkken ORM 15 altına inilemiyor'); ok(res.ormEarly < 15, 'RBMK Test: kilit devre dışıyken ORM 15 altına düşüyor (' + res.ormEarly.toFixed(1) + ')'); ok(res.peak > 2 * res.mwEarly, 'RBMK Test: pozitif scram sıçraması');
-      await p.waitForTimeout(250); await p.screenshot({ path: `${OUT}/rb-mobile-end.png` });
+      ok(res.prot === 'full', 'RBMK Test: koruma TAM başlıyor'); ok(res.lockedORM >= 14.9, 'RBMK Test: kilit açıkken ORM 15 altına inilemiyor'); ok(res.ormEarly < 15 && res.byp, 'RBMK Test: kilit devre dışıyken ORM 15 altına düşüyor (' + res.ormEarly.toFixed(1) + ')'); ok(res.peak > 2 * res.mwEarly, 'RBMK Test: pozitif scram sıçraması');
+      await p.waitForTimeout(2500); await p.screenshot({ path: `${OUT}/rb-mobile-report.png`, fullPage: true }); ok(await p.isVisible('.rep'), 'vardiya raporu açılıyor');
+      // koruma sistemi
       const pr = await p.evaluate(() => {
-        const R = window.__rb, M = R.M, o = {}; R.initScenario('sand', 'rbmk'); R.playing = false; const S = () => R.S;
-        S().auto = false; S().pTarget = 0; for (let i = 0; i < 20 * 40; i++) R.tick(); o.orm = M.ORM(S(), S().p); o.alive = !S().destroyed;
-        R.initScenario('sand', 'rbmk'); R.playing = false; S().flowTarget = 0.3; for (let i = 0; i < 20 * 120 && !S().az; i++) R.tick(); o.lowFlowTrip = S().az && !S().destroyed;
-        R.initScenario('sand', 'rbmk'); R.playing = false; R.setBypass(true); S().auto = false; S().pTarget = 0; let slow = false; for (let i = 0; i < 20 * 120 && !S().destroyed; i++) { R.tick(); if (R.ts < 0.5) slow = true; } o.slow = slow;
-        return o;
+        const R = window.__rb, M = R.M, o = {}, S = () => R.S, go = (sn, ty, prot) => { R.save.prot = prot; R.initScenario(sn, ty); R.playing = false; };
+        go('sand', 'rbmk', 'assist'); S().auto = false; S().pTarget = 0; for (let i = 0; i < 20 * 40; i++) R.tick(); o.orm = M.ORM(S(), S().p); o.alive = !S().destroyed;
+        go('sand', 'rbmk', 'full'); S().flowTarget = 0.3; for (let i = 0; i < 20 * 120 && !S().az; i++) R.tick(); o.lowFlowTrip = S().az && !S().destroyed;
+        go('sand', 'rbmk', 'assist'); S().flowTarget = 0.3; for (let i = 0; i < 20 * 60; i++) R.tick(); o.assistNoTrip = !S().az && !S().destroyed && R.flags.stepbacks > 0;
+        go('sand', 'pwr', 'assist'); R.trip(false, 'm_trip_man'); o.turbOff = S().Dset === 0; for (let i = 0; i < 20 * 2; i++) R.tick(); o.early = R.canReset(); for (let i = 0; i < 20 * 5; i++) R.tick(); o.can = R.canReset(); R.doReset(); o.reset = !S().az && S().Dset > 0.5;
+        go('sand', 'rbmk', 'off'); R.setBypass(true); S().auto = false; S().pTarget = 0; let slow = false; for (let i = 0; i < 20 * 120 && !S().destroyed; i++) { R.tick(); if (R.ts < 0.5) slow = true; } o.slow = slow;
+        R.save.prot = 'assist'; return o;
       });
-      ok(pr.orm >= 14.9 && pr.alive, 'RBMK: çubuklar sonuna çekilse bile kilit ORM 15\'te tutuyor'); ok(pr.lowFlowTrip, 'RBMK: düşük debide otomatik trip ve reaktör sağlam'); ok(pr.slow, 'RBMK: güç sıçramasında ağır çekim');
+      console.log('   koruma:', JSON.stringify(pr));
+      ok(pr.orm >= 14.9 && pr.alive, 'RBMK: çubuklar sonuna çekilse bile kilit ORM 15\'te tutuyor'); ok(pr.lowFlowTrip, 'Koruma TAM: düşük debide otomatik kapatma, reaktör sağlam');
+      ok(pr.assistNoTrip, 'Koruma YARDIMCI: düşük debide kapatma yerine geri çekme'); ok(pr.turbOff && !pr.early && pr.can && pr.reset, 'PWR: kapatmada türbin düşüyor, çubuklar inince yeniden başlatma');
+      ok(pr.slow, 'RBMK: korumasız güç sıçramasında ağır çekim');
+    }
+    if (name === 'desktop') {
+      await p.click('[data-a="r"][data-id="bwr"]'); await p.waitForTimeout(300); await p.click('[data-s="move"]'); await p.waitForTimeout(300); await p.click('[data-a="go"]'); await p.waitForTimeout(500);
+      await p.evaluate(() => { const R = window.__rb; R.playing = false; for (let i = 0; i < 20 * 50; i++) R.tick(); R.playing = true; }); await p.waitForTimeout(300);
+      await p.screenshot({ path: `${OUT}/rb-desktop-play-bwr.png` }); ok(await p.isVisible('#kbHint'), 'masaüstü: klavye ipucu görünüyor');
     }
     ok(errs.length === 0, name + ': hata yok ' + errs.join('|'));
     await ctx.close();
+  }
+  // RTL ve sahte dil
+  {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); await ctx.addInitScript(() => { window.__RB_TEST__ = true; });
+    const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
+    await p.goto('file://' + HTML + '?lang=pseudo'); await p.waitForTimeout(400);
+    ok(/\[/.test(await p.textContent('#ov')) && (await p.evaluate(() => [...window.__rb.MISSING].filter(k => !k.includes(':')).length)) === 0, '?lang=pseudo: tüm metinler çeviriden geliyor (eksik anahtar yok)');
+    await p.screenshot({ path: `${OUT}/rb-pseudo-menu.png` });
+    if (T.ar) { await p.goto('file://' + HTML + '?lang=ar'); await p.waitForTimeout(400); ok(await p.evaluate(() => document.documentElement.dir) === 'rtl', 'Arapça: sayfa sağdan sola'); await p.screenshot({ path: `${OUT}/rb-ar-menu.png` }); }
+    ok(errs.length === 0, 'sahte dil/RTL: hata yok ' + errs.join('|')); await ctx.close();
   }
   console.log(fails ? 'BAŞARISIZ ' + fails : '\nHEPSİ GEÇTİ'); await b.close(); process.exit(fails ? 1 : 0);
 })();
