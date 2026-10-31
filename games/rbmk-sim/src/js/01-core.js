@@ -102,4 +102,5 @@ function applyPrefs() {
   document.documentElement.classList.toggle('rm', RM());
   document.documentElement.style.setProperty('--fs', save.big ? 1.12 : 1);
   FS = save.big ? 1.12 : 1;
+  if (typeof fitCtl === 'function') { FIT.clear(); requestAnimationFrame(fitCtl); } // yazı boyutu değişince düğmeleri yeniden sığdır
 }

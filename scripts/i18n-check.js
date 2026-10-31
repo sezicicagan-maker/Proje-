@@ -4,7 +4,7 @@
 const fs = require('fs'), path = require('path');
 const D = path.join(__dirname, '..', 'games', 'rbmk-sim', 'i18n'), META = JSON.parse(fs.readFileSync(path.join(D, '_meta.json'), 'utf8'));
 const en = JSON.parse(fs.readFileSync(path.join(D, 'en.json'), 'utf8')), keys = Object.keys(en);
-const only = process.argv.slice(2); let errors = 0, warns = 0;
+const only = process.argv.slice(2), skipped = []; let errors = 0, warns = 0;
 const ph = v => (String(v).match(/\{0\}/g) || []).length;
 const SAME_OK = /^(AZ-5|SCRAM|MW|ORM|PWR|BWR|CANDU|RBMK-1000|Tavg|\$|OK|%|STOP|Xe|Reactor Lab|REACTOR LAB|Normal|Total|Version \{0\}|Start)$/i;
 const TIGHT = /^(a[A-Z]|lim_|prot_.*_s$|reset_trip|auto$|man$|test$|trip_|conf$|hdr|pl_|k_|lg_|t_|m_auto|m_red|m_full|u_|prot_(full|assist|off)$|tgt|slow|mw$)/;
@@ -13,7 +13,7 @@ const vals = v => typeof v === 'object' ? Object.values(v) : [v];
 for (const code of Object.keys(META)) {
   if (code === 'en' || (only.length && !only.includes(code))) continue;
   const f = path.join(D, code + '.json'), m = META[code], E = [], W = [];
-  if (!fs.existsSync(f)) { console.log(`${code}: DOSYA YOK`); errors++; continue; }
+  if (!fs.existsSync(f)) { if (only.length) { console.log(`${code}: DOSYA YOK`); errors++; } else skipped.push(code); continue; } // dosyası olmayan dil derlemeye girmez
   let o; try { o = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { console.log(`${code}: JSON HATASI ${e.message}`); errors++; continue; }
   let cats = ['other']; try { cats = new Intl.PluralRules(m.locale || code).resolvedOptions().pluralCategories; } catch (e) {}
   const miss = keys.filter(k => !(k in o)), extra = Object.keys(o).filter(k => !(k in en));
@@ -41,4 +41,5 @@ for (const code of Object.keys(META)) {
   console.log(`${code.padEnd(3)} ${E.length ? 'HATA ' + E.length : 'tamam'}${W.length ? ' · uyarı ' + W.length : ''}`);
   for (const e of E) console.log('   ✗ ' + e); for (const w of W) console.log('   ! ' + w);
 }
+if (skipped.length) console.log(`\nhenüz çevrilmedi (oyuna dahil değil): ${skipped.join(' ')}`);
 console.log(errors ? `\n${errors} hata, ${warns} uyarı` : `\nhata yok, ${warns} uyarı`); process.exit(errors ? 1 : 0);

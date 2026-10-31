@@ -445,6 +445,7 @@ function applyPrefs() {
   document.documentElement.classList.toggle('rm', RM());
   document.documentElement.style.setProperty('--fs', save.big ? 1.12 : 1);
   FS = save.big ? 1.12 : 1;
+  if (typeof fitCtl === 'function') { FIT.clear(); requestAnimationFrame(fitCtl); } // yazı boyutu değişince düğmeleri yeniden sığdır
 }
 
 /* ==== 02-audio.js ==== */
@@ -2072,7 +2073,7 @@ function nudgePower(dir, big) {
   if (!S || S.az) return; const pwr = TY.id === 'pwr';
   if (S.auto && !pwr && !scenDriven()) S.nSet = clamp(S.nSet + dir * (big ? 0.05 : 0.01), 0.02, 1);
   else if (pwr && S.auto && !scenDriven() && !flags.turbOff) { S.Dset = clamp(S.Dset + dir * (big ? 0.1 : 0.02), 0.3, 1); flags.loadMem = S.Dset; }
-  else if (!(S.auto && TY.actuator === 'rods')) { let v = clamp(S.pTarget - dir * (big ? 0.5 : 0.1), 0, TY.stroke); if (S.interlock && v < Math.min(S.p, S.pLock) - 0.005) { v = Math.min(S.p, S.pLock); lockNotice(); } S.pTarget = v; }
+  else if (!(S.auto && TY.actuator === 'rods') && !S.jammed && !(scen === 'test' && scenT >= 60 && scenT < 100)) { let v = clamp(S.pTarget - dir * (big ? 0.5 : 0.1), 0, TY.stroke); if (S.interlock && v < Math.min(S.p, S.pLock) - 0.005) { v = Math.min(S.p, S.pLock); lockNotice(); } S.pTarget = v; }
   ctlSync(true);
 }
 function nudgeF(dir, big) {
@@ -2471,7 +2472,7 @@ function tick() {
   }
   if (TY.id === 'candu' && xp > 260 && S.n < 0.05 && !flags.poison && scen !== 'test') {
     flags.poison = 1; note('m_poison', 'bad', undefined, true);
-    if (scen !== 'sand') setTimeout(() => { if (!ended && S) finish('poison'); }, 2500);
+    if (scen !== 'sand') { const sid = S; setTimeout(() => { if (!ended && S === sid) finish('poison'); }, 2500); }
   }
   if (scen === 'test') {
     for (const [tt, k] of [[60, 'm_a1'], [100, 'm_a2'], [140, 'm_a2b']]) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; note(k, tt === 60 ? 'bad' : 'warn', undefined, tt !== 140); }
@@ -2527,7 +2528,7 @@ function finish(kind) {
     if (R.pct !== null && R.pct > (save.best[key] || 0)) save.best[key] = R.pct;
     R.best = save.best[key] || 0; persist();
   }
-  setTimeout(() => reportScreen(R), dead ? 200 : 350);
+  const sid = S; setTimeout(() => { if (S === sid) reportScreen(R); }, dead ? 200 : 350); // bu arada menüye çıkıldıysa rapor açılmaz
 }
 
 /* ==== 09-loop.js ==== */

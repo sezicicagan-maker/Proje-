@@ -121,7 +121,7 @@ function nudgePower(dir, big) {
   if (!S || S.az) return; const pwr = TY.id === 'pwr';
   if (S.auto && !pwr && !scenDriven()) S.nSet = clamp(S.nSet + dir * (big ? 0.05 : 0.01), 0.02, 1);
   else if (pwr && S.auto && !scenDriven() && !flags.turbOff) { S.Dset = clamp(S.Dset + dir * (big ? 0.1 : 0.02), 0.3, 1); flags.loadMem = S.Dset; }
-  else if (!(S.auto && TY.actuator === 'rods')) { let v = clamp(S.pTarget - dir * (big ? 0.5 : 0.1), 0, TY.stroke); if (S.interlock && v < Math.min(S.p, S.pLock) - 0.005) { v = Math.min(S.p, S.pLock); lockNotice(); } S.pTarget = v; }
+  else if (!(S.auto && TY.actuator === 'rods') && !S.jammed && !(scen === 'test' && scenT >= 60 && scenT < 100)) { let v = clamp(S.pTarget - dir * (big ? 0.5 : 0.1), 0, TY.stroke); if (S.interlock && v < Math.min(S.p, S.pLock) - 0.005) { v = Math.min(S.p, S.pLock); lockNotice(); } S.pTarget = v; }
   ctlSync(true);
 }
 function nudgeF(dir, big) {

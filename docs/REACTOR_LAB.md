@@ -16,7 +16,7 @@ Eğitim amaçlı, tek dosyalık HTML5 nükleer reaktör simülatörü. Yayın: `
 | `src/js/07-screens.js` | Menü, reaktör seçimi, brifing, duraklatma, ayarlar, aramalı dil seçici, yardım, ipucu kartı, vardiya raporu. |
 | `src/js/08-sim.js` | Senaryolar, koruma sistemi v2, ağır çekim, puanlama, olay günlüğü, rapor verisi. |
 | `src/js/09-loop.js` | Kare döngüsü, alarm bipleri, boyutlandırma, dokunma, açılış, test kancaları (`window.__RB_TEST__`). |
-| `i18n/*.json`, `i18n/_meta.json` | 21 dil. |
+| `i18n/*.json`, `i18n/_meta.json` | 7 tam dil (en, tr, de, es, pt, fr, ru); `_meta.json` 21 dili tanımlar, dosyası eklenen dil derlemeye girer. |
 
 Derleme `node scripts/build-rbmk.js` modülleri dosya adı sırasıyla tek bir IIFE içinde birleştirir ve sözdizimini denetler.
 

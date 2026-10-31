@@ -137,7 +137,7 @@ function tick() {
   }
   if (TY.id === 'candu' && xp > 260 && S.n < 0.05 && !flags.poison && scen !== 'test') {
     flags.poison = 1; note('m_poison', 'bad', undefined, true);
-    if (scen !== 'sand') setTimeout(() => { if (!ended && S) finish('poison'); }, 2500);
+    if (scen !== 'sand') { const sid = S; setTimeout(() => { if (!ended && S === sid) finish('poison'); }, 2500); }
   }
   if (scen === 'test') {
     for (const [tt, k] of [[60, 'm_a1'], [100, 'm_a2'], [140, 'm_a2b']]) if (scenT >= tt && !flags['m' + tt]) { flags['m' + tt] = 1; note(k, tt === 60 ? 'bad' : 'warn', undefined, tt !== 140); }
@@ -193,5 +193,5 @@ function finish(kind) {
     if (R.pct !== null && R.pct > (save.best[key] || 0)) save.best[key] = R.pct;
     R.best = save.best[key] || 0; persist();
   }
-  setTimeout(() => reportScreen(R), dead ? 200 : 350);
+  const sid = S; setTimeout(() => { if (S === sid) reportScreen(R); }, dead ? 200 : 350); // bu arada menüye çıkıldıysa rapor açılmaz
 }
