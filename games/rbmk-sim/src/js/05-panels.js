@@ -4,9 +4,9 @@ function computeLayout() {
   const box = cw.getBoundingClientRect(), bw = Math.max(1, box.width), bh = Math.max(1, box.height);
   let W, Hh, r;
   if (WIDE) {
-    W = 720; Hh = 480;
-    r = { head: { x: 0, y: 0, w: 720, h: 22 }, core: { x: 6, y: 24, w: 230, h: 196 }, xread: { x: 6, y: 226, w: 230, h: 62 }, xchart: { x: 6, y: 294, w: 230, h: 92 }, rodflow: { x: 6, y: 392, w: 230, h: 82 },
-      power: { x: 244, y: 24, w: 232, h: 196 }, trend: { x: 244, y: 226, w: 232, h: 120 }, lamps: { x: 244, y: 352, w: 232, h: 122, cols: 2 }, plant: { x: 484, y: 24, w: 230, h: 196 }, msg: { x: 484, y: 226, w: 230, h: 248 } };
+    W = 720; Hh = clamp(Math.round(W * bh / bw), 480, 580); const e = Hh - 480, h2 = e / 2;
+    r = { head: { x: 0, y: 0, w: 720, h: 22 }, core: { x: 6, y: 24, w: 230, h: 196 }, xread: { x: 6, y: 226, w: 230, h: 62 }, xchart: { x: 6, y: 294, w: 230, h: 92 + e }, rodflow: { x: 6, y: 392 + e, w: 230, h: 82 },
+      power: { x: 244, y: 24, w: 232, h: 196 }, trend: { x: 244, y: 226, w: 232, h: 120 + h2 }, lamps: { x: 244, y: 352 + h2, w: 232, h: 122 + h2, cols: 2 }, plant: { x: 484, y: 24, w: 230, h: 196 }, msg: { x: 484, y: 226, w: 230, h: 248 + e } };
   } else {
     W = 360; Hh = clamp(Math.round(W * bh / bw), 520, 640); const EX = Hh - 520, e1 = EX * 0.12, e2 = EX * 0.26, e3 = EX * 0.46;
     r = { head: { x: 0, y: 0, w: 360, h: 22 }, core: { x: 6, y: 24, w: 170, h: 168 }, power: { x: 180, y: 24, w: 174, h: 168 }, trend: { x: 6, y: 198 + e1, w: 170, h: 72 }, xchart: { x: 180, y: 198 + e1, w: 174, h: 72 },
@@ -20,12 +20,8 @@ function computeLayout() {
 const period = () => (S && S.rate > 1e-3) ? 1 / S.rate : Infinity;
 
 function pHeader(w) {
-  const topW = (E('top').offsetWidth || 120) / sc, avail = w - topW - 16;
-  const title = `${rname(TY.id)} · ${t('s_' + scen)}`;
-  const tw = fitTxt(title, 10, 11.5, 12, '#c9d9ee', 'left', avail * 0.55, 800);
-  ctx.font = font(800, tw); const used = 10 + Math.min(avail * 0.55, ctx.measureText(title).width) + 10;
-  const st = `${fmtTime(scenT)}  ×${speed}  Xe×${M.Z}${ts < 0.9 ? '  ' + t('slow') : ''}`;
-  fitTxt(st, w - topW - 10, 11.5, 10.5, ts < 0.9 ? '#ff7b6b' : '#7e96b6', 'right', Math.max(30, w - topW - 10 - used), 700);
+  const topW = WIDE ? 0 : (E('top').offsetWidth || 120) / sc;
+  fitTxt(`${rname(TY.id)} · ${t('s_' + scen)}`, 10, 11.5, 12, '#c9d9ee', 'left', Math.max(40, w - topW - 20), 800);
 }
 function coreDraw(now) {
   const id = TY.id, n = S.n, col = glowCol(n), cx = 85, cy = 90, ins = S.p / TY.stroke, jam = S.jammed;
@@ -104,7 +100,7 @@ function pTrend(w, h) {
   curve(HIST.d, x, y, cw2, ch, logF, 'rgba(255,255,255,.55)', true, N); curve(HIST.p, x, y, cw2, ch, logF, '#5fd3ff', false, N);
 }
 function pXChart(w, h) {
-  panel(w, h, t('hdr4'), 'tip_xe', 'xe');
+  panel(w, h, `${t('hdr4')} · ×${M.Z}`, 'tip_xe', 'xe');
   const x = 8, y = 16, cw2 = w - 16, ch = h - 22;
   for (const [a, b, c] of [[0, 110, 'rgba(70,224,160,.15)'], [110, 160, 'rgba(255,200,61,.15)'], [160, 260, 'rgba(255,84,104,.17)']]) { ctx.fillStyle = c; ctx.fillRect(x, y + ch - b / 260 * ch, cw2, (b - a) / 260 * ch); }
   ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.setLineDash([2, 3]); const y100 = y + ch - 100 / 260 * ch; ctx.beginPath(); ctx.moveTo(x, y100); ctx.lineTo(x + cw2, y100); ctx.stroke(); ctx.setLineDash([]); txt('100%', x + cw2 - 2, y100 - 5, 7, '#7e96b6', 'right');
@@ -151,16 +147,17 @@ function pLamps(w, h, cols, now) {
 }
 const KINDC = { bad: '#ff9aa6', warn: '#ffd77a', ok: '#8ff0c4', info: '#e6f0ff' };
 function pMsg(w, h, now) {
-  panel(w, h, t('hdr7'));
+  const st = `${fmtTime(scenT)}  ×${speed}`; ctx.font = font(700, 9 * FS); const sw = ctx.measureText(st).width;
+  panel(w, h, t('hdr7'), null, null, sw + 16); txt(st, w - 10, 8.5, 9 * FS, '#7e96b6', 'right', 700, MONO);
   const live = msgT > 0 && msg, s = live ? msg : goalText(), col = live ? (KINDC[msgKind] || '#e6f0ff') : '#7e96b6';
-  const top = WIDE ? 70 : Math.min(62, h * 0.62);
-  wrapTxt(s, w / 2, 16 + (top - 16) / 2 + 2, w - 24, top - 18, WIDE ? 12.5 : 12.5, col, 700, 3);
+  const top = WIDE ? 104 : Math.min(80, h * 0.68);
+  wrapTxt(s, w / 2, 16 + (top - 16) / 2 + 2, w - 24, top - 18, 12.5, col, 700, WIDE ? 5 : 4);
   const evs = EVENTS.slice(-(WIDE ? 10 : Math.max(0, Math.floor((h - top - 6) / 13)))).reverse();
   let y = top + 8;
-  for (const e of evs) { if (y > h - 6) break; txt(fmtTime(e.t), 10, y, 8.5, '#5d7698', 'left', 700, MONO); fitTxt(t(e.key, e.arg), 44, y, 9.5, KINDC[e.kind] || '#a8bcd6', 'left', w - 54, 600); y += 13; }
+  for (const e of evs) { if (y > h - 6) break; txt(fmtTime(e.t), 10, y, 8.5, '#5d7698', 'left', 700, MONO); ellTxt(t(e.key, e.arg), 44, y, 9.5, KINDC[e.kind] || '#a8bcd6', 'left', w - 54, 600); y += 13; }
 }
 function draw(now) {
-  REG = [];
+  REG = []; PIDX = 0;
   const L = LAYOUT; if (!L) return;
   ctx.setTransform(sc * dpr, 0, 0, sc * dpr, 0, 0); ctx.clearRect(0, 0, L.W, L.H); ctx.drawImage(bgTex(L.W, L.H), 0, 0);
   if (!S) return;
@@ -176,6 +173,7 @@ function draw(now) {
   ctx.setTransform(sc * dpr, 0, 0, sc * dpr, 0, 0);
   if (ts < 0.9 && save.flash) { const p = RM() ? 0.5 : 0.5 + 0.5 * Math.sin(now / 160), g = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * 0.35, L.W / 2, L.H / 2, Math.max(L.W, L.H) * 0.7); g.addColorStop(0, 'rgba(255,40,70,0)'); g.addColorStop(1, `rgba(255,40,70,${0.22 + 0.12 * p})`); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
   else if (S.stepback && save.flash) { const g = ctx.createRadialGradient(L.W / 2, L.H / 2, Math.min(L.W, L.H) * 0.4, L.W / 2, L.H / 2, Math.max(L.W, L.H) * 0.7); g.addColorStop(0, 'rgba(255,154,61,0)'); g.addColorStop(1, `rgba(255,154,61,${0.1 + (RM() ? 0 : 0.06 * Math.sin(now / 200))})`); ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H); }
+  if (ts < 0.9) { const s2 = t('slow'), pw = Math.min(L.W * 0.6, (ctx.font = font(800, 11 * FS), ctx.measureText(s2).width + 26)), px = L.W / 2 - pw / 2, py = 24, a = RM() ? 1 : 0.75 + 0.25 * Math.sin(now / 140); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(80,8,20,.92)'; rr(px, py, pw, 18, 9); ctx.fill(); ctx.strokeStyle = '#ff5468'; ctx.lineWidth = 1.2; ctx.stroke(); fitTxt(s2, L.W / 2, py + 9.5, 11, '#ffd0d6', 'center', pw - 14, 800); ctx.globalAlpha = 1; }
   if (FLASH > now && save.flash) { ctx.fillStyle = `rgba(${FLASHC},${0.45 * (FLASH - now) / 700})`; ctx.fillRect(0, 0, L.W, L.H); }
   if (S.destroyed) { ctx.fillStyle = `rgba(255,255,255,${clamp((save.flash ? 0.85 : 0.3) - S.destroyT * 0.3, 0, 0.85)})`; ctx.fillRect(0, 0, L.W, L.H); }
 }

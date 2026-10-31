@@ -4,7 +4,10 @@ const d = path.join(__dirname, '..', 'games', 'rbmk-sim');
 const model = fs.readFileSync(path.join(d, 'model.js'), 'utf8').replace(/\/\*MODEL_(BEGIN|END)\*\//g, '').replace(/if \(typeof module[^\n]*\n?/, '');
 const meta = JSON.parse(fs.readFileSync(path.join(d, 'i18n', '_meta.json'), 'utf8'));
 const T = {}, LANGS = {};
+// --langs en,tr: yalnız bu dilleri dahil et (dil QA için)
+const li = process.argv.indexOf('--langs'), onlyL = li > 0 ? process.argv[li + 1].split(',') : null;
 for (const code of Object.keys(meta)) {
+  if (onlyL && !onlyL.includes(code)) continue;
   const f = path.join(d, 'i18n', code + '.json');
   if (!fs.existsSync(f)) continue;
   T[code] = JSON.parse(fs.readFileSync(f, 'utf8')); LANGS[code] = meta[code];

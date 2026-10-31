@@ -80,7 +80,7 @@ function briefing(sn, dir) {
   }, 'brief');
 }
 function go(sn) {
-  audioInit(); initScenario(sn, typeId); hide(); playing = true; ended = false; SFX.start(); computeLayout(); ctlSync(true);
+  audioInit(); initScenario(sn, typeId); hide(); INTRO = performance.now(); playing = true; ended = false; SFX.start(); computeLayout(); ctlSync(true);
   if (save.hints && !TIPHINT) { TIPHINT = true; setTimeout(() => { if (playing) toast(t('m_tiphint'), 'info', 3800); }, 2200); }
 }
 function resumeGame() { if (!S || ended) { quitGame(); return; } hide(); playing = true; ctlSync(true); }

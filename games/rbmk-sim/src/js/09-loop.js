@@ -24,7 +24,7 @@ function frame(now) {
 let rzq = 0;
 function resize() {
   const w = window.innerWidth, h = window.innerHeight, wide = w >= 640 && w / h >= 1.2;
-  if (wide !== WIDE) { WIDE = wide; E('app').classList.toggle('wide', WIDE); VIEW = 'core'; }
+  if (wide !== WIDE) { WIDE = wide; E('app').classList.toggle('wide', WIDE); VIEW = 'core'; if (WIDE) E('ctl').insertBefore(E('top'), E('ctl').firstChild); else cw.appendChild(E('top')); }
   computeLayout(); if (S) draw(performance.now());
 }
 window.addEventListener('resize', () => { cancelAnimationFrame(rzq); rzq = requestAnimationFrame(resize); });

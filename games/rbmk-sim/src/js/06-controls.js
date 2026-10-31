@@ -5,7 +5,7 @@ const scenDriven = () => !!(sdef && sdef.demand);
 const isActive = inp => document.activeElement === inp && inp.matches(':active');
 function setRange(inp, min, max, step) { inp.min = min; inp.max = max; inp.step = step; }
 function setMark(c, f) { c.s.style.setProperty('--m', clamp(Number.isFinite(f) ? f : 0, 0, 1).toFixed(4)); }
-const unitP = n => save.pct ? nf(n * 100, n * 100 < 10 ? 1 : 0) + '%' : fmtMW(n * TY.Pn) + ' MW';
+const unitP = n => save.pct ? pc(n * 100, n * 100 < 10 ? 1 : 0) : fmtMW(n * TY.Pn) + ' MW';
 let ARM = { lim: 0, prot: 0 };
 function ctlConfig() {
   const pwr = TY.id === 'pwr';
@@ -29,13 +29,13 @@ function ctlSync(force) {
   const sOn = pwr ? (!scenDriven() && !S.az && !flags.turbOff) : (S.auto && !scenDriven() && !S.az);
   if (force || !isActive(CT.S.in)) CT.S.in.value = Math.round(pwr ? S.Dset * 100 : S.nSet * TY.Pn);
   CT.S.in.disabled = !sOn; CT.S.row.classList.toggle('dis', !sOn && !(S.auto || pwr));
-  CT.S.v.textContent = pwr ? `${nf(Math.round(S.D * 100))}%` : (S.auto ? unitP(S.nSet) : t('auto_off'));
+  CT.S.v.textContent = pwr ? pc(Math.round(S.D * 100)) : (S.auto ? unitP(S.nSet) : t('auto_off'));
   setMark(CT.S, pwr ? (S.n * 100 - 30) / 70 : (S.n * TY.Pn - +CT.S.in.min) / (+CT.S.in.max - +CT.S.in.min));
   // 2) çubuklar
   const rodsAuto = S.auto && act === 'rods' && !S.az, rOn = !rodsAuto && !locked;
   if (force || !isActive(CT.R.in)) CT.R.in.value = Math.round((rodsAuto || S.az ? S.p : S.pTarget) * 100);
   CT.R.in.disabled = !rOn; CT.R.row.classList.toggle('dis', !rOn && !rodsAuto); CT.R.row.classList.toggle('hot', !!S.stepback);
-  CT.R.v.textContent = rodsAuto || S.az || Math.abs(S.pTarget - S.p) < 0.01 ? `${nf(S.p, 2)} m${rodsAuto ? ' · ' + t('auto') : ''}` : `${nf(S.p, 2)} → ${nf(S.pTarget, 1)} m`;
+  CT.R.v.textContent = rodsAuto || S.az || Math.abs(S.pTarget - S.p) < 0.01 ? `${nf(S.p, 2)} m` : `${nf(S.p, 2)} → ${nf(S.pTarget, 1)} m`; CT.R.row.classList.toggle('auto', rodsAuto);
   setMark(CT.R, S.p / TY.stroke);
   const ch = E('chLim'); ch.textContent = ARM.lim ? t('conf') : (S.interlock ? t('lim_on') : t('lim_off')); ch.classList.toggle('off', !S.interlock); ch.classList.toggle('arm', !!ARM.lim);
   // 3) debi / bor
@@ -47,7 +47,7 @@ function ctlSync(force) {
     const flowAuto = S.auto && act === 'flow' && !S.az, fOn = !flowAuto && !S.test && !S.az && !S.destroyed;
     if (force || !isActive(CT.F.in)) CT.F.in.value = Math.round(S.flowTarget * 100);
     CT.F.in.disabled = !fOn; CT.F.row.classList.toggle('dis', !fOn && !flowAuto);
-    CT.F.v.textContent = `${nf(Math.round(S.flow * 100))}%${flowAuto ? ' · ' + t('auto') : ''}`;
+    CT.F.v.textContent = pc(Math.round(S.flow * 100)); CT.F.row.classList.toggle('auto', flowAuto);
     setMark(CT.F, (S.flow * 100 - +CT.F.in.min) / (+CT.F.in.max - +CT.F.in.min));
   }
   // düğmeler
@@ -56,8 +56,24 @@ function ctlSync(force) {
   E('bSpd').textContent = '×' + speed; E('bPause').textContent = 'II';
   const tripped = S.az && !S.destroyed;
   E('az').hidden = tripped; E('cover').hidden = tripped; E('rst').hidden = !tripped; E('rst').disabled = !canReset();
+  sideSync();
   const bp = E('bProt'); bp.className = ARM.prot ? S.prot + ' arm' : S.prot; bp.textContent = ARM.prot ? t('conf') : t('prot_' + S.prot + '_s');
+  fitCtl();
 }
+function sideSync() {
+  if (!WIDE || !S) return; const end = sdef.end, fin = Number.isFinite(end);
+  E('sdT').textContent = `${rname(TY.id)} · ${t('s_' + scen)}`; E('sdG').textContent = msgT > 0 && msg ? msg : goalText();
+  E('sdP').style.width = fin ? clamp(scenT / end * 100, 0, 100) + '%' : '100%'; E('sdTm').textContent = fin ? `${fmtTime(scenT)} / ${fmtTime(end)}` : fmtTime(scenT);
+  E('sdK').textContent = score.tot ? `${t('k_pct')} ${pc(Math.round(score.ok / score.tot * 100))}` : flags.trips ? `${t('k_trips')} ${nf(flags.trips)}` : '';
+}
+/* Metni kutusuna sığdır: taşarsa yazı boyutunu küçült (tüm dillerde düğmeler ve etiketler okunur kalır) */
+const FIT = new Map();
+function fitEl(el, min) {
+  const key = el.textContent + '|' + el.clientWidth; if (FIT.get(el) === key) return; FIT.set(el, key);
+  el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize), g = 0;
+  while ((el.scrollWidth > el.clientWidth + 0.5 || el.scrollHeight > el.clientHeight + 1) && fs > min && g++ < 40) { fs -= 0.5; el.style.fontSize = fs + 'px'; }
+}
+function fitCtl() { for (const el of document.querySelectorAll('#ctl .b, #az, #rst, #cover span, #ctl .rl, #ctl .chip, #bProt')) if (el.offsetParent) fitEl(el, 7.5); }
 function lockNotice() { if (!flags.lockT || scenT - flags.lockT > 3) { flags.lockT = scenT; note('m_lock', 'warn'); SFX.lock(); buzz(30); } attn('rods'); }
 CT.S.in.addEventListener('input', () => { if (!S || S.az) return; const v = +CT.S.in.value; if (TY.id === 'pwr') { if (!scenDriven() && !flags.turbOff) { S.Dset = v / 100; flags.loadMem = S.Dset; } } else if (S.auto && !scenDriven()) S.nSet = v / TY.Pn; ctlSync(); });
 CT.R.in.addEventListener('input', () => { if (!S || S.az || (S.auto && TY.actuator === 'rods')) return; let v = +CT.R.in.value / 100; if (S.interlock && v < Math.min(S.p, S.pLock) - 0.005) { v = Math.min(S.p, S.pLock); CT.R.in.value = Math.round(v * 100); lockNotice(); } S.pTarget = v; ctlSync(); });

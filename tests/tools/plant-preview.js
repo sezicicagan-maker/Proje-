@@ -6,7 +6,7 @@ const type = process.argv[2], out = path.resolve(process.argv[3] || '.');
 if (!['rbmk', 'pwr', 'bwr', 'candu'].includes(type)) { console.error('tür: rbmk|pwr|bwr|candu'); process.exit(1); }
 fs.mkdirSync(out, { recursive: true });
 const html = path.join(out, `game-${type}.html`);
-execFileSync('node', [path.join(__dirname, '..', '..', 'scripts', 'build-rbmk.js'), '--plant', type, '--out', html], { stdio: 'inherit' });
+execFileSync('node', [path.join(__dirname, '..', '..', 'scripts', 'build-rbmk.js'), '--plant', type, '--langs', 'en', '--out', html], { stdio: 'inherit' });
 const STATES = ['full', 'low', 'tripped', 'stress'];
 function setup({ st, type }) {
   const R = window.__rb; R.initScenario('sand', type); R.playing = false; const S = R.S, run = s => { for (let i = 0; i < s * 20; i++) R.tick(); };

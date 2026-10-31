@@ -13,6 +13,13 @@ function fitTxt(s, x, y, size, col, al, maxW, w) {
   if (mw > maxW) { sz = Math.max(4.5, sz * maxW / mw); ctx.font = font(w, sz); if (QA.on && sz < 7 * Math.min(1, size / 8.5)) QA.fit.push({ s, sz: +sz.toFixed(1), size }); }
   ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y); return sz;
 }
+/* Tek satır: önce biraz küçült, sığmazsa sonunu "…" ile kes (olay günlüğü gibi tam metnin başka yerde göründüğü yerler için) */
+function ellTxt(s, x, y, size, col, al, maxW, w, minSize) {
+  let sz = size * FS; ctx.font = font(w, sz); let mw = ctx.measureText(s).width;
+  if (mw > maxW) { sz = Math.max((minSize || 7.5) * Math.min(1.15, FS), sz * maxW / mw); ctx.font = font(w, sz); }
+  if (ctx.measureText(s).width > maxW) { const ch = Array.from(s); let lo = 0, hi = ch.length; while (lo < hi) { const m = (lo + hi + 1) >> 1; if (ctx.measureText(ch.slice(0, m).join('') + '…').width <= maxW) lo = m; else hi = m - 1; } s = ch.slice(0, lo).join('').trimEnd() + '…'; }
+  ctx.textAlign = al || 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(s, x, y);
+}
 function wrapLines(s, maxW) {
   const charMode = CJK || (!/\s/.test(s) && ctx.measureText(s).width > maxW);
   const parts = charMode ? Array.from(s) : s.split(' '), sep = charMode ? '' : ' ', out = []; let line = '';
@@ -41,14 +48,14 @@ const attnLevel = k => { const d = performance.now() - (ATT[k] || -1e9); return 
 function smooth(key, target, k) { if (SM[key] === undefined || !Number.isFinite(SM[key]) || !Number.isFinite(target)) SM[key] = target; else SM[key] += (target - SM[key]) * (RM() ? 1 : k); return SM[key]; }
 /* Panel çerçevesi */
 function infoIcon(x, y) { ctx.fillStyle = '#0b1626'; ctx.beginPath(); ctx.arc(x, y, 5.5, 0, TAU); ctx.fill(); ctx.strokeStyle = '#3f6a9a'; ctx.lineWidth = 1; ctx.stroke(); txt('i', x, y + 0.5, 8, '#8fb3da', 'center', 800, MONO); }
-function panel(w, h, title, tip, attKey) {
+function panel(w, h, title, tip, attKey, rightW) {
   const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#17283f'); g.addColorStop(1, '#0d1829'); ctx.fillStyle = g; rr(0, 0, w, h, 9); ctx.fill();
   ctx.lineWidth = 1; ctx.strokeStyle = '#27426a'; ctx.stroke();
   const a = attKey ? attnLevel(attKey) : 0;
   if (a > 0) { ctx.save(); ctx.strokeStyle = `rgba(255,200,61,${a})`; ctx.lineWidth = 2; ctx.shadowColor = '#ffc83d'; ctx.shadowBlur = 12 * a; rr(1, 1, w - 2, h - 2, 9); ctx.stroke(); ctx.restore(); }
   ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.beginPath(); ctx.moveTo(9, 1.5); ctx.lineTo(w - 9, 1.5); ctx.stroke();
   for (const [rx, ry] of [[5, 5], [w - 5, h - 5], [5, h - 5]]) { ctx.fillStyle = '#3a526f'; ctx.beginPath(); ctx.arc(rx, ry, 1.5, 0, TAU); ctx.fill(); }
-  if (title) fitTxt(title, 12, 8.5, 8.5, '#6f89ab', 'left', w - (tip ? 40 : 22), 700);
+  if (title) fitTxt(title, 12, 8.5, 8.5, '#6f89ab', 'left', w - (tip ? 40 : 22) - (rightW || 0), 700);
   if (tip) { infoIcon(w - 12, 9); region(tip, w - 30, 0, 30, 22); }
 }
 function lamp(x, y, w, h, label, col, on, blink, now) {
@@ -81,8 +88,11 @@ function bgTex(w, h) {
   return (BG[k] = c);
 }
 /* Yerleştirme: tasarım boyutundaki paneli dikdörtgene ölçekle */
-function place(r, dw, dh, fn) { const s = Math.min(r.w / dw, r.h / dh); ctx.save(); ctx.translate(r.x + (r.w - dw * s) / 2, r.y + (r.h - dh * s) / 2); ctx.scale(s, s); fn(dw, dh); ctx.restore(); }
-function placeFlex(r, fn) { ctx.save(); ctx.translate(r.x, r.y); fn(r.w, r.h); ctx.restore(); }
+/* Açılış animasyonu: senaryo başlarken paneller sırayla belirip yerine oturur */
+let INTRO = -1e9, PIDX = 0;
+function introIn() { const d = performance.now() - INTRO - PIDX++ * 70; if (RM() || d > 420) return; const k = Math.max(0, d / 420), e = 1 - Math.pow(1 - k, 3); ctx.globalAlpha = e; ctx.translate(0, (1 - e) * 12); }
+function place(r, dw, dh, fn) { const s = Math.min(r.w / dw, r.h / dh); ctx.save(); introIn(); ctx.translate(r.x + (r.w - dw * s) / 2, r.y + (r.h - dh * s) / 2); ctx.scale(s, s); fn(dw, dh); ctx.restore(); }
+function placeFlex(r, fn) { ctx.save(); introIn(); ctx.translate(r.x, r.y); fn(r.w, r.h); ctx.restore(); }
 
 /* ---------- Santral şeması: kayıt ve ortak çizim araçları ----------
    PLANT[tip] = function (c, S, now, H) — 158 x 146 yerel kutuya çizer (0,0 sol üst). Kutunun dışına çizmez.

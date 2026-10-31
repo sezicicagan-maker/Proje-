@@ -17,8 +17,8 @@ button{font-family:inherit;color:inherit}
 #cw{position:relative;flex:1 1 0;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 canvas{display:block;touch-action:none}
 #app.wide{max-width:1500px}
-#app.wide #stage{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:12px;padding:12px}
-#app.wide #ctl{justify-content:center;gap:12px;padding:16px;background:linear-gradient(180deg,#12223a,#0a1424);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.35)}
+#app.wide #stage{display:grid;grid-template-columns:minmax(0,1fr) 350px;grid-template-rows:minmax(0,1fr);gap:12px;padding:12px;height:100%}
+#app.wide #ctl{min-height:0;overflow-y:auto;overscroll-behavior:contain;justify-content:flex-end;gap:12px;padding:16px;background:linear-gradient(180deg,#12223a,#0a1424);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.35)}
 #app.wide .row{padding:8px 14px 6px}
 #app.wide .rh{font-size:calc(12.5px*var(--fs))}
 #app.wide .b,#app.wide #az,#app.wide #rst{height:50px}
@@ -184,6 +184,20 @@ small.d{display:block;color:#6a82a3;font-size:11px;max-width:340px;line-height:1
 .why h4{margin:0 0 6px;font-size:11px;letter-spacing:.18em;color:#7e96b6}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 /* v4 ek */
+#rst:not([hidden]){animation:pop .45s cubic-bezier(.2,1.6,.4,1) both}
+#rst:not(:disabled){animation:pop .45s cubic-bezier(.2,1.6,.4,1) both,rstGlow 1.6s ease-in-out .5s infinite}@keyframes rstGlow{50%{box-shadow:0 3px 0 #0b4a2d,0 0 22px rgba(70,224,160,.6)}}
+.row.hot .rh{animation:blink .9s steps(2) infinite}
+.row.auto .rs input::-webkit-slider-thumb{background:linear-gradient(180deg,#d8f6ff,#5fc8f0 55%,#2a8ab8);box-shadow:0 0 10px rgba(95,211,255,.6),inset 0 1px 0 rgba(255,255,255,.6)}
+.row.auto .rs input::-moz-range-thumb{background:linear-gradient(180deg,#d8f6ff,#5fc8f0)}
+.b{white-space:normal;overflow-wrap:normal;line-height:1.08}
+#bSpd,#bPause{flex:.72}
+#side{display:none}
+#app.wide #side{display:flex;flex-direction:column;gap:6px;margin-bottom:auto;padding:14px;border-radius:14px;background:linear-gradient(180deg,#152843,#0e1b30);border:1px solid #2a436b}
+#side b{font-size:calc(15px*var(--fs))}#side p{margin:0;color:#a8bcd6;font-size:calc(12.5px*var(--fs));line-height:1.45}
+.sdbar{height:6px;border-radius:4px;background:#0a1220;overflow:hidden}.sdbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2aa8e0,#7be0ff);transition:width .5s linear}
+.sdrow{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.sdrow span:last-child{color:var(--ok);font-weight:800}
+#app.wide #top{position:static;justify-content:flex-end;order:-1}
+#app.wide #top button{height:34px;min-width:40px;font-size:15px}#app.wide #bProt{font-size:11px!important;padding:0 12px}
 .ghost.w{min-width:220px}
 .pz{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font:800 26px/1 var(--font);letter-spacing:4px;color:var(--acc);background:#0b1626;border:1px solid #2b4a74;box-shadow:0 0 30px rgba(95,211,255,.18);animation:breathe2 2.6s ease-in-out infinite}
 @keyframes breathe2{50%{box-shadow:0 0 44px rgba(95,211,255,.35)}}
@@ -208,7 +222,7 @@ small.d{display:block;color:#6a82a3;font-size:11px;max-width:340px;line-height:1
 .srch:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(95,211,255,.15)}
 .kpi b{transition:color .3s}
 .chk .sw{pointer-events:none}
-@media (max-height:600px){#app.wide #stage{grid-template-columns:minmax(0,1fr) 300px;gap:8px;padding:8px}#app.wide #ctl{padding:10px;gap:6px}#app.wide .b,#app.wide #az,#app.wide #rst{height:42px}#app.wide #kbHint{display:none}}
+@media (max-height:600px){#app.wide #stage{grid-template-columns:minmax(0,1fr) 300px;gap:8px;padding:8px}#app.wide #ctl{padding:8px 10px;gap:5px;justify-content:flex-start}#app.wide .row{padding:3px 12px 1px}#app.wide .b,#app.wide #az,#app.wide #rst{height:40px}#app.wide #kbHint,#app.wide #side{display:none}#app.wide #top button{height:28px;min-width:32px;font-size:13px}}
 @media (min-width:900px){.scr{max-width:620px}.grid{grid-template-columns:repeat(4,1fr)}}
 html.rm *,html.rm *::before,html.rm *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 </style>
@@ -222,6 +236,7 @@ html.rm *,html.rm *::before,html.rm *::after{animation-duration:.001ms!important
    <div id="tip" hidden role="dialog"></div>
   </div>
   <div id="ctl">
+   <div id="side"><b id="sdT"></b><p id="sdG"></p><div class="sdbar"><i id="sdP"></i></div><div class="sdrow"><span id="sdTm"></span><span id="sdK"></span></div></div>
    <div class="row" id="rowS"><div class="rh"><span class="rl" id="lS"></span><b class="rv" id="vS"></b></div><div class="rs" id="sS"><input id="inS" type="range"><i class="mk"></i></div></div>
    <div class="row" id="rowR"><div class="rh"><span class="rl" id="lR"></span><button class="chip" id="chLim"></button><b class="rv" id="vR"></b></div><div class="rs" id="sR"><input id="inR" type="range"><i class="mk"></i></div></div>
    <div class="row" id="rowF"><div class="rh"><span class="rl" id="lF"></span><b class="rv" id="vF"></b></div><div class="rs" id="sF"><input id="inF" type="range"><i class="mk"></i></div></div>
