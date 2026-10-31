@@ -73,7 +73,7 @@ PLANT.pwr = (() => {
     c.fill();
   }
   function valve(c, x, y, vert, state) { // state: 0 kapalı (normal), 1 açık, 2 kapalı (açma)
-    c.save(); c.translate(x, y); if (vert) c.rotate(-Math.PI / 2);
+    c.save(); c.translate(x, y); if (vert) c.rotate(Math.PI / 2);
     c.beginPath(); c.moveTo(-3, -2.3); c.lineTo(3, 2.3); c.lineTo(3, -2.3); c.lineTo(-3, 2.3); c.closePath();
     c.fillStyle = state === 1 ? '#46e0a0' : state === 2 ? '#ff5468' : '#1a2638'; c.fill();
     c.strokeStyle = state === 0 ? '#6f89ab' : '#0b1626'; c.lineWidth = 0.8; c.stroke();
@@ -123,7 +123,7 @@ PLANT.pwr = (() => {
     ph.prim += dt * 24 * flow; ph.rcp += dt * 14 * flow; ph.stm += dt * 34 * steamK; ph.dump += dt * 26 * dumpK;
     ph.fw += dt * 16 * feedK; ph.fwp += dt * 12 * Math.max(feedK, dead ? 0 : 0.05); ph.turb += dt * 6 * turbW;
     ph.cw += dt * (dead ? 0 : 9); ph.boil += dt * (dead ? 0 : 0.35 + 0.9 * nv); ph.puff += dt;
-    if (ph.prim > 1e5) for (const k in ph) ph[k] %= 840;
+    ph.turb %= TAU; if (ph.prim > 1e5) for (const k in ph) ph[k] %= 840;   // 840: tüm nokta aralıklarının (6, 7, 8) katı
 
     const g = grads(c);
     c.save(); c.lineJoin = 'round'; c.lineCap = 'round';
@@ -274,7 +274,7 @@ PLANT.pwr = (() => {
     c.strokeStyle = 'rgba(220,235,255,.5)'; c.lineWidth = 0.6; c.beginPath(); c.moveTo(CND.x, hw); c.lineTo(CND.x + CND.w, hw); c.stroke();
     c.restore();
     H.rr(CND.x, CND.y, CND.w, CND.h, 5); c.strokeStyle = '#7fa6d3'; c.lineWidth = 1.2; c.stroke();
-    if (!dead) { H.arrow(156, CW_UP, 0, 2, cwCol); H.arrow(CND.x + CND.w + 1.6, CW_LO, Math.PI, 2, cwCol); }
+    if (!dead) { H.arrow(155.4, CW_UP, 0, 2, cwCol); H.arrow(CND.x + CND.w + 1.6, CW_LO, Math.PI, 2, cwCol); }
 
     /* ===== Besi suyu pompası ===== */
     H.pump(FWP.x, FWP.y, FWP.r, ph.fwp, '#7fa6d3');

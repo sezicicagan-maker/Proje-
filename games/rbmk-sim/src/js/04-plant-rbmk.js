@@ -47,7 +47,7 @@ PLANT.rbmk = (() => {
     [2.6, 'cw', [P.cwIn.pts, P.cwOut.pts]],
     [3.6, 'steam', [P.steamL.pts, P.steamR.pts]]
   ];
-  const LOOPDOTS = [P.downL, P.downR, P.disL, P.disR, P.hdrL, P.hdrR, ...STUBS];
+  const LOOPDOTS = [P.downL, P.downR, P.disL, P.disR, P.hdrL, P.hdrR, ...STUBS], RISERS = [P.riseL, P.riseR];
   /* akış yönü okları (hareketsiz kipte de yön okunur): x, y, açı */
   const CHEV = [[12, 74, HP], [84, 74, HP], [48, 117.5, -HP], [31, 124, 0], [65, 124, Math.PI], [97, 64, -HP], [112, 94, HP], [90, 13, 0]];
   const NECK = [[130, TB.y + TB.h * (0.7 + 0.3 * 26 / 34)], [138, TB.y + TB.h], [141, CD.y], [126, CD.y]];
@@ -56,7 +56,7 @@ PLANT.rbmk = (() => {
   /* faz biriktiricileri: hız değişince noktalar sıçramasın diye zamanla entegre edilir (yalnız görsel) */
   const ph = { loop: 0, rise: 0, steam: 0, fw: 0, cw: 0, mcp: 0, fwp: 0, turb: 0, bub: 0 };
   let last = 0;
-  const WRAP = 360 * 7;
+  const WRAP = 2520 * 400;   // 1..10 boşluklarının katı; sarma anında sıçrama olmaz
   /* sabit gradyanlar: bağlam başına bir kez */
   let G = null, Gc = null;
   function grads(c) {
@@ -151,15 +151,14 @@ PLANT.rbmk = (() => {
     if (flow > 0.01) { c.fillStyle = 'rgba(255,236,214,.85)'; c.beginPath(); for (const Pt of LOOPDOTS) dotsP(c, Pt, ph.loop, 9, 0.95); c.fill(); }
     if (!dead) {
       /* yükselen hatlar: su noktaları + buhar kabarcıkları (boşluk oranıyla) */
-      const wb = [], bb = [];
       c.fillStyle = 'rgba(255,236,214,.7)'; c.beginPath();
-      for (const R of [P.riseL, P.riseR]) {
+      for (const R of RISERS) {
         const x = R.pts[0][0], y0 = R.pts[0][1], L = R.L;
         for (let k = 0; k < 6; k++) { const yy = y0 - ((ph.rise + k * L / 6) % L), xx = x + (hash(k * 3 + x) - 0.5) * 1.4; if (hash(k + x) < 0.15 + vf * 0.8) continue; c.moveTo(xx + 0.9, yy); c.arc(xx, yy, 0.9, 0, TAU); }
       }
       c.fill();
       c.fillStyle = `rgba(245,250,255,${(0.6 + 0.35 * Math.min(1, vf)).toFixed(2)})`; c.beginPath();
-      for (const R of [P.riseL, P.riseR]) {
+      for (const R of RISERS) {
         const x = R.pts[0][0], y0 = R.pts[0][1], L = R.L;
         for (let k = 0; k < 6; k++) { if (hash(k + x) >= 0.15 + vf * 0.8) continue; const yy = y0 - ((ph.rise + k * L / 6) % L), xx = x + (hash(k * 3 + x) - 0.5) * 1.4, r = 0.7 + 0.9 * hash(k * 7 + x) * (0.4 + 0.6 * Math.min(1, vf)); c.moveTo(xx + r, yy); c.arc(xx, yy, r, 0, TAU); }
       }
@@ -247,7 +246,7 @@ PLANT.rbmk = (() => {
       const drvCol = S.jammed ? '#ffc83d' : az ? '#ff5468' : S.stepback ? '#ff9a3d' : S.auto ? '#5fd3ff' : OUT;
       c.beginPath(); for (const x of RODX) c.rect(x - 2.6, DRV_Y, 5.2, DRV_H);
       c.fillStyle = '#132037'; c.fill(); c.strokeStyle = drvCol; c.lineWidth = 0.9; c.stroke();
-      if ((az && azT < 20) || (S.stepback && !az)) {
+      if ((az && ins < 0.995) || (S.stepback && !az)) {   /* çubuklar hareket ederken */
         if (!now || Math.sin(now / 160) > -0.3) { c.fillStyle = az ? '#ff5468' : '#ff9a3d'; c.beginPath(); for (const x of RODX) chevP(c, x, DRV_Y - 2.6, HP, 2.2); c.fill(); }
       }
     }
