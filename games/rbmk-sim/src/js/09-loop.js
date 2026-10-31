@@ -43,7 +43,7 @@ try { matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', 
 /* Açılış */
 loadSave(); setLang(pickLang(), false); applyPrefs(); resize(); mainMenu('up'); requestAnimationFrame(frame);
 if (window.__RB_TEST__) window.__rb = {
-  M, T, LANGS, QA, MISSING, get REG() { return REG; }, initScenario, tick, finish, trip, doReset, canReset, setBypass, setProt, setLimit, setAuto, setLang, relabel, mainMenu, reactorMenu, briefing, settingsScreen, langPicker, helpScreen, pauseMenu, showTip, closeTip, go, draw, resize, computeLayout,
+  M, T, LANGS, QA, MISSING, get REG() { return REG; }, initScenario, tick, finish, trip, doReset, canReset, setBypass, setProt, setLimit, setAuto, setLang, relabel, mainMenu, reactorMenu, briefing, settingsScreen, langPicker, helpScreen, pauseMenu, showTip, closeTip, go, draw, resize, computeLayout, UPG, typeFor, upgradesScreen, creditsFor,
   get S() { return S; }, get TY() { return TY; }, get save() { return save; }, get scen() { return scen; }, get scenT() { return scenT; }, get flags() { return flags; }, get score() { return score; }, get EVENTS() { return EVENTS; }, get HIST() { return HIST; },
   get playing() { return playing; }, set playing(v) { playing = v; }, get ended() { return ended; }, get ts() { return ts; }, get LANG() { return LANG; }, get WIDE() { return WIDE; }, get LAYOUT() { return LAYOUT; }, get VIEW() { return VIEW; }, set VIEW(v) { VIEW = v; }, get PLANT_ERR() { return PLANT_ERR; }
 };

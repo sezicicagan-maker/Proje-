@@ -43,7 +43,7 @@ const M = (() => {
       let d; const k = T.stroke / 7;
       if (T.actuator === 'flow') d = null;
       else if (T.mod) { const e = tRef(s.D) - s.Tm, ea = Math.max(0, Math.abs(e) - (T.autoDead || 0.2)), vv = -Math.sign(e) * Math.min(1, ea / (T.autoGain || 3)); d = vv * T.vRod * dt * 1.001; if (s.n < 0.15) { if (d < 0 && s.rate > 1 / 20) d = 0; if (s.rate > 1 / 8) d = Math.max(d, 0.3 * T.vRod * dt); } }
-      else { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); d = -Math.max(-1, Math.min(1, 2.2 * e)) * 0.8 * k; if (d < 0 && s.rate > 1 / 40) d = 0; if (s.rate > 1 / 20) d = Math.max(d, 0.3 * k); /* periyot sınırlı: çekerken ≥ 40 sn, 20 sn altında geri sür */ }
+      else { const e = (s.nSet - s.n) / Math.max(0.03, s.nSet); d = -Math.max(-1, Math.min(1, 2.2 * e)) * 0.8 * k; if (d < 0 && s.rate > 1 / (T.autoPer || 40)) d = 0; if (s.rate > 1 / (T.autoIns || 20)) d = Math.max(d, 0.3 * k); /* periyot sınırlı: çekerken ≥ 40 sn, 20 sn altında geri sür */ }
       if (d !== null) { const dd = Math.max(-v * dt, Math.min(v * dt, d)); tgt = Math.max(0, Math.min(T.stroke, s.p + dd)); s.pTarget = tgt; } // hedef yalnız bu adımın hareketi: OTOMATİK kapanınca çubuklar yerinde kalır
     }
     if (s.stepback && !s.az) { tgt = Math.min(T.stroke, Math.max(tgt, s.p + 1)); v = T.vRod * 1.6; }

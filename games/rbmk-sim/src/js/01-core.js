@@ -7,7 +7,7 @@ const E = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const URLQ = (() => { try { return new URLSearchParams(location.search); } catch (e) { return { get: () => null }; } })();
 
-const DEF = () => ({ lang: null, muted: false, vol: 0.8, amb: true, hap: true, prot: 'assist', slow: true, flash: true, pct: false, big: false, hints: true, motion: 'auto', stars: {}, best: {}, seen: {} });
+const DEF = () => ({ lang: null, muted: false, vol: 0.8, amb: true, hap: true, prot: 'assist', slow: true, flash: true, pct: false, big: false, hints: true, motion: 'auto', stars: {}, best: {}, seen: {}, cr: 0, up: {} });
 let save = DEF();
 function loadSave() {
   const read = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
@@ -21,6 +21,8 @@ function loadSave() {
     const ok = k => /^(rbmk|pwr|bwr|candu):(train|move|test)$/.test(k);
     if (o.stars && typeof o.stars === 'object') for (const k of Object.keys(o.stars).slice(0, 40)) { const s = Math.floor(+o.stars[k]); if (ok(k) && s >= 0 && s <= 3) d.stars[k] = s; }
     if (o.best && typeof o.best === 'object') for (const k of Object.keys(o.best).slice(0, 40)) { const s = Math.round(+o.best[k]); if (ok(k) && s >= 0 && s <= 100) d.best[k] = s; }
+    if (Number.isFinite(+o.cr)) d.cr = clamp(Math.floor(+o.cr), 0, 999999);
+    if (o.up && typeof o.up === 'object') for (const k of Object.keys(o.up).slice(0, 40)) if (/^(rbmk|pwr|bwr|candu):[a-z]{2,10}$/.test(k) && o.up[k] === 1) d.up[k] = 1;
     if (o.seen && typeof o.seen === 'object') for (const k of Object.keys(o.seen).slice(0, 40)) if (/^(rbmk|pwr|bwr|candu):(train|move|test|sand)$/.test(k)) d.seen[k] = 1;
   }
   save = d;

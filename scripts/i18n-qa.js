@@ -8,7 +8,7 @@ if (!code) { console.error('kullanım: node scripts/i18n-qa.js <dil> [çıktı]'
 const out = path.join(outRoot, code); fs.mkdirSync(out, { recursive: true });
 const html = path.join(out, 'game.html');
 execFileSync('node', [path.join(__dirname, 'build-rbmk.js'), '--langs', code === 'en' ? 'en' : 'en,' + code, ...(process.argv.includes('--with-plants') ? [] : ['--plant', 'none']), '--out', html], { stdio: 'ignore' });
-const DOMSEL = '.rl,.rv,.chip,.b,#az span,#rst span,#cover span,#bProt,.tile b,.tile span,.card b,.card .st small,.seg button,.ghost,.btn,.kpi small,.kpi b,.stat em,.stat b,.lang b,.lang span,.h3,.top h2,.sr .lb b,.langrow b,.chk span,.brief h4,.lg span,.newb,#sdT,#sdTm,#sdK,.pad h2,.hero h1,.hero small,.lgbtn';
+const DOMSEL = '.upc .upt b,.buy,.stamp,.crp,.earn .plus,.upb small,.rl,.rv,.chip,.b,#az span,#rst span,#cover span,#bProt,.tile b,.tile span,.card b,.card .st small,.seg button,.ghost,.btn,.kpi small,.kpi b,.stat em,.stat b,.lang b,.lang span,.h3,.top h2,.sr .lb b,.langrow b,.chk span,.brief h4,.lg span,.newb,#sdT,#sdTm,#sdK,.pad h2,.hero h1,.hero small,.lgbtn';
 function domCheck({ screen, sel }) {
   const issues = [], vw = window.innerWidth;
   for (const el of document.querySelectorAll(sel)) {
@@ -54,6 +54,8 @@ function domCheck({ screen, sel }) {
     await p.click('[data-a="back"]'); await p.click('[data-a="help"]'); await shot('help'); await p.evaluate(() => { document.getElementById('ov').scrollTop = 9999; }); await shot('help2');
     await p.click('[data-a="back"]'); await p.evaluate(() => { const R = window.__rb; R.initScenario('move', 'bwr'); R.playing = false; R.flags.trips = 2; R.flags.stepbacks = 1; R.flags.bypassUsed = true; for (let i = 0; i < 20 * 30; i++) R.tick(); R.trip(false, 'm_trip_man'); R.finish('done'); });
     await p.waitForTimeout(2600); await shot('report'); await p.evaluate(() => { document.getElementById('ov').scrollTop = 9999; }); await shot('report2');
+    await p.evaluate(() => { const R = window.__rb; R.save.cr = 150; R.save.up['rbmk:fastaz'] = 1; R.upgradesScreen('rbmk', () => R.mainMenu()); }); await shot('upgrades');
+    await p.evaluate(() => { const R = window.__rb; R.upgradesScreen('bwr', () => R.mainMenu()); }); await shot('upgrades-bwr');
     await p.evaluate(() => window.__rb.langPicker(() => window.__rb.mainMenu())); await shot('lang');
     for (const e of errs) all.push({ screen: vpn, kind: 'js-error', text: e });
     const miss = await p.evaluate(() => [...window.__rb.MISSING]); for (const k of miss) all.push({ screen: vpn, kind: 'missing-key', text: k });

@@ -33,7 +33,7 @@ function goalText() {
 function initScenario(sn, id) {
   if (id) typeId = id; scen = sn; sdef = scenDef(typeId, sn); ended = false; scenT = 0; histT = 0; ts = 1; slowT = 0; speed = 1; acc = 0;
   flags = { trips: 0, autoTrips: 0, stepbacks: 0, minORM: 99, maxV: 0, maxXe: 0 }; score = { ok: 0, tot: 0 }; EVENTS = []; HIST = { p: [], d: [], x: [] };
-  S = M.create(typeId, sdef.opts); TY = S.T; S.auto = sdef.auto; S.prot = sn === 'test' ? 'full' : save.prot; S.interlock = true; S._dxe = 0;
+  S = M.create(typeFor(typeId, sn), sdef.opts); TY = S.T; S.auto = sdef.auto; S.prot = sn === 'test' ? 'full' : save.prot; S.interlock = true; S._dxe = 0;
   const d0 = sdef.demand ? sdef.demand(0) : S.n; S.Dset = S.D = d0; if (TY.id !== 'pwr') S.nSet = sdef.n0 || d0;
   flags.loadMem = S.Dset; ARM.lim = 0; ARM.prot = 0;
   for (const k of Object.keys(SM)) delete SM[k]; PLANT_ERR = null; VIEW = 'core'; msg = ''; msgT = 0;
@@ -187,11 +187,13 @@ function finish(kind) {
   R.kpis = [];
   if (R.pct !== null) R.kpis.push(['k_pct', R.pct, 0, '%']);
   R.kpis.push(['k_trips', flags.trips, 0, ''], ['k_orm', +flags.minORM.toFixed(1), 1, ''], ['k_peak', peakMW, 0, ' MW'], ['k_xe', Math.round(flags.maxXe), 0, '%'], ['k_time', Math.round(scenT), -1, '']);
-  const key = typeId + ':' + scen;
+  const key = typeId + ':' + scen, prevStars = save.stars[key] || 0;
+  R.earned = creditsFor(R, prevStars); R.crFrom = save.cr; save.cr = Math.min(999999, save.cr + R.earned);
   if (scen !== 'sand') {
     if (R.stars > (save.stars[key] || 0)) { save.stars[key] = R.stars; R.isNew = R.stars > 0; }
     if (R.pct !== null && R.pct > (save.best[key] || 0)) save.best[key] = R.pct;
-    R.best = save.best[key] || 0; persist();
+    R.best = save.best[key] || 0;
   }
+  persist();
   const sid = S; setTimeout(() => { if (S === sid) reportScreen(R); }, dead ? 200 : 350); // bu arada menüye çıkıldıysa rapor açılmaz
 }

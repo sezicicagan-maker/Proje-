@@ -28,6 +28,7 @@ ok(Math.abs(maneuver('pwr', 0.4, 40, 120, 150, {}, true).n - 1) < 0.05, 'PWR: %4
 ok(Math.abs(maneuver('bwr', 0.4, 40, 120, 150).n - 1) < 0.05, 'BWR: %40 manevrası tam güce dönüyor');
 ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa manevra (30 sn düşük) tam güce dönüyor');
 { const s = maneuver('candu', 0.4, 40, 120, 150); ok(s.n < 0.05, 'CANDU: güç uzun süre düşük kalırsa ksenon zehirlenmesi (n=' + s.n.toFixed(2) + ', Xe ' + M.xenonPct(s).toFixed(0) + '%)'); }
+{ const T = JSON.parse(JSON.stringify(M.TYPES.rbmk)); T.ps0 = 1.2; const s = M.create(T, { n: 0.0625, orm: 8, flow: 0.55, nHist: 0.2, sub: 0.15 }); run(s, 2); const nb = s.n; M.azStart(s); run(s, 20); ok(s.maxAz / nb < r8.ratio / 2 && !s.destroyed, 'Yükseltme: yeni çubuklarla ORM 8\'de pozitif scram çok küçük (x' + (s.maxAz / nb).toFixed(1) + ' / eski x' + r8.ratio.toFixed(0) + ')'); }
 { const s = M.create('rbmk'); M.azStart(s); run(s, 25); ok(M.resetTrip(s) && !s.az && !s.auto && Math.abs(s.pTarget - s.p) < 1e-9, 'Kapatma sonrası yeniden başlatma (resetTrip) durumu temizliyor'); }
 
 /* 2) Dil dosyaları */
@@ -132,6 +133,24 @@ ok(Math.abs(maneuver('candu', 0.5, 40, 70, 100).n - 1) < 0.05, 'CANDU: kısa man
     await p.screenshot({ path: `${OUT}/rb-pseudo-menu.png` });
     if (T.ar) { await p.goto('file://' + HTML + '?lang=ar'); await p.waitForTimeout(400); ok(await p.evaluate(() => document.documentElement.dir) === 'rtl', 'Arapça: sayfa sağdan sola'); await p.screenshot({ path: `${OUT}/rb-ar-menu.png` }); }
     ok(errs.length === 0, 'sahte dil/RTL: hata yok ' + errs.join('|')); await ctx.close();
+  }
+  // yükseltmeler: kredi kazanma, satın alma animasyonu, fiziğe etkisi, 1986 testinde kapalı
+  {
+    const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); await ctx.addInitScript(() => { window.__RB_TEST__ = true; });
+    const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); await p.goto('file://' + HTML + '?lang=en'); await p.waitForTimeout(400);
+    const e1 = await p.evaluate(() => { const R = window.__rb; R.initScenario('train', 'pwr'); R.playing = false; for (let i = 0; i < 20 * 160 && !R.ended; i++) R.tick(); return { cr: R.save.cr, stars: R.save.stars['pwr:train'] }; });
+    ok(e1.cr > 0 && e1.stars > 0, 'yükseltme: vardiya bitince kredi kazanılıyor (+' + e1.cr + ')');
+    await p.waitForTimeout(2500); ok(/\+\d+ ⚡/.test(await p.textContent('#ov')), 'yükseltme: raporda kazanılan kredi gösteriliyor');
+    await p.evaluate(() => { window.__rb.save.cr = 500; window.__rb.reactorMenu('pwr'); }); await p.waitForTimeout(400);
+    await p.click('[data-a="upg"]'); await p.waitForTimeout(500); ok(await p.evaluate(() => document.querySelectorAll('.upc').length) === 3, 'yükseltme: ekranda 3 kart');
+    await p.click('[data-a="buy"][data-u="boron"]'); await p.waitForTimeout(1500);
+    const e2 = await p.evaluate(() => { const R = window.__rb; R.initScenario('train', 'pwr'); return { cr: R.save.cr, own: R.save.up['pwr:boron'], bRate: R.S.T.bRate, stamp: !!document.querySelector('.upc.own .stamp') }; });
+    ok(e2.own === 1 && e2.cr === 440 && e2.stamp, 'yükseltme: satın alındı, kredi düştü, KURULDU damgası (' + e2.cr + ')'); ok(e2.bRate === 10, 'yükseltme: fizik parametresi değişti (bor hızı 4 → 10 ppm/s)');
+    await p.evaluate(() => { window.__rb.save.up['rbmk:rods'] = 1; }); const e3 = await p.evaluate(() => { const R = window.__rb; R.initScenario('test', 'rbmk'); const a = R.S.T.ps0; R.initScenario('move', 'rbmk'); return [a, R.S.T.ps0]; });
+    ok(e3[0] === 4.4 && e3[1] === 1.2, 'yükseltme: 1986 testi özgün tasarımla, diğer senaryolar yükseltilmiş');
+    await p.evaluate(() => { window.__rb.save.cr = 10; window.__rb.upgradesScreen('bwr', () => {}); }); await p.waitForTimeout(400);
+    ok(await p.evaluate(() => [...document.querySelectorAll('.buy')].every(b => b.disabled)), 'yükseltme: kredi yetmezse satın alınamıyor');
+    ok(errs.length === 0, 'yükseltme: hata yok ' + errs.join('|')); await ctx.close();
   }
   console.log(fails ? 'BAŞARISIZ ' + fails : '\nHEPSİ GEÇTİ'); await b.close(); process.exit(fails ? 1 : 0);
 })();

@@ -41,6 +41,9 @@ const SFX = {
   star(i) { tone(660 + i * 200, 0.22, 'triangle', 0.08); tone(1320 + i * 400, 0.12, 'sine', 0.03, null, 0.04); },
   win() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.2, 'triangle', 0.07, null, i * 0.1)); },
   fail() { [392, 311, 262].forEach((f, i) => tone(f, 0.28, 'sawtooth', 0.05, null, i * 0.16)); },
+  tick(i) { tone(900 + i * 60, 0.03, 'square', 0.025); },
+  buy() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.16, 'triangle', 0.07, null, i * 0.07)); tone(2093, 0.3, 'sine', 0.03, null, 0.38); },
+  coin(i) { tone(1180 + (i % 5) * 90, 0.07, 'square', 0.03); tone(1760 + (i % 5) * 120, 0.09, 'sine', 0.025, null, 0.04); },
   boom() { tone(80, 1.6, 'sawtooth', 0.12, 0.3); tone(55, 2, 'square', 0.08, 0.5, 0.1); }
 };
 function audioUpdate(playingNow) {
